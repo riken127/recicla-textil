@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const userAddress = require('Address')
 const UserSchema = new mongoose.Schema({
     lastName: {type: String, required: true},
     firstName: {type: String, required: true},
@@ -16,12 +16,7 @@ const UserSchema = new mongoose.Schema({
             default: 'user'
         }]
     },
-    address: {
-        street: {type: String, required: true},
-        city: {type: String, required: true},
-        postalCode: {type: String, required: true},
-        country: {type: String, required: true},
-    },
+    address: { type: userAddress, required: true },
     phone: {type: String, required: true},
     leafs: {type: Number, required: true},
     language: {type: String, required: true},

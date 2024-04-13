@@ -5,6 +5,7 @@ const LinkSchema = new mongoose.Schema({
     title: { type: String, required: true },
     onHover: { type: String, required: true }
 });
+
 const BenefactorPostSchema = new mongoose.Schema({
     benefactorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Benefactor', required: true },
     title: { type: String, required: true },
