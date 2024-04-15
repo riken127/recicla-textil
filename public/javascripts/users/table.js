@@ -58,16 +58,19 @@ $(document).ready(function () {
                 method: "GET",
                 success: function (response) {
                     // Populate form fields with retrieved user data
-                    $("#firstName").val(response.firstName);
-                    $("#lastName").val(response.lastName);
-                    $("#roles").val(response.roles.join(", "));
-                    $("#street").val(response.address.street);
-                    $("#city").val(response.address.city);
-                    $("#postalCode").val(response.address.postalCode);
-                    $("#country").val(response.address.country);
-                    $("#phone").val(response.phone);
-                    $("#language").val(response.language);
-                    $("#userId").val(id);
+                    $("#editFirstName").val(response.firstName);
+                    $("#editLastName").val(response.lastName);
+                    $("#editRoles").val(response.roles.join(", "));
+                    $("#editUsername").val(response.username);
+                    $("#editEmail").val(response.email);
+                    $("#editPassword").val(response.password);
+                    $("#editStreet").val(response.address.street);
+                    $("#editCity").val(response.address.city);
+                    $("#editPostalCode").val(response.address.postalCode);
+                    $("#editCountry").val(response.address.country);
+                    $("#editPhone").val(response.phone);
+                    $("#editLanguage").val(response.language);
+                    $("#editUserId").val(id);
                     $("#editModal").modal("show");
                     var form = document.getElementById("editUserForm");
                     form.action = "update";
@@ -85,16 +88,19 @@ $(document).ready(function () {
     $("#editUserForm").submit(function (event) {
         event.preventDefault(); // Prevent default form submission
 
-        const userId = $("#userId").val();
-        const firstName = $("#firstName").val();
-        const lastName = $("#lastName").val();
-        const roles = $("#roles").val();
-        const street = $("#street").val();
-        const city = $("#city").val();
-        const postalCode = $("#postalCode").val();
-        const country = $("#country").val();
-        const phone = $("#phone").val();
-        const language = $("#language").val();
+        const userId = $("#editUserId").val();
+        const firstName = $("#editFirstName").val();
+        const lastName = $("#editLastName").val();
+        const roles = $("#editRoles").val();
+        const street = $("#editStreet").val();
+        const city = $("#editCity").val();
+        const postalCode = $("#editPostalCode").val();
+        const country = $("#editCountry").val();
+        const phone = $("#editPhone").val();
+        const language = $("#editLanguage").val();
+        const username = $("#editUsername").val();
+        const email = $("#editEmail").val();
+        const password = $("#editPassword").val();
 
         const address = {
             street: street,
