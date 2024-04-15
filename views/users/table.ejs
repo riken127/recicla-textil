@@ -13,6 +13,10 @@
     <!-- Include the country select and intl-tel-input CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/css/countrySelect.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/css/intlTelInput.css">
+    <style>
+        .country-select {width: 100%;}
+        .iti { width: 100%; }
+    </style>
 </head>
 
 <body>
@@ -111,15 +115,16 @@
                                     <div class="row">
                                         <div class="col-md-6">                  
                                     <div class="mb-3">
-                                        <label for="createImage" class="form-label">Image</label>
-                                        <input type="file" class="form-control" id="createImage" name="image">
+                                        <label for="editImage" class="form-label">Image</label>
+                                        <input type="file" class="form-control" id="editImage" name="image">
                                     </div>
                                         </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label for="editPhone" class="form-label">Phone</label>
-                                                    <input type="text" class="form-control" id="editPhone" name="phone" required />
-                                                </div>                        
+                                                    <label for="editphone" class="form-label">Phone</label>
+                                                    <br>
+                                                    <input type="tel" class="form-control intl-tel-input" id="editphone" name="phone" required />
+                                                </div>
                                             </div>
                                     </div>
                                 </div>
@@ -157,9 +162,10 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label for="editCountry" class="form-label">Country</label>
-                                                <select name="editCountry" id="editCountry" class="form-control selectpicker countrypicker" data-flag="true"></select>
-                                            </div>                    
+                                                <label for="editcountry" class="form-label">Country</label>
+                                                <br>
+                                                <input type="text" id="editcountry" class="form-control" name="address.country" required>
+                                            </div>
                                         </div>
                                     </div>
                                     
@@ -220,8 +226,8 @@
                                             <div class="col-md-6">
                                                 <div class="mb-3 form-check">
                                                     <br>
-                                                    <input type="checkbox" class="form-check-input" id="createNotify" name="notify">
-                                                    <label class="form-check-label" for="createNotify">Notify</label>
+                                                    <input type="checkbox" class="form-check-input" id="editNotify" name="notify">
+                                                    <label class="form-check-label" for="editNotify">Notify</label>
                                                 </div>
                                             </div>
                                         </div>         
@@ -361,19 +367,23 @@
     <script>
            // Initialize country selector
            $('#createcountry').countrySelect();
-
+           $('#editcountry').countrySelect();
     // Initialize intl-tel-input for phone input
-    var phoneInput = document.querySelector("#createphone");
-    var iti = window.intlTelInput(phoneInput, {
-        initialCountry: "pt",
+    var createPhoneInput = document.querySelector("#createphone");
+    var createIti = window.intlTelInput(createPhoneInput, { initialCountry: "pt",
         separateDialCode: true,
         utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/utils.js",
     });
+           var editPhoneInput = document.querySelector("#editphone");
+           var editIti = window.intlTelInput(editPhoneInput,{
+               separateDialCode: true,
+               utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/utils.js",
+           })
     const handleChange = () => {
   let text;
-  if (phoneInput.value) {
-    text = iti.isValidNumber()
-      ? "Valid number! Full international format: " + iti.getNumber()
+  if (createPhoneInput.value) {
+    text = createIti.isValidNumber()
+      ? "Valid number! Full international format: " + createIti.getNumber()
       : "Invalid number - please try again";
   } else {
     text = "Please enter a valid number below";

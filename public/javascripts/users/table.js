@@ -67,8 +67,9 @@ $(document).ready(function () {
                     $("#editStreet").val(response.address.street);
                     $("#editCity").val(response.address.city);
                     $("#editPostalCode").val(response.address.postalCode);
-                    $("#editCountry").val(response.address.country);
-                    $("#editPhone").val(response.phone);
+                    $("#editcountry").countrySelect("setCountry",response.address.country);
+                    //$("#editphone").val(response.phone);
+                    editIti.setNumber(response.phone);
                     $("#editLanguage").val(response.language);
                     $("#editUserId").val(id);
                     $("#editModal").modal("show");
@@ -113,6 +114,9 @@ $(document).ready(function () {
             userId: userId,
             firstName: firstName,
             lastName: lastName,
+            username: username,
+            email: email,
+            password: password,
             roles: roles,
             address: address,
             phone: phone,
@@ -178,7 +182,7 @@ $(document).ready(function () {
                 postalCode: $("#createPostalCode").val(),
                 country: $("#createcountry").val(),
             },
-            phone: iti.getNumber(),
+            phone: createIti.getNumber(),
             language: null, // Placeholder for language
             notify: $("#createNotify").is(":checked"),
         };
