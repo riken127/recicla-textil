@@ -26,7 +26,11 @@ function renderEditForm(req, res, next) {
 }
 
 function renderUsersTable(req, res, next) {
+    const page = req.body.page || 1;
+
   User.find()
+      .skip((page - 1) * 10)
+      .limit(10)
     .exec()
     .then((users) => {
       res.render("users/table", {
@@ -40,6 +44,97 @@ function renderUsersTable(req, res, next) {
       });
     });
 }
+/*
+function getAllUsers(req, res, next) {
+    // Retrieve DataTables parameters from the request
+    const { draw, start, length, search, order, columns } = req.body;
+
+    // Construct MongoDB query based on DataTables parameters
+    const query = {}; // You can add conditions here based on DataTables parameters
+
+    User.find(query)
+        .skip(parseInt(start))
+        .limit(parseInt(length))
+        .exec()
+        .then((users) => {
+            // Respond with the retrieved users and other necessary information
+            res.json({
+                draw: parseInt(draw),
+                recordsTotal: users.length, // Total records in the entire dataset (without any filtering)
+                recordsFiltered: users.length, // Total records after filtering (if applicable)
+                data: users, // Array of users to display on the current page
+            });
+        })
+        .catch((err) => {
+            // Handle errors
+            res.status(500).json({
+                error: err.message,
+            });
+        });
+}*/
+
+async function getAllUsers(req, res, next) {
+    const totalRecords = await getTotalCount({});
+    // Retrieve DataTables parameters from the request
+    const { draw, start, length, order, columns } = req.body;
+    const search = req.body['search[value]'];
+    if (typeof order === "undefined") {
+        var attribute_name = 'firstName';
+        var column_sort_order = 'desc';
+    } else {
+        var column_index = req.query.order?.[0]?.['column'];
+        var column_name = req.query.columns?.[column_index]?.['data'];
+        var column_sort_order = req.query.order?.[0]?.['dir'];
+    }
+
+    // Check if search parameter exists and handle accordingly
+    //var search_value = search ? search['text'] : '';
+    var search_value = search;
+    // Construct MongoDB query based on DataTables parameters
+    const query = {};
+
+    if (search_value) {
+        query['$text'] = { $search: search_value };
+    }
+
+    console.log(req.body);
+    // Sort
+    const sortOptions = {};
+    if (column_name) {
+        sortOptions[column_name] = column_sort_order === 'asc' ? 1 : -1;
+    } else {
+        sortOptions['firstName'] = column_sort_order === 'asc' ? 1 : -1;
+    }
+
+    User.find(query)
+        .sort(sortOptions)
+        .skip(parseInt(start))
+        .limit(parseInt(length))
+        .exec()
+        .then((users) => {
+            res.json({
+                draw: parseInt(draw),
+                recordsTotal:  totalRecords,
+                recordsFiltered: totalRecords,
+                data: users,
+            });
+        })
+        .catch((err) => {
+            // Handle errors
+            res.status(500).json({
+                error: err.message,
+            });
+        });
+}
+async function getTotalCount(query) {
+    try {
+        const count = await User.countDocuments(query);
+        return count;
+    } catch (err) {
+        throw err;
+    }
+}
+
 function getUser(req, res, next) {
   const userId = req.params.id; // Assuming the user ID is passed as a route parameter
   User.findById(userId)
@@ -92,11 +187,14 @@ function addUser(req, res, next) {
 function updateUser(req, res, next) {
   const userId = req.body.userId;
   const updateData = {}; // Object to hold changes
-
+    console.log(req.body)
   // Loop through editable user properties (excluding userId)
   const editableProperties = [
     "firstName",
     "lastName",
+      "username",
+      "email",
+      "password",
     "roles",
     "phone",
     "language",
@@ -169,4 +267,5 @@ module.exports = {
   updateUser: updateUser,
   deleteUser: deleteUser,
   getUser: getUser,
+    getAllUsers: getAllUsers
 };
