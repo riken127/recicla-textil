@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const benefactorAddress = require('Address')
 const PickPointSchema = new mongoose.Schema({
     street: { type: String, required: true },
     city: { type: String, required: true },
@@ -9,6 +9,9 @@ const PickPointSchema = new mongoose.Schema({
 
 const BenefactorSchema = new mongoose.Schema({
     name: { type: String, required: true },
+    address: {type: benefactorAddress, required: true},
+    username: { type: String, required: true },
+    password: {type: String, required: true},
     email: { type: String, required: true },
     phone: { type: String, required: true },
     logo: { type: String, required: true },
