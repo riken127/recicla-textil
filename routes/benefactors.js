@@ -11,7 +11,8 @@ router.get('/all', benefactorController.renderBenefactorsTable);
 // add user via mongoose middleware
 router.post('/add', benefactorController.addBenefactor)
 // edit user via mongoose middleware
-router.post('/edit', benefactorController.updateBenefactor);
+router.post('/update', benefactorController.updateBenefactor);
+router.get('/:id', benefactorController.getBenefactor);
 // delete user via mongoose middleware
 router.post('/delete', benefactorController.deleteBenefactor);
 

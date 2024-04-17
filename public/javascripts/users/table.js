@@ -248,8 +248,13 @@ $(document).ready(function () {
         if (userId) {
             // If user ID is provided, make an AJAX request to delete user
             $.ajax({
-                url: "/users/delete/" + UserId,
-                method: "DELETE",
+                url: "/users/delete/",
+                method: "POST",
+                data: JSON.stringify({
+                    id: userId
+                }),
+                contentType: "application/json",
+                dataType: "json",
                 success: function (response) {
                     console.log("User deleted successfully:", response);
                     // Handle successful deletion (e.g., close modal, refresh table)
@@ -263,6 +268,12 @@ $(document).ready(function () {
             console.error("User ID is missing.");
         }
     });
+
+    $(document).on("click", ".delete-button", function () {
+        var userId = $(this).data("userid");
+        openDeleteModal(userId);
+    });
+
 
     // Function to open delete modal
 
