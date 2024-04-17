@@ -2,11 +2,11 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>DataTable Example</title>
     <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" />
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"/>
     <script crossorigin="anonymous" src="https://kit.fontawesome.com/3eb5f00bae.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/css/countrySelect.min.css">    
@@ -20,46 +20,47 @@
 </head>
 
 <body>
-    <div class="container md-col-12 mb-3 py-4">
-        <table id="usersTable" class="table table-striped display" style="width: 100%">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Roles</th>
-                    <th>Address</th>
-                    <th>Phone</th>
-                    <th>Created At</th>
-                    <th>Language</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% users.forEach(function(user) { %>
-                    <tr>
-                        <td>
-                            <%= user.firstName + ' ' + user.lastName %>
-                        </td>
-                        <td>
-                            <%= user.roles.join(', ') %></td>
-            <td>
-              <%= user.address ? user.address.street + ' , ' + user.address.city
-              + ' , ' + user.address.postalCode + ' , ' + user.address.country :
-              ' N/A' %>
-                        </td>
-                        <td>
-                            <%= user.phone %>
-                        </td>
-                        <td>
-                            <%= new Date(user.createdAt).toDateString() %>
-                        </td>
-                        <td>
-                            <%= user.language %>
-                        </td>
-                        <td class="text-center">
-                            <a href="#" class="edit-button" data-userid="<%= user._id %>"><i class="fa-solid fa-pen-to-square"></i></a>
+<div class="container md-col-12 mb-3 py-4">
+    <table id="usersTable" class="table table-striped display" style="width: 100%">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Roles</th>
+            <th>Address</th>
+            <th>Phone</th>
+            <th>Created At</th>
+            <th>Language</th>
+            <th class="text-center">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% users.forEach(function(user) { %>
+            <tr>
+                <td>
+                    <%= user.firstName + ' ' + user.lastName %>
+                </td>
+                <td>
+                    <%= user.roles.join(', ') %></td>
+                <td>
+                    <%= user.address ? user.address.street + ' , ' + user.address.city
+                            + ' , ' + user.address.postalCode + ' , ' + user.address.country :
+                            ' N/A' %>
+                </td>
+                <td>
+                    <%= user.phone %>
+                </td>
+                <td>
+                    <%= new Date(user.createdAt).toDateString() %>
+                </td>
+                <td>
+                    <%= user.language %>
+                </td>
+                <td class="text-center">
+                    <a href="#" class="edit-button" data-userid="<%= user._id %>"><i
+                                class="fa-solid fa-pen-to-square"></i></a>
 
-                            &nbsp;
-                            <a href="#" onclick="openDeleteModal('<%= user._id %>')"><i class="fa-solid fa-trash"></i></a>
+                    &nbsp;
+                    <a href="#" class="delete-button" data-userid="<%= user._id %>"><i class="fa-solid fa-trash"></i></a>
 
                         </td>
                     </tr>
@@ -142,10 +143,9 @@
                     </button>
                 </div>
             </div>
-
-            </form>
         </div>
     </div>
+</div>
 
 <!-- Create Modal -->
 <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
@@ -311,7 +311,6 @@
         </div>
     </div>
 </div>
-</div>
 
 <!-- Delete Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -332,30 +331,31 @@
     </div>
 </div>
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 
-    <!-- DataTables JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Bootstrap Bundle (Bootstrap JS and Popper.js) -->
-    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
-    <!-- DataTables Buttons JavaScript -->
-    <script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.dataTables.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.1/js/dataTables.buttons.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.html5.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.print.min.js"></script>
-    <!-- Initialization script -->
-        <!-- Include intl-tel-input JavaScript -->
-        <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/intlTelInput.min.js"></script>
-        <!-- Include country-select-js JavaScript -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/js/countrySelect.min.js"></script>
-    
-    <script src="/javascripts/users/table.js"></script>
-    <script>
-           // Initialize country selector
-           $('#createcountry').countrySelect();
+<!-- Bootstrap Bundle (Bootstrap JS and Popper.js) -->
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
+<!-- DataTables Buttons JavaScript -->
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.dataTables.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.1/js/dataTables.buttons.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.print.min.js"></script>
+<!-- Initialization script -->
+<!-- Include intl-tel-input JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/intlTelInput.min.js"></script>
+<!-- Include country-select-js JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/js/countrySelect.min.js"></script>
+
+<script src="/javascripts/users/table.js"></script>
+<script>
+    // Initialize country selector
+    $('#createcountry').countrySelect();
+
     // Initialize intl-tel-input for phone input
     var phoneInput = document.querySelector("#createphone");
     var iti = window.intlTelInput(phoneInput, {
@@ -364,28 +364,23 @@
         utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/utils.js",
     });
     const handleChange = () => {
-  let text;
-  if (phoneInput.value) {
-    text = iti.isValidNumber()
-      ? "Valid number! Full international format: " + iti.getNumber()
-      : "Invalid number - please try again";
-  } else {
-    text = "Please enter a valid number below";
-  }
-  const textNode = document.createTextNode(text);
-  output.innerHTML = "";
-  output.appendChild(textNode);
-};
-
-// listen to "keyup", but also "change" to update when the user selects a country
-input.addEventListener('change', handleChange);
-input.addEventListener('keyup', handleChange);
-    </script>
-        <style>
-        .country-select-width {
-            display: inline !important;
+        let text;
+        if (phoneInput.value) {
+            text = iti.isValidNumber()
+                ? "Valid number! Full international format: " + iti.getNumber()
+                : "Invalid number - please try again";
+        } else {
+            text = "Please enter a valid number below";
         }
-    </style>
+        const textNode = document.createTextNode(text);
+        output.innerHTML = "";
+        output.appendChild(textNode);
+    };
+
+    // listen to "keyup", but also "change" to update when the user selects a country
+    input.addEventListener('change', handleChange);
+    input.addEventListener('keyup', handleChange);
+</script>
 </body>
 
 </html>
