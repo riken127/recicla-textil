@@ -1,6 +1,5 @@
 $(document).ready(function () {
-    /*var table = $("#usersTable").DataTable({
-        pageLength: 3,
+    var dataTableOptions = {
         layout: {
             topStart: {
                 buttons: [
@@ -14,21 +13,13 @@ $(document).ready(function () {
                 ],
             },
         },
-    });
-
-    // Event delegation for edit buttons
-    $(document).on("click", ".edit-button", function () {
-        var userId = $(this).data("userid");
-        openEditModal(userId);
-    });*/
-    var dataTableOptions = {
         "processing": true,
         "searchable": true,
         "serverSide": true,
         "ajax": {
             url: "http://localhost:3000/users/all-users",
             type: "POST",
-            data: function(d) {
+            data: function (d) {
                 console.log(d);
                 return d;
             }
@@ -37,38 +28,38 @@ $(document).ready(function () {
             {
                 "data": null,
                 "title": "Name",
-                "render": function(data, type, row) {
+                "render": function (data, type, row) {
                     return `${row.firstName} ${row.lastName}`;
                 }
             },
             {
                 "data": "roles",
                 "title": "Roles",
-                "render": function(data, type, row) {
+                "render": function (data, type, row) {
                     return data.join(', ');
                 }
             },
             {
                 "data": null,
                 "title": "Address",
-                "render": function(data, type, row) {
+                "render": function (data, type, row) {
                     return row.address ? `${row.address.street}, ${row.address.city}, ${row.address.postalCode}, ${row.address.country}` : 'N/A';
                 }
             },
-            { "data": "phone", "title": "Phone" },
+            {"data": "phone", "title": "Phone"},
             {
                 "data": "createdAt",
                 "title": "Created At",
-                "render": function(data, type, row) {
+                "render": function (data, type, row) {
                     return new Date(data).toDateString();
                 }
             },
-            { "data": "language", "title": "Language" },
+            {"data": "language", "title": "Language"},
             {
                 "data": null,
                 "title": "Actions",
                 "className": "text-center",
-                "render": function(data, type, row) {
+                "render": function (data, type, row) {
                     return `<a href="#" class="edit-button" onclick="openEditModal('${row._id}')"><i class="fa-solid fa-pen-to-square"></i></a>&nbsp;<a href="#" onclick="openDeleteModal('${row._id}')"><i class="fa-solid fa-trash"></i></a>`;
                 }
             }
@@ -78,9 +69,10 @@ $(document).ready(function () {
     };
 
 
-        var table = $("#usersTable").DataTable(dataTableOptions);
+    var table = $("#usersTable").DataTable(dataTableOptions);
 
-        window.openDeleteModal = (userId) => {
+    window.openDeleteModal = (userId) => {
+        console.log(userId)
         $("#deleteModal").modal("show");
         $("#confirmDelete").data("userid", userId);
     }
@@ -103,7 +95,7 @@ $(document).ready(function () {
                     $("#editStreet").val(response.address.street);
                     $("#editCity").val(response.address.city);
                     $("#editPostalCode").val(response.address.postalCode);
-                    $("#editcountry").countrySelect("setCountry",response.address.country);
+                    $("#editcountry").countrySelect("setCountry", response.address.country);
                     //$("#editphone").val(response.phone);
                     editIti.setNumber(response.phone);
                     $("#editLanguage").val(response.language);
@@ -157,13 +149,16 @@ $(document).ready(function () {
                     success: function (response) {
                         console.log("Server response:", response);
                         $("#editModal").modal("hide");
+                        table.ajax.reload();
                     },
                     error: function (error) {
                         console.error("Error:", error);
                     },
                 });
             })
+
     });
+
     // Function to get language based on country code
     function getLanguageForCountry(countryName) {
         return fetch(`https://restcountries.com/v3.1/name/${countryName}`)
@@ -181,13 +176,12 @@ $(document).ready(function () {
                 return null;
             });
     }
+
     // Form submission event handler for create modal
     $("#createUserForm").submit(function (event) {
         event.preventDefault(); // Prevent default form submission
-    
 
-        
-    
+
         const userData = {
             firstName: $("#createFirstName").val(),
             lastName: $("#createLastName").val(),
@@ -208,17 +202,17 @@ $(document).ready(function () {
             language: null, // Placeholder for language
             notify: $("#createNotify").is(":checked"),
         };
-    
+
         // Get the language for the selected country
         getLanguageForCountry(userData.address.country)
             .then(language => {
                 // Set the user's language based on the country
                 userData.language = language;
-    
+
                 // Convert data object to JSON string
                 const jsonData = JSON.stringify(userData);
-    
                 // Send AJAX request
+                console.log(userData)
                 $.ajax({
                     url: "/users/add",
                     type: "POST",
@@ -239,6 +233,7 @@ $(document).ready(function () {
             .catch(error => {
                 console.error("Error getting language for country:", error);
             });
+        table.ajax.reload();
     });
 
 
@@ -259,6 +254,7 @@ $(document).ready(function () {
                     console.log("User deleted successfully:", response);
                     // Handle successful deletion (e.g., close modal, refresh table)
                     $("#deleteModal").modal("hide");
+                    table.ajax.reload();
                 },
                 error: function (xhr, status, error) {
                     console.error("Error deleting user:", error);
@@ -269,10 +265,11 @@ $(document).ready(function () {
         }
     });
 
-    $(document).on("click", ".delete-button", function () {
+    /*$(document).on("click", ".delete-button", function () {
         var userId = $(this).data("userid");
+        console.log(userId);
         openDeleteModal(userId);
-    });
+    });*/
 
 
     // Function to open delete modal

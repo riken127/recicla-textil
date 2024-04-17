@@ -1,6 +1,12 @@
-const mongoose = require('mongoose');
-const Address = require('../Address');
+/**
+ * Module representing the User model.
+ * @module User
+ */
 
+const mongoose = require('mongoose');
+const Address = require('../Address'); // Assuming Address model exists
+
+// Define schema for User
 const UserSchema = new mongoose.Schema({
     lastName: { type: String, required: true },
     firstName: { type: String, required: true },
@@ -15,9 +21,9 @@ const UserSchema = new mongoose.Schema({
         enum: ['administrator', 'employee', 'user', 'moderator'],
         default: 'user'
     }],
-    address: { type: Address.schema, required: true },
+    address: { type: Address.schema, required: true }, // Reference to Address schema
     phone: { type: String, required: true },
-    leafs: { type: Number, required: true, default: 0},
+    leafs: { type: Number, required: true, default: 0 },
     language: { type: String, required: true },
     title: [{
         type: String,
@@ -27,4 +33,5 @@ const UserSchema = new mongoose.Schema({
     notify: { type: Boolean, required: true }
 });
 
+// Export the User model
 module.exports = mongoose.model('User', UserSchema);

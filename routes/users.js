@@ -2,19 +2,18 @@ var express = require('express');
 var router = express.Router();
 var userController = require('../controllers/UserController');
 
-// user creation form
-router.get('/create', userController.renderCreateForm);
-// user editing form
-router.get('/edit/:id', userController.renderEditForm);
-// user table
+// the main page, that contains the datatables' plugin, and all the modals'.
 router.get('/all', userController.renderUsersTable);
-// add user via mongoose middleware
+// add user via mongoose middleware, sends mongoose object via POSTs' body via create modals' form
 router.post('/add', userController.addUser)
-// edit user via mongoose middleware
+// edit user via mongoose middleware, sends mongoose object via POSTs' body via update modals' form.
 router.post('/update', userController.updateUser)
+// get user information via get, sends a request to which is than rendered in frontend via ajax.
 router.get('/:id', userController.getUser)
-// delete user via mongoose middleware
+// delete user via mongoose middleware, sends mongoose object via post's body.
 router.post('/delete/', userController.deleteUser)
-// get all users by json
+// get all users by json (server-side processing route, connects with ajax's create table in frontend)
 router.post('/all-users', userController.getAllUsers);
+
+// route exportation
 module.exports = router;
