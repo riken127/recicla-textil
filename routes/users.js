@@ -15,4 +15,6 @@ router.post('/update', userController.updateUser)
 router.get('/:id', userController.getUser)
 // delete user via mongoose middleware
 router.post('/delete/', userController.deleteUser)
+// get all users by json
+router.post('/all-users', userController.getAllUsers);
 module.exports = router;

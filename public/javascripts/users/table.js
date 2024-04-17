@@ -1,5 +1,6 @@
 $(document).ready(function () {
-    var table = $("#usersTable").DataTable({
+    /*var table = $("#usersTable").DataTable({
+        pageLength: 3,
         layout: {
             topStart: {
                 buttons: [
@@ -14,43 +15,77 @@ $(document).ready(function () {
             },
         },
     });
-/*
-    $(document).ready(function() {
-        let countries;
 
-        $.get('https://restcountries.com/v3.1/all?fields=name,flags', function(data) {
-            countries = data;
-            assignValues();
-            handleCountryChange();
-        });
-
-        function assignValues() {
-            const select = $('#createCountry');
-            countries.forEach(country => {
-                const option = $('<option></option>').attr('value', country.cca2).text(country.name.common);
-                select.append(option);
-            });
-        }
-
-        function handleCountryChange() {
-            const countryCode = $('#createCountry').val();
-            const countryData = countries.find(country => countryCode === country.cca2);
-            const flagUrl = countryData.flags.png; // Adjusted to match the structure of the data
-            $('#phoneCountryFlag').html('<img src="' + flagUrl + '" width="20" height="20" alt="Flag">');
-            // You may add phone number formatting logic here
-        }
-
-        $('#createCountry').change(handleCountryChange);
-    });*/
-    
     // Event delegation for edit buttons
     $(document).on("click", ".edit-button", function () {
         var userId = $(this).data("userid");
         openEditModal(userId);
-    });
+    });*/
+    var dataTableOptions = {
+        "processing": true,
+        "searchable": true,
+        "serverSide": true,
+        "ajax": {
+            url: "http://localhost:3000/users/all-users",
+            type: "POST",
+            data: function(d) {
+                console.log(d);
+                return d;
+            }
+        },
+        "columns": [
+            {
+                "data": null,
+                "title": "Name",
+                "render": function(data, type, row) {
+                    return `${row.firstName} ${row.lastName}`;
+                }
+            },
+            {
+                "data": "roles",
+                "title": "Roles",
+                "render": function(data, type, row) {
+                    return data.join(', ');
+                }
+            },
+            {
+                "data": null,
+                "title": "Address",
+                "render": function(data, type, row) {
+                    return row.address ? `${row.address.street}, ${row.address.city}, ${row.address.postalCode}, ${row.address.country}` : 'N/A';
+                }
+            },
+            { "data": "phone", "title": "Phone" },
+            {
+                "data": "createdAt",
+                "title": "Created At",
+                "render": function(data, type, row) {
+                    return new Date(data).toDateString();
+                }
+            },
+            { "data": "language", "title": "Language" },
+            {
+                "data": null,
+                "title": "Actions",
+                "className": "text-center",
+                "render": function(data, type, row) {
+                    return `<a href="#" class="edit-button" onclick="openEditModal('${row._id}')"><i class="fa-solid fa-pen-to-square"></i></a>&nbsp;<a href="#" onclick="openDeleteModal('${row._id}')"><i class="fa-solid fa-trash"></i></a>`;
+                }
+            }
+        ],
+        "paging": true,
+        "pagingType": "full_numbers"
+    };
 
+
+        var table = $("#usersTable").DataTable(dataTableOptions);
+
+        window.openDeleteModal = (userId) => {
+        $("#deleteModal").modal("show");
+        $("#confirmDelete").data("userid", userId);
+    }
     // Function to open modal and fetch user data
-    function openEditModal(id) {
+    window.openEditModal = (id) => {
         if (id) {
             // If user ID is provided, make an AJAX request to fetch user data
             $.ajax({
@@ -58,6 +93,7 @@ $(document).ready(function () {
                 method: "GET",
                 success: function (response) {
                     // Populate form fields with retrieved user data
+                    $("#editUserId").val(response._id);
                     $("#editFirstName").val(response.firstName);
                     $("#editLastName").val(response.lastName);
                     $("#editRoles").val(response.roles.join(", "));
@@ -71,7 +107,6 @@ $(document).ready(function () {
                     //$("#editphone").val(response.phone);
                     editIti.setNumber(response.phone);
                     $("#editLanguage").val(response.language);
-                    $("#editUserId").val(id);
                     $("#editModal").modal("show");
                     var form = document.getElementById("editUserForm");
                     form.action = "update";
@@ -89,81 +124,68 @@ $(document).ready(function () {
     $("#editUserForm").submit(function (event) {
         event.preventDefault(); // Prevent default form submission
 
-        const userId = $("#editUserId").val();
-        const firstName = $("#editFirstName").val();
-        const lastName = $("#editLastName").val();
-        const roles = $("#editRoles").val();
-        const street = $("#editStreet").val();
-        const city = $("#editCity").val();
-        const postalCode = $("#editPostalCode").val();
-        const country = $("#editCountry").val();
-        const phone = $("#editPhone").val();
-        const language = $("#editLanguage").val();
-        const username = $("#editUsername").val();
-        const email = $("#editEmail").val();
-        const password = $("#editPassword").val();
-
-        const address = {
-            street: street,
-            city: city,
-            postalCode: postalCode,
-            country: country,
-        };
-
         const userData = {
-            userId: userId,
-            firstName: firstName,
-            lastName: lastName,
-            username: username,
-            email: email,
-            password: password,
-            roles: roles,
-            address: address,
-            phone: phone,
-            language: language,
+            userId: $("#editUserId").val(),
+            firstName: $("#editFirstName").val(),
+            lastName: $("#editLastName").val(),
+            username: $("#editUsername").val(),
+            email: $("#editEmail").val(),
+            password: $("#editPassword").val(),
+            roles: $("#editRoles").val(),
+            address: {
+                street: $("#editStreet").val(),
+                city: $("#editCity").val(),
+                postalCode: $("#editPostalCode").val(),
+                country: $("#createcountry").val(),
+            },
+            phone: editIti.getNumber(),
+            language: null,
+            notify: $("#editNotify").is(":checked"),
         };
 
-        // Convert data object to JSON string
-        const jsonData = JSON.stringify(userData);
+        getLanguageForCountry(userData.address.country)
+            .then(language => {
+                userData.language = language;
 
-        // Send data using AJAX (replace with your server-side URL and method)
-        $.ajax({
-            url: "/users/update", // Replace with your endpoint for updating user
-            type: "POST",
-            data: jsonData,
-            contentType: "application/json",
-            dataType: "json",
-            success: function (response) {
-                console.log("Server response:", response);
-                $("#editModal").modal("hide");
-            },
-            error: function (error) {
-                console.error("Error:", error);
-            },
-        });
+                const jsonData = JSON.stringify(userData);
+                $.ajax({
+                    url: "/users/update", // Replace with your endpoint for updating user
+                    type: "POST",
+                    data: jsonData,
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (response) {
+                        console.log("Server response:", response);
+                        $("#editModal").modal("hide");
+                    },
+                    error: function (error) {
+                        console.error("Error:", error);
+                    },
+                });
+            })
     });
-
+    // Function to get language based on country code
+    function getLanguageForCountry(countryName) {
+        return fetch(`https://restcountries.com/v3.1/name/${countryName}`)
+            .then(response => response.json())
+            .then(data => {
+                // Retrieve the primary language spoken in the country
+                const languages = data[0].languages;
+                // Assuming the first language listed is the primary one, you can retrieve its name
+                const primaryLanguageCode = Object.keys(languages)[0];
+                const primaryLanguageName = languages[primaryLanguageCode];
+                return primaryLanguageName;
+            })
+            .catch(error => {
+                console.error('Error fetching country data:', error);
+                return null;
+            });
+    }
     // Form submission event handler for create modal
     $("#createUserForm").submit(function (event) {
         event.preventDefault(); // Prevent default form submission
     
-        // Function to get language based on country code
-        function getLanguageForCountry(countryName) {
-            return fetch(`https://restcountries.com/v3.1/name/${countryName}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Retrieve the primary language spoken in the country
-                    const languages = data[0].languages;
-                    // Assuming the first language listed is the primary one, you can retrieve its name
-                    const primaryLanguageCode = Object.keys(languages)[0];
-                    const primaryLanguageName = languages[primaryLanguageCode];
-                    return primaryLanguageName;
-                })
-                .catch(error => {
-                    console.error('Error fetching country data:', error);
-                    return null;
-                });
-        }
+
         
     
         const userData = {
@@ -218,15 +240,15 @@ $(document).ready(function () {
                 console.error("Error getting language for country:", error);
             });
     });
-    
-    
+
+
     // Click event listener for delete confirmation button
     $(document).on("click", "#confirmDelete", function () {
         var userId = $(this).data("userid");
         if (userId) {
             // If user ID is provided, make an AJAX request to delete user
             $.ajax({
-                url: "/users/delete/" + userId,
+                url: "/users/delete/" + UserId,
                 method: "DELETE",
                 success: function (response) {
                     console.log("User deleted successfully:", response);
@@ -243,8 +265,5 @@ $(document).ready(function () {
     });
 
     // Function to open delete modal
-    function openDeleteModal(userId) {
-        $("#deleteModal").modal("show");
-        $("#confirmDelete").data("userid", userId);
-    }
-});
+
+})

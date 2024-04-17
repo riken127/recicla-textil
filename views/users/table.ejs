@@ -14,8 +14,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/css/countrySelect.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/css/intlTelInput.css">
     <style>
-        .country-select {width: 100%;}
-        .iti { width: 100%; }
+        .country-select {
+            width: 100%;
+        }
+        .iti {
+            width: 100%;
+        }
     </style>
 </head>
 
@@ -25,55 +29,15 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Roles</th>
-                    <th>Address</th>
                     <th>Phone</th>
-                    <th>Created At</th>
-                    <th>Language</th>
-                    <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <% users.forEach(function(user) { %>
-                    <tr>
-                        <td>
-                            <%= user.firstName + ' ' + user.lastName %>
-                        </td>
-                        <td>
-                            <%= user.roles.join(', ') %></td>
-            <td>
-              <%= user.address ? user.address.street + ' , ' + user.address.city
-              + ' , ' + user.address.postalCode + ' , ' + user.address.country :
-              ' N/A' %>
-                        </td>
-                        <td>
-                            <%= user.phone %>
-                        </td>
-                        <td>
-                            <%= new Date(user.createdAt).toDateString() %>
-                        </td>
-                        <td>
-                            <%= user.language %>
-                        </td>
-                        <td class="text-center">
-                            <a href="#" class="edit-button" data-userid="<%= user._id %>"><i class="fa-solid fa-pen-to-square"></i></a>
-
-                            &nbsp;
-                            <a href="#" onclick="openDeleteModal('<%= user._id %>')"><i class="fa-solid fa-trash"></i></a>
-
-                        </td>
-                    </tr>
-                    <% }); %>
             </tbody>
             <tfoot>
                 <tr>
                     <th>Name</th>
-                    <th>Roles</th>
-                    <th>Address</th>
                     <th>Phone</th>
-                    <th>Created At</th>
-                    <th>Language</th>
-                    <th class="text-center">Actions</th>
                 </tr>
             </tfoot>
         </table>
@@ -99,7 +63,7 @@
                                 <div class="accordion-body">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <input type="hidden" id="userId" name="userId" />
+                                            <input type="hidden" id="editUserId" name="editUserId" />
                                             <div class="mb-3">
                                                 <label for="editFirstName" class="form-label">First Name</label>
                                                 <input type="text" class="form-control" id="editFirstName" name="firstName" required />
@@ -215,8 +179,8 @@
                                                 <div class="mb-3">
                                                     <label for="editRoles" class="form-label">Roles</label>
                                                     <select class="form-select" id="editRoles" name="roles" required>
-                                                        <option selected>Choose Option</option>
-                                                        <option>Admistrador</option>
+                                                        <option selected disabled hidden>Choose Option</option>
+                                                        <option>Administrator</option>
                                                         <option>Employee</option>
                                                         <option>User</option>
                                                         <option>Moderator</option>
@@ -394,8 +358,8 @@
 };
 
 // listen to "keyup", but also "change" to update when the user selects a country
-input.addEventListener('change', handleChange);
-input.addEventListener('keyup', handleChange);
+//input.addEventListener('change', handleChange);
+//input.addEventListener('keyup', handleChange);
     </script>
 </body>
 
