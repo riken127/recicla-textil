@@ -9,36 +9,41 @@ async function returnUsersDashboard(req, res, next) {
                             percentagePerCountry(),
                             percentagePerLanguage(),
                             roleDistribution(),
-                            titleDistribution()]).then((values => {
-                                res.render("dashboards/users", JSON.stringify({values : values}));
+                            titleDistribution(),
+                            leafsPerCountry()]).then((values => {
+                                res.render("dashboards/users", {data : values});
         }));
     } catch (error) {
         console.error('Error fetching aggregation data:', error);
         res.status(500).send('Error fetching aggregation data');
     }
 }
-
 const createdAtInOrderOfMonth = async () => {
-    User.aggregate([
+    const startDate = new Date();
+    startDate.setFullYear(startDate.getFullYear() - 1);
+    startDate.setDate(1);
+    startDate.setHours(0, 0, 0, 0);
+
+    return User.aggregate([
         {
             $match: {
-                date: {
-                    $gte: new Date(new Date().getFullYear(), 0, 1), // Start of current year
-                    $lt: new Date(new Date().getFullYear() + 1, 0, 1) // Start of next year
+                createdAt: {
+                    $gte: startDate, // Start of the month 12 months ago
+                    $lte: new Date() // Up to now
                 }
             }
         },
         {
             $group: {
-                _id: { $month: "$date" }, // Group by month
-                totalLeafs: { $sum: "$leafs" } // Sum leafs for each month
+                _id: { $month: "$createdAt" }, // Group by month
+                totalUsers: { $sum: 1 } // Count users for each month
             }
         },
         {
             $project: {
                 _id: 0,
                 month: "$_id",
-                totalLeafs: 1
+                totalUsers: 1
             }
         },
         {
@@ -46,9 +51,8 @@ const createdAtInOrderOfMonth = async () => {
                 month: 1 // Sort by month ascending
             }
         }
-    ])
+    ]);
 }
-
     const percentagePerCountry = async () => {
         try {
             // Group users by country and count the number of users per country
@@ -153,7 +157,7 @@ const roleDistribution = async () => {
         const result = await User.aggregate([
             {
                 $group: {
-                    _id: "$role",
+                    _id: "$roles",
                     count: { $sum: 1 }
                 }
             },
@@ -169,7 +173,6 @@ const roleDistribution = async () => {
         throw error;
     }
 };
-
 
     const titleDistribution = async () => {
         try {
@@ -201,13 +204,35 @@ const roleDistribution = async () => {
                 {
                     $group: {
                         _id: "$address.country",
-                        count: { $sum: 1 }
+                        count: { $sum : "$leafs"}
                     }
                 },
                 {
-                    $sort: { "_id": 1}
+                    $group: {
+                        _id: null,
+                        countries: {
+                            $push: { country: "$_id", leafs: "$count"}
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        countries: {
+                            $map: {
+                                input: "$countries",
+                                as: "country",
+                                in: {
+                                    country: "$$country.country",
+                                    points: "$$country.leafs"
+                                }
+                            }
+                        }
+                    }
                 }
             ]);
+
+            return result;
         } catch(error) {
             console.error("Error getting leafs per country:", error);
             throw error;

@@ -17,10 +17,10 @@ async function returnUserData(numUsers) {
                     postalCode: faker.location.zipCode(),
                     country: faker.location.country()
                 },
-                phone: faker.phone.number(),
-                leafs: faker.phone.number(),
+                phone: faker.phone.number('+351#########'),
+                leafs: faker.datatype.number({min: 1, max: 100000000}),
                 language: faker.helpers.arrayElement(['English', 'Spanish', 'French', 'German']),
-                title: faker.helpers.arrayElement(['rookie', 'novice', 'master', 'king', 'caregiver']),
+                title: [faker.helpers.arrayElement(['rookie', 'novice', 'master', 'king', 'caregiver'])],
                 notify: faker.datatype.boolean()
             };
             users.push(fakeUserData);

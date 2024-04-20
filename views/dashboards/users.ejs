@@ -10,14 +10,15 @@
 
 <body>
 
-<%
-for (const item of JSON.parse(values)) {%>
-
-<p><%=item%>)</p>
-
-<%}%>
+<% for (const item of data) { %>
+    <div>
+        <% for (const key in item) { %>
+            <p><%= key %>: <%= item[key] %></p>
+        <% } %>
+    </div>
+<% } %>
 <script>
-
+    console.log(<%- JSON.stringify(data) %>);
 </script>
 </body>
 </html>
