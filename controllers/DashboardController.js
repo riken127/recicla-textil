@@ -304,6 +304,7 @@ async function calculateTotalPoints() {
 async function returnBenefactorsDashboard(req, res, next) {
   try {
     Promise.all([
+      pickPointsPerCity(),
       pickPointsPerCountry(),
       benefactorsPerMonth(),
       benefactorsPerCountry(),
@@ -311,6 +312,7 @@ async function returnBenefactorsDashboard(req, res, next) {
       benefactorsCreationsVsUpdates(),
       Benefactor.countDocuments(),
       totalPickpoints(),
+      pickPointsPerCity()
     ]).then((values) => {
       res.render("dashboards/benefactors", { data: values });
     });
@@ -362,6 +364,31 @@ const pickPointsPerCountry = async () => {
     throw error;
   }
 };
+const pickPointsPerCity = async () => {
+  try {
+    const result = await Benefactor.aggregate([
+      {
+        $unwind: "$pickpoints",
+      },
+      {
+        $group: {
+          _id: "$pickpoints.city",
+          totalPickpoints: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { totalPickpoints: -1 },
+      },
+      { $limit: 10 },
+    ]);
+
+    return result;
+  } catch (error) {
+    console.error("Error getting pickpoints per city:", error);
+    throw error;
+  }
+};
+
 
 const benefactorsPerMonth = async () => {
   try {
