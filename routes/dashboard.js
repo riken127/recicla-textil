@@ -5,6 +5,6 @@ var dashboardController = require('../controllers/DashboardController');
 // the users-data endpoint, this endpoint will be the pillar of the dashboards' information processing
 router.get('/users', dashboardController.returnUsersDashboard);
 
-router.post('/benefactors', dashboardController.returnBenefactorsDashboard);
+router.get('/benefactors', dashboardController.returnBenefactorsDashboard);
 
 module.exports = router;

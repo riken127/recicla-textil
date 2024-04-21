@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const generator = require("../utils/fakeDataGenerator");
 const User = require("../models/user/User");
-
+const Benefactor = require("../models/benefactor/Benefactor");
 async function returnUsersDashboard(req, res, next) {
   try {
     Promise.all([
@@ -13,7 +13,7 @@ async function returnUsersDashboard(req, res, next) {
       titleDistribution(),
       leafsPerCountry(),
       countTotalUsers(),
-      calculateTotalPoints()
+      calculateTotalPoints(),
     ]).then((values) => {
       res.render("dashboards/users", { data: values });
     });
@@ -278,7 +278,7 @@ const leafsPerCountry = async () => {
 async function countTotalUsers() {
   try {
     return await User.countDocuments();
-  } catch(error) {
+  } catch (error) {
     console.error("Error counting total users:", error);
     throw error;
   }
@@ -294,15 +294,190 @@ async function calculateTotalPoints() {
         },
       },
     ]);
-  } catch(error) {
+  } catch (error) {
     console.error("Error calculating total points:", error);
     throw error;
   }
 }
 
-function returnBenefactorsDashboard(req, res, next) {}
+
+async function returnBenefactorsDashboard(req, res, next) {
+  try {
+    Promise.all([
+      pickPointsPerCountry(),
+      benefactorsPerMonth(),
+      benefactorsPerCountry(),
+      benefactorsPerCity(),
+      benefactorsCreationsVsUpdates(),
+      Benefactor.countDocuments(),
+      totalPickpoints(),
+    ]).then((values) => {
+      res.render("dashboards/benefactors", { data: values });
+    });
+  } catch (error) {
+    console.error("Error fetching aggregation data:", error);
+    res.status(500).send("Error fetching aggregation data");
+  }
+}
+const totalPickpoints = async () => {
+  try {
+    return await Benefactor.aggregate([
+      {
+        $unwind: "$pickpoints",
+      },
+      {
+        $group: {
+          _id: null,
+          totalPickpoints: { $sum: 1 },
+        },
+      },
+    ]);
+  } catch (error) {
+    console.error("Error counting total pickpoints:", error);
+    throw error;
+  }
+
+}
+const pickPointsPerCountry = async () => {
+  try {
+    const result = await Benefactor.aggregate([
+      {
+        $unwind: "$pickpoints",
+      },
+      {
+        $group: {
+          _id: "$pickpoints.country",
+          totalPickpoints: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { totalPickpoints: -1 },
+      },
+      { $limit: 10 },
+    ]);
+
+    return result;
+  } catch (error) {
+    console.error("Error getting pickpoints per country:", error);
+    throw error;
+  }
+};
+
+const benefactorsPerMonth = async () => {
+  try {
+    const result = await Benefactor.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: new Date(
+              new Date().setFullYear(new Date().getFullYear() - 1)
+            ),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%m", date: "$createdAt" },
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+      { $limit: 12 },
+    ]);
+
+    return result;
+  } catch (error) {
+    console.error("Error getting benefactors per month:", error);
+    throw error;
+  }
+};
+
+const benefactorsPerCountry = async () => {
+  try{
+    const result = await Benefactor.aggregate([
+      {
+        $group: {
+          _id: "$address.country",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { count: -1 },
+      },
+      { $limit: 10 }
+    ]);
+
+    return result;
+  } catch (error) {
+    console.error("Error getting benefactors per country:", error);
+    throw error;
+  }
+}
+
+const benefactorsPerCity = async () => {
+  try {
+    const result = await Benefactor.aggregate([
+      {
+        $group: {
+          _id: "$address.city",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { count: -1 },
+      },
+      { $limit: 10 }
+    ]);
+
+    return result;
+  } catch (error) {
+    console.error("Error getting benefactors per city:", error);
+    throw error;
+  }
+
+}
+
+const benefactorsCreationsVsUpdates = async () => {
+  try {
+    const result = await Benefactor.aggregate([
+      {
+        $match: {
+          $or: [
+            { "createdAt": { $gte: new Date(new Date().setMonth(new Date().getMonth() - 12)) } },
+            { "lastUpdateAt": { $gte: new Date(new Date().setMonth(new Date().getMonth() - 12)) } }
+          ]
+        }
+      },
+      {
+        $project: {
+          yearMonth: { $dateToString: { format: "%m", date: { $ifNull: ["$lastUpdateAt", "$createdAt"] } } },
+          isUpdate: { $ne: ["$createdAt", "$lastUpdateAt"] }
+        }
+      },
+      {
+        $group: {
+          _id: "$yearMonth",
+          creations: { $sum: { $cond: [{ $not: "$isUpdate" }, 1, 0] } },
+          updates: { $sum: { $cond: ["$isUpdate", 1, 0] } }
+        }
+      },
+      {
+        $sort: { "_id": 1 }
+      }
+    ]);
+
+    return result;
+  } catch(error) {
+    console.error("Error getting benefactors creations vs updates:", error);
+    throw error;
+  }
+}
 
 module.exports = {
   returnUsersDashboard,
-  returnBenefactorsDashboard
-}
+  returnBenefactorsDashboard,
+};
