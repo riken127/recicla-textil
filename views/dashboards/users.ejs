@@ -1,214 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Dashboard</title>
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-    crossorigin="anonymous"
-  />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script crossorigin="anonymous" src="https://kit.fontawesome.com/3eb5f00bae.js"></script>
-  <link rel="stylesheet" href="//unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css" type="text/css" />
-  <link rel="stylesheet" href="//unpkg.com/bootstrap-select@1.12.4/dist/css/bootstrap-select.min.css" type="text/css" />
-  <link rel="stylesheet" href="//unpkg.com/bootstrap-select-country@4.0.0/dist/css/bootstrap-select-country.min.css" type="text/css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Public Sans', sans-serif;
+    }
+    .header {
+      background-color: #343a40;
+      color: #f8f9fa;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .header-title {
+      font-weight: 700;
+      font-size: 3.2rem;
+      color: #f8f9fa;
+    }
+    .chart-container {
+      position: relative;
+      height: 250px;
+    }
+    /* Custom CSS for layout */
+    .header-content {
+      padding: 15px;
+      text-align: left;
+      border-radius: 15px;
+      margin-bottom: 15px;
+    }
+    .header-content h3,
+    .header-content h2 {
+      margin-bottom: 10px;
+    }
+    .badge {
+      font-size: 0.9em;
+    }
+  </style>
 </head>
-
-<body>
-  <div class="container my-3 py-4">
-    <div class="accordion" id="dashboardAccordion">
-
-      <!-- Users Per Month Accordion -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="usersPerMonthHeading">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#usersPerMonthCollapse" aria-expanded="true" aria-controls="usersPerMonthCollapse">
-            Users Per Month
-          </button>
-        </h2>
-        <div id="usersPerMonthCollapse" class="accordion-collapse collapse show" aria-labelledby="usersPerMonthHeading" data-bs-parent="#dashboardAccordion">
-          <div class="accordion-body">
-            <canvas id="usersPerMonth"></canvas>
+<body class="py-2">
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="header border-0 rounded shadow">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <h1 class="header-title"><i class="fas fa-socks fa-lg"></i>&nbsp;reciclatextil</h1>
+            <div class="py-3 px-3">
+              <h3><i class="fas fa-users"></i>&nbsp; <%= data[6] %></h3>
+              <h3><i class="fas fa-leaf"></i>&nbsp; <%= data[7][0].totalPoints %></h3>
+            </div>
           </div>
-        </div>
-      </div>
-
-      <!-- Leafs Per Country Accordion -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="leafsPerCountryHeading">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#leafsPerCountryCollapse" aria-expanded="false" aria-controls="leafsPerCountryCollapse">
-            Leafs Per Country
-          </button>
-        </h2>
-        <div id="leafsPerCountryCollapse" class="accordion-collapse collapse" aria-labelledby="leafsPerCountryHeading" data-bs-parent="#dashboardAccordion">
-          <div class="accordion-body">
-            <canvas id="leafsPerCountry"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Role Distribution Accordion -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="roleDistributionHeading">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#roleDistributionCollapse" aria-expanded="false" aria-controls="roleDistributionCollapse">
-            Role Distribution
-          </button>
-        </h2>
-        <div id="roleDistributionCollapse" class="accordion-collapse collapse" aria-labelledby="roleDistributionHeading" data-bs-parent="#dashboardAccordion">
-          <div class="accordion-body">
-            <canvas id="roleDistribution"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Title Distribution Accordion -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="titleDistributionHeading">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#titleDistributionCollapse" aria-expanded="false" aria-controls="titleDistributionCollapse">
-            Title Distribution
-          </button>
-        </h2>
-        <div id="titleDistributionCollapse" class="accordion-collapse collapse" aria-labelledby="titleDistributionHeading" data-bs-parent="#dashboardAccordion">
-          <div class="accordion-body">
-            <canvas id="titleDistribution"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Percentage Per Country Accordion -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="percentagePerCountryHeading">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#percentagePerCountryCollapse" aria-expanded="false" aria-controls="percentagePerCountryCollapse">
-            Percentage Per Country
-          </button>
-        </h2>
-        <div id="percentagePerCountryCollapse" class="accordion-collapse collapse" aria-labelledby="percentagePerCountryHeading" data-bs-parent="#dashboardAccordion">
-          <div class="accordion-body">
-            <canvas id="percentagePerCountry"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Percentage Per Language Accordion -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="percentagePerLanguageHeading">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#percentagePerLanguageCollapse" aria-expanded="false" aria-controls="percentagePerLanguageCollapse">
-            Percentage Per Language
-          </button>
-        </h2>
-        <div id="percentagePerLanguageCollapse" class="accordion-collapse collapse" aria-labelledby="percentagePerLanguageHeading" data-bs-parent="#dashboardAccordion">
-          <div class="accordion-body">
+          <div class="col-md-6">
+            <h2>User Registration Evolution</h2>
             <div class="chart-container">
-              <canvas id="percentagePerLanguage"></canvas>
+              <canvas id="usersPerMonth"></canvas>
             </div>
           </div>
         </div>
       </div>
-
+    </div>
+  </div>
+</div>
+  <div class="jumbotron py-3">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <h1 class="display-6">Enum Distribution</h1>
+        </div>
+        <div class="col-md-6">
+          <div class="card bg-white border-0 shadow">
+            <div class="card-body">
+              <h2 class="card-title">Role Distribution</h2>
+              <div class="chart-container">
+                <canvas id="roleDistribution"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card bg-white border-0 shadow">
+            <div class="card-body">
+              <h2 class="card-title">Title Distribution</h2>
+              <div class="chart-container">
+                <canvas id="titleDistribution"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    console.log(<%- JSON.stringify(data) %>);
-    const ppl = document.getElementById("percentagePerLanguage");
-    const ubm = document.getElementById("usersPerMonth");
-    const lpc = document.getElementById("leafsPerCountry");
-    const rld = document.getElementById("roleDistribution");
-    const tid = document.getElementById("titleDistribution");
-    const ppc = document.getElementById("percentagePerCountry");
+  <div>
+    <div class="container py-3">
+      <div class="row">
+        <div class="col-12">
+          <h1 class="display-6">Region Related</h1>
+        </div>
+        <div class="col-md-6">
+          <div class="card bg-white border-0 shadow">
+            <div class="card-body">
+              <h2 class="card-title">Percentage Per Country</h2>
+              <div class="chart-container">
+                <canvas id="percentagePerCountry"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card bg-white border-0 shadow">
+            <div class="card-body">
+              <h2 class="card-title">Percentage Per Language</h2>
+              <div class="chart-container">
+                <canvas id="percentagePerLanguage"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <% let usersByMonth = data[0];
-    let percentagePerCountry = data[1];
-    let percentagePerLanguage = data[2];
-    let roleDistribution = data[3];
-    let titleDistribution = data[4];
-    let pointsPerCountry = data[5][0];
-    function getMonthName(monthNumber) {
-      const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-      return monthNames[monthNumber - 1];
-    } %>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  console.log(<%- JSON.stringify(data) %>);
+  const ppl = document.getElementById("percentagePerLanguage");
+  const ubm = document.getElementById("usersPerMonth");
+  const rld = document.getElementById("roleDistribution");
+  const tid = document.getElementById("titleDistribution");
+  const ppc = document.getElementById("percentagePerCountry");
 
-    new Chart(ppl, {
-      type: 'doughnut',
-      data: {
-        labels: <%- JSON.stringify(percentagePerLanguage.map(item => item.language)) %>,
-        datasets: [{
-          data: <%= JSON.stringify(percentagePerLanguage.map(item => item.percentage)) %>,
-          borderWidth: 1
-        }]
+  <% let usersByMonth = data[0];
+  let percentagePerCountry = data[1];
+  let percentagePerLanguage = data[2];
+  let roleDistribution = data[3];
+  let titleDistribution = data[4];
+  let pointsPerCountry = data[5][0];
+  function getMonthName(monthNumber) {
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    return monthNames[monthNumber - 1];
+  } %>
+
+  new Chart(ppl, {
+    type: 'doughnut',
+    data: {
+      labels: <%- JSON.stringify(percentagePerLanguage.map(item => item.language)) %>,
+      datasets: [{
+        data: <%= JSON.stringify(percentagePerLanguage.map(item => item.percentage)) %>,
+        borderWidth: 1,
+        backgroundColor: [
+          '#FF6B6B',
+          '#FFD166',
+          '#06D6A0',
+          '#118AB2',
+          '#073B4C',
+        ],
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      legend: {
+        position: 'bottom',
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false
-      }
-    });
+    }
+  });
 
-    new Chart(ubm, {
-      type: 'line',
-      data: {
-        labels: <%- JSON.stringify(usersByMonth.map(item => getMonthName(item.month))) %>,
-        datasets: [{
-          label: 'Total Users',
-          data: <%- JSON.stringify(usersByMonth.map(item => item.totalUsers)) %>,
-          fill: false,
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1
-        }]
-      }
-    });
-
-    new Chart(lpc, {
-      type: 'bar',
-      data: {
-        labels: <%- JSON.stringify(pointsPerCountry.countries.map(item => item.country)) %>,
-        datasets: [{
-          label: 'Leafs',
-          data: <%= JSON.stringify(pointsPerCountry.countries.map(item => item.points)) %>,
-          borderWidth: 1
-        }]
+  new Chart(ubm, {
+  type: 'line',
+  data: {
+    labels: <%- JSON.stringify(usersByMonth.map(item => getMonthName(item.month))) %>,
+    datasets: [{
+      label: 'Total Users',
+      data: <%- JSON.stringify(usersByMonth.map(item => item.totalUsers)) %>,
+      fill: true,
+      backgroundColor: 'rgba(255, 255, 255, 0.1)', // white background with 10% opacity
+      borderColor: '#06D6A0',
+      tension: 0.1
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)', // white grid lines with 10% opacity
+          borderColor: 'rgba(255, 255, 255, 0.1)' // white grid border color with 10% opacity
+        },
+        ticks: {
+          color: 'white', // white color for y-axis labels
+        }
       },
-      options: {
-        responsive: true,
+      x: {
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)', // white grid lines with 10% opacity
+          borderColor: 'rgba(255, 255, 255, 0.1)' // white grid border color with 10% opacity
+        },
+        ticks: {
+          color: 'white' // white color for x-axis labels
+        }
       }
-    });
+    },
+    plugins: {
+      legend: {
+        labels: {
+          color: 'white' // white color for legend labels
+        }
+      }
+    }
+  }
+});
 
-    new Chart(rld, {
-      type: 'bar',
-      data: {
-        labels: <%- JSON.stringify(roleDistribution.map(item => item._id[0])) %>,
-        datasets: [{
-          label: 'Number of people in a given role',
-          data: <%= JSON.stringify(roleDistribution.map(item => item.count)) %>,
-          backgroundColor: 'purple'
-        }]
-      }
-    });
 
-    new Chart(tid, {
-      type: 'bar',
-      data: {
-        labels: <%- JSON.stringify(titleDistribution.map(item => item._id[0] || 'Nenhum')) %>,
-        datasets: [{
-          label: 'Number of people with a certain title',
-          data: <%= JSON.stringify(titleDistribution.map(item => item.count)) %>,
-          backgroundColor: 'red'
-        }]
-      }
-    });
+  new Chart(rld, {
+    type: 'bar',
+    data: {
+      labels: <%- JSON.stringify(roleDistribution.map(item => item._id[0])) %>,
+      datasets: [{
+        label: 'Number of people in a given role',
+        data: <%= JSON.stringify(roleDistribution.map(item => item.count)) %>,
+        backgroundColor: '#FF6B6B'
+      }]
+    }
+  });
 
-    new Chart(ppc, {
-      type: 'bar',
-      data: {
-        labels: <%- JSON.stringify(percentagePerCountry.map(item => item.country)) %>,
-        datasets: [{
-          label: 'Country Percentage',
-          data: <%- JSON.stringify(percentagePerCountry.map(item => item.percentage)) %>,
-          backgroundColor: 'blue'
-        }]
-      }
-    });
-  </script>
+  new Chart(tid, {
+    type: 'bar',
+    data: {
+      labels: <%- JSON.stringify(titleDistribution.map(item => item._id[0] || 'Nenhum')) %>,
+      datasets: [{
+        label: 'Number of people with a certain title',
+        data: <%= JSON.stringify(titleDistribution.map(item => item.count)) %>,
+        backgroundColor: '#FFD166'
+      }]
+    }
+  });
+
+  new Chart(ppc, {
+    type: 'bar',
+    data: {
+      labels: <%- JSON.stringify(percentagePerCountry.map(item => item.country)) %>,
+      datasets: [{
+        label: 'Country Percentage',
+        data: <%- JSON.stringify(percentagePerCountry.map(item => item.percentage)) %>,
+        backgroundColor: '#118AB2'
+      }]
+    }
+  });
+</script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

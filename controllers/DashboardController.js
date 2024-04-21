@@ -12,6 +12,8 @@ async function returnUsersDashboard(req, res, next) {
       roleDistribution(),
       titleDistribution(),
       leafsPerCountry(),
+      countTotalUsers(),
+      calculateTotalPoints()
     ]).then((values) => {
       res.render("dashboards/users", { data: values });
     });
@@ -272,9 +274,35 @@ const leafsPerCountry = async () => {
     throw error;
   }
 };
+
+async function countTotalUsers() {
+  try {
+    return await User.countDocuments();
+  } catch(error) {
+    console.error("Error counting total users:", error);
+    throw error;
+  }
+}
+
+async function calculateTotalPoints() {
+  try {
+    return await User.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalPoints: { $sum: "$leafs" },
+        },
+      },
+    ]);
+  } catch(error) {
+    console.error("Error calculating total points:", error);
+    throw error;
+  }
+}
+
 function returnBenefactorsDashboard(req, res, next) {}
 
 module.exports = {
   returnUsersDashboard,
-  returnBenefactorsDashboard,
-};
+  returnBenefactorsDashboard
+}
