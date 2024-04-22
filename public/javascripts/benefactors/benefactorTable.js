@@ -36,7 +36,7 @@ $(document).ready(function () {
         title: "Pick Points",
         render: function (data, type, row) {
           if (data.length > 0) {
-            return `<a href="#" class="expand-button" onclick="openPickpointModal('${row._id}') title="${data.length} Pickpoints"><i class="fa-solid fa-up-right-and-down-left-from-center px-4 align-items-center"></i></a>`;
+            return `<a href="#" class="expand-button" onclick="openPickpointModal('${row._id}')" title="${data.length} Pickpoints"><i class="fa-solid fa-up-right-and-down-left-from-center px-4 align-items-center"></i></a>`;
           } else {
             return `<a href="#" class="expand-button" onclick="openPickpointModal('${row._id}')" title="This Benefactor has ${data.length} associated Pickpoints!"><i class="fa-solid fa-triangle-exclamation px-4 align-items-center"></i></a>`;
           }
@@ -90,7 +90,7 @@ $(document).ready(function () {
       // If benefactor ID is provided, make an AJAX request to fetch benefactor data
       $.ajax({
         url: "/benefactors/" + id,
-        method: "GET",
+        method: "GET",  
         success: function (response) {
           // Populate form fields with retrieved benefactor data
           $("#editBenefactorId").val(response._id);
@@ -119,15 +119,16 @@ $(document).ready(function () {
 
   // Form submission event handler for edit modal
   $("#editBenefactorForm").submit(function (event) {
+    console.log("O lucas é meio burro")
     event.preventDefault(); // Prevent default form submission
 
     const benefactorData = {
-      benefactorId: $("#editBenefactorId").val(),
-      firstName: $("#editBenefactorName").val(),
+      id: $("#editBenefactorId").val(),
+      name: $("#editBenefactorName").val(),
       username: $("#editBenefactorUsername").val(),
       email: $("#editBenefactorEmail").val(),
-      password: $("#editPassword").val(),
-      roles: $("#editRoles").val(),
+      banner: $("#editBanner").val(),
+      logo: $("#editLogo").val(),
       address: {
         street: $("#editStreet").val(),
         city: $("#editCity").val(),
@@ -135,8 +136,11 @@ $(document).ready(function () {
         country: $("#editCountry").val(),
       },
       phone: editIti.getNumber(),
-      notify: $("#editNotify").is(":checked"),
     };
+    
+    if ($("#newPassword").val() != "") {
+      benefactorData.password = $("#newPassword").val();
+    }
 
     const jsonData = JSON.stringify(benefactorData);
     $.ajax({

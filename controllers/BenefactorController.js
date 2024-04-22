@@ -252,6 +252,8 @@ function updateBenefactor(req, res, next) {
     // Extract the benefactor ID from the request body.
     const benefactorId = req.body.benefactorId;
 
+    console.log(req.body);
+
     // Object to hold the changes to be updated.
     const updateData = {};
 
@@ -261,7 +263,10 @@ function updateBenefactor(req, res, next) {
         "username",
         "email",
         "password",
-        "pickpoints",
+        "logo",
+        "banner",
+        "description",
+        "address",
         "phone",
     ];
 
