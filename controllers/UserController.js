@@ -3,7 +3,7 @@ const User = require("../models/user/User");
 const Address = require("../models/Address");
 const fs = require("fs");
 const objectMapper = require("../utils/objectMapper");
-const {json} = require("express");
+const { json } = require("express");
 
 /**
  * Renders the table of users.
@@ -20,27 +20,27 @@ const {json} = require("express");
  * router.get('/all', userController.renderUsersTable);
  */
 function renderUsersTable(req, res, next) {
-    // Extracts the page number from the request body or defaults to 1
-    const page = req.body.page || 1;
-    // Query the database for users, skipping the appropriate number of documents based on the page number,
-    // and limiting the results to 10 users per page
-    User.find()
-        .skip((page - 1) * 10)
-        .limit(10)
-        .exec()
-        .then((users) => {
-            // Renders the "users/table" view with the retrieved users data
-            res.render("users/table", {
-                users: users,
-            });
-        })
-        .catch((err) => {
-            // If an error occurs during the database query or rendering, respond with a JSON error message
-            res.json({
-                message: err.message,
-                type: "danger",
-            });
-        });
+  // Extracts the page number from the request body or defaults to 1
+  const page = req.body.page || 1;
+  // Query the database for users, skipping the appropriate number of documents based on the page number,
+  // and limiting the results to 10 users per page
+  User.find()
+    .skip((page - 1) * 10)
+    .limit(10)
+    .exec()
+    .then((users) => {
+      // Renders the "users/table" view with the retrieved users data
+      res.render("users/table", {
+        users: users,
+      });
+    })
+    .catch((err) => {
+      // If an error occurs during the database query or rendering, respond with a JSON error message
+      res.json({
+        message: err.message,
+        type: "danger",
+      });
+    });
 }
 
 /**
@@ -61,61 +61,65 @@ function renderUsersTable(req, res, next) {
 async function getAllUsers(req, res, next) {
     // Retrieve the total number of records in the database
     const totalRecords = await getTotalCount({});
-
+    console.log(req.body);
     // Retrieve DataTables parameters from the request
-    const {draw, start, length, order, columns} = req.body;
-    const search = req.body['search[value]'];
-
+    let { draw, start, length, order, columns } = req.body;
+    const search = req.body["search[value]"];
     // Determine the sorting parameters
     if (typeof order === "undefined") {
-        var attribute_name = 'firstName'; // Default sorting column
-        var column_sort_order = 'desc'; // Default sorting order
+      var attribute_name = "firstName"; // Default sorting column
+      var column_sort_order = "desc"; // Default sorting order
     } else {
-        var column_index = req.query.order?.[0]?.['column'];
-        var column_name = req.query.columns?.[column_index]?.['data'];
-        var column_sort_order = req.query.order?.[0]?.['dir'];
+      var column_index = req.query.order?.[0]?.["column"];
+      var column_name = req.query.columns?.[column_index]?.["data"];
+      var column_sort_order = req.query.order?.[0]?.["dir"];
     }
-
+  
     // Determine the search value
     var search_value = search;
-
     // Construct the MongoDB query based on the search value
     const query = {};
-
+  
     if (search_value) {
-        query['$text'] = {$search: search_value};
+      query["$or"] = [
+        { "firstName": { $regex: search_value, $options: "i" } },
+        { "lastName": { $regex: search_value, $options: "i" } },
+        { "username": { $regex: search_value, $options: "i" } }
+      ];
     }
-
+    console.log(query);
     // Construct sorting options
     const sortOptions = {};
     if (column_name) {
-        sortOptions[column_name] = column_sort_order === 'asc' ? 1 : -1;
+      sortOptions[column_name] = column_sort_order === "asc" ? 1 : -1;
     } else {
-        sortOptions['firstName'] = column_sort_order === 'asc' ? 1 : -1;
+      sortOptions["firstName"] = column_sort_order === "asc" ? 1 : -1;
     }
-
-    // Query the database for users
+  
+    length = length !== undefined ? parseInt(length) : 10;
+  
     User.find(query)
-        .sort(sortOptions)
-        .skip(parseInt(start))
-        .limit(parseInt(length))
-        .exec()
-        .then((users) => {
-            // Respond with DataTables formatted data
-            res.json({
-                draw: parseInt(draw),
-                recordsTotal: totalRecords,
-                recordsFiltered: totalRecords,
-                data: users,
-            });
-        })
-        .catch((err) => {
-            // Handle errors
-            res.status(500).json({
-                error: err.message,
-            });
+      .sort(sortOptions)
+      .skip(parseInt(start))
+      .limit(length) // No need to parse it here, as it's already an integer
+      .exec()
+      .then((users) => {
+        // Respond with DataTables formatted data
+        res.json({
+          draw: parseInt(draw),
+          recordsTotal: totalRecords,
+          recordsFiltered: totalRecords,
+          data: users,
         });
-}
+      })
+      .catch((err) => {
+        // Handle errors
+        res.status(500).json({
+          error: err.message,
+        });
+      });
+  }
+  
 
 /**
  * Retrieves the total count of users based on a query.
@@ -127,14 +131,14 @@ async function getAllUsers(req, res, next) {
  * @returns {Promise<number>} The total count of users.
  */
 async function getTotalCount(query) {
-    try {
-        // Count the documents in the 'User' collection that match the provided query
-        const count = await User.countDocuments(query);
-        return count;
-    } catch (err) {
-        // If an error occurs during the counting process, throw the error
-        throw err;
-    }
+  try {
+    // Count the documents in the 'User' collection that match the provided query
+    const count = await User.countDocuments(query);
+    return count;
+  } catch (err) {
+    // If an error occurs during the counting process, throw the error
+    throw err;
+  }
 }
 
 /**
@@ -153,26 +157,26 @@ async function getTotalCount(query) {
  * router.get('/:id', userController.getUser);
  */
 function getUser(req, res, next) {
-    // Extract the user ID from the route parameters
-    const userId = req.params.id; // Assuming the user ID is passed as a route parameter
+  // Extract the user ID from the route parameters
+  const userId = req.params.id; // Assuming the user ID is passed as a route parameter
 
-    // Find the user in the database by their ID
-    User.findById(userId)
-        .then((user) => {
-            // If the user is not found, respond with a 404 error
-            if (!user) {
-                return res.status(404).json({message: "User not found"});
-            }
+  // Find the user in the database by their ID
+  User.findById(userId)
+    .then((user) => {
+      // If the user is not found, respond with a 404 error
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
 
-            // Send the user data as JSON response
-            res.json(user);
-        })
-        .catch((err) => {
-            // If an error occurs during the retrieval process, log the error
-            console.error("Error retrieving user:", err);
-            // Respond with a 500 error
-            res.status(500).json({message: "Internal Server Error"});
-        });
+      // Send the user data as JSON response
+      res.json(user);
+    })
+    .catch((err) => {
+      // If an error occurs during the retrieval process, log the error
+      console.error("Error retrieving user:", err);
+      // Respond with a 500 error
+      res.status(500).json({ message: "Internal Server Error" });
+    });
 }
 
 /**
@@ -193,41 +197,42 @@ function getUser(req, res, next) {
  * router.post('/add', userController.addUser);
  */
 function addUser(req, res, next) {
-    // Extract user data from the request body
-    const userData = req.body;
-    // Create a new user object with default values for optional fields
-    let user = new User({
-        lastName: userData.lastName,
-        firstName: userData.firstName,
-        username: userData.username || "", // Default to empty string if not provided
-        email: userData.email || "", // Default to empty string if not provided
-        password: userData.password || "", // Default to empty string if not provided
-        image: userData.image || "", // Default to empty string if not provided
-        roles: userData.roles || ["user"], // Default to "user" if roles are not provided
-        address: userData.address || {}, // Default to empty object if address is not provided
-        phone: userData.phone || "", // Default to empty string if not provided
-        language: userData.language || "", // Default to empty string if not provided
-        notify: userData.notify || false // Default to false if notify is not provided
-    });
+  // Extract user data from the request body
+  const userData = req.body;
+  // Create a new user object with default values for optional fields
+  let user = new User({
+    lastName: userData.lastName,
+    firstName: userData.firstName,
+    username: userData.username || "", // Default to empty string if not provided
+    email: userData.email || "", // Default to empty string if not provided
+    password: userData.password || "", // Default to empty string if not provided
+    image: userData.image || "", // Default to empty string if not provided
+    roles: userData.roles || ["user"], // Default to "user" if roles are not provided
+    address: userData.address || {}, // Default to empty object if address is not provided
+    phone: userData.phone || "", // Default to empty string if not provided
+    language: userData.language || "", // Default to empty string if not provided
+    notify: userData.notify || false, // Default to false if notify is not provided
+  });
 
-    // Save the new user to the database
-    user.save()
-        .then((savedUser) => {
-            // Set a success message in the session
-            req.session.message = {
-                type: "success",
-                message: savedUser.firstName + " was added successfully.",
-            };
-            // Redirect to the "/all" route
-            res.redirect("/all");
-        })
-        .catch((err) => {
-            // If an error occurs during the save process, respond with a JSON error message
-            res.json({
-                message: err.message,
-                type: "danger"
-            });
-        });
+  // Save the new user to the database
+  user
+    .save()
+    .then((savedUser) => {
+      // Set a success message in the session
+      req.session.message = {
+        type: "success",
+        message: savedUser.firstName + " was added successfully.",
+      };
+      // Redirect to the "/all" route
+      res.redirect("/all");
+    })
+    .catch((err) => {
+      // If an error occurs during the save process, respond with a JSON error message
+      res.json({
+        message: err.message,
+        type: "danger",
+      });
+    });
 }
 
 /**
@@ -249,65 +254,65 @@ function addUser(req, res, next) {
  * router.post('/update', userController.updateUser);
  */
 function updateUser(req, res, next) {
-    // Extract the user ID from the request body.
-    const userId = req.body.userId;
+  // Extract the user ID from the request body.
+  const userId = req.body.userId;
 
-    // Object to hold the changes to be updated.
-    const updateData = {};
+  // Object to hold the changes to be updated.
+  const updateData = {};
 
-    // Define editable user properties (excluding userId)
-    const editableProperties = [
-        "firstName",
-        "lastName",
-        "username",
-        "email",
-        "password",
-        "roles",
-        "phone",
-        "language",
-    ];
+  // Define editable user properties (excluding userId)
+  const editableProperties = [
+    "firstName",
+    "lastName",
+    "username",
+    "email",
+    "password",
+    "roles",
+    "phone",
+    "language",
+  ];
 
-    // Loop through editable user properties
-    for (const prop of editableProperties) {
-        // Check if property exists in the request body and is not undefined.
-        if (req.body.hasOwnProperty(prop) && req.body[prop] !== undefined) {
-            // Include only properties present in request body for update.
-            updateData[prop] = req.body[prop];
-        }
+  // Loop through editable user properties
+  for (const prop of editableProperties) {
+    // Check if property exists in the request body and is not undefined.
+    if (req.body.hasOwnProperty(prop) && req.body[prop] !== undefined) {
+      // Include only properties present in request body for update.
+      updateData[prop] = req.body[prop];
     }
+  }
 
-    // Handle nested properties like address
-    if (req.body.address) {
-        const addressUpdates = {};
-        // Loop through address properties.
-        for (const addressProp in req.body.address) {
-            if (req.body.address.hasOwnProperty(addressProp)) {
-                addressUpdates[addressProp] = req.body.address[addressProp];
-            }
-        }
-        // Update address field in the update data.
-        updateData.address = addressUpdates;
+  // Handle nested properties like address
+  if (req.body.address) {
+    const addressUpdates = {};
+    // Loop through address properties.
+    for (const addressProp in req.body.address) {
+      if (req.body.address.hasOwnProperty(addressProp)) {
+        addressUpdates[addressProp] = req.body.address[addressProp];
+      }
     }
+    // Update address field in the update data.
+    updateData.address = addressUpdates;
+  }
 
-    // Update the user in the database
-    User.findByIdAndUpdate(userId, updateData, {new: true}) // Return updated document
-        .then((updatedUser) => {
-            // If the user is not found, respond with a JSON error message.
-            if (!updatedUser) {
-                return res.json({message: "User not found", type: "danger"});
-            }
-            // Set a success message in the session.
-            req.session.message = {
-                type: "success",
-                message: updatedUser.firstName + " was updated successfully.",
-            };
-            // Redirect to the '/all' route.
-            res.redirect("/all");
-        })
-        .catch((err) => {
-            // If an error occurs during the update process, respond with a JSON error message.
-            res.json({message: err.message, type: "danger"});
-        });
+  // Update the user in the database
+  User.findByIdAndUpdate(userId, updateData, { new: true }) // Return updated document
+    .then((updatedUser) => {
+      // If the user is not found, respond with a JSON error message.
+      if (!updatedUser) {
+        return res.json({ message: "User not found", type: "danger" });
+      }
+      // Set a success message in the session.
+      req.session.message = {
+        type: "success",
+        message: updatedUser.firstName + " was updated successfully.",
+      };
+      // Redirect to the '/all' route.
+      res.redirect("/all");
+    })
+    .catch((err) => {
+      // If an error occurs during the update process, respond with a JSON error message.
+      res.json({ message: err.message, type: "danger" });
+    });
 }
 
 /**
@@ -329,44 +334,43 @@ function updateUser(req, res, next) {
  * router.post('/delete', userController.deleteUser);
  */
 async function deleteUser(req, res, next) {
-    try {
-        // Extract the user ID from the request body.
-        const id = req.body.id;
+  try {
+    // Extract the user ID from the request body.
+    const id = req.body.id;
 
-        // Delete the user from the database using the user ID.
-        const result = await User.findByIdAndDelete(id);
+    // Delete the user from the database using the user ID.
+    const result = await User.findByIdAndDelete(id);
 
-        // If the deletion is successful and user document contains an image
-        if (result && result.image) {
-            // Delete the image file from the file system.
-            try {
-                fs.unlinkSync("./uploads/" + result.image);
-            } catch (err) {
-                // Log any errors that occur during file deletion.
-                console.error(err);
-            }
-        }
-
-        // Respond with a JSON success message.
-        res.status(200).json({
-            message: "User deleted successfully",
-            type: "success",
-        });
-    } catch (err) {
-        // If an error occurs during the deletion process, respond with a JSON error message.
-        res.status(500).json({
-            message: err.message,
-            type: "danger",
-        });
+    // If the deletion is successful and user document contains an image
+    if (result && result.image) {
+      // Delete the image file from the file system.
+      try {
+        fs.unlinkSync("./uploads/" + result.image);
+      } catch (err) {
+        // Log any errors that occur during file deletion.
+        console.error(err);
+      }
     }
+
+    // Respond with a JSON success message.
+    res.status(200).json({
+      message: "User deleted successfully",
+      type: "success",
+    });
+  } catch (err) {
+    // If an error occurs during the deletion process, respond with a JSON error message.
+    res.status(500).json({
+      message: err.message,
+      type: "danger",
+    });
+  }
 }
 
-
 module.exports = {
-    renderUsersTable: renderUsersTable,
-    addUser: addUser,
-    updateUser: updateUser,
-    deleteUser: deleteUser,
-    getUser: getUser,
-    getAllUsers: getAllUsers
+  renderUsersTable: renderUsersTable,
+  addUser: addUser,
+  updateUser: updateUser,
+  deleteUser: deleteUser,
+  getUser: getUser,
+  getAllUsers: getAllUsers,
 };

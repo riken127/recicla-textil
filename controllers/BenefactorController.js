@@ -15,7 +15,7 @@ function renderEditForm(req, res, next) {
         .exec()
         .then((benefactors) => {
             res.render('benefactors/edit', {
-                benefactor: benefactor
+                benefactor: benefactors
             });
         })
         .catch((err) => {
@@ -168,6 +168,82 @@ async function deleteBenefactor(req, res, next) {
     }
 }
 
+/**
+ * Retrieves all benefactors with DataTables parameters.
+ *
+ * This function retrieves all benefactors from the database while considering DataTables parameters
+ * such as pagination, sorting, and searching. It constructs MongoDB queries based on the parameters
+ * and returns the benefactors data in a format suitable for DataTables.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function in the request-response cycle.
+ * @returns {void}
+ * @example
+ * // Usage:
+ * router.post('/add', benefactorController.addBenefactor);
+ */
+async function getAllBenefactors(req, res, next) {
+    console.log("Hello, World!")
+    // Retrieve the total number of records in the database
+    const totalRecords = await getTotalCount({});
+
+    // Retrieve DataTables parameters from the request
+    const {draw, start, length, order, columns} = req.body;
+    const search = req.body['search[value]'];
+
+    // Determine the sorting parameters
+    if (typeof order === "undefined") {
+        var attribute_name = 'name'; // Default sorting column
+        var column_sort_order = 'desc'; // Default sorting order
+    } else {
+        var column_index = req.query.order?.[0]?.['column'];
+        var column_name = req.query.columns?.[column_index]?.['data'];
+        var column_sort_order = req.query.order?.[0]?.['dir'];
+    }
+
+    // Determine the search value
+    var search_value = search;
+
+    // Construct the MongoDB query based on the search value
+    const query = {};
+
+    if (search_value) {
+        query['$text'] = {$search: search_value};
+    }
+
+    // Construct sorting options
+    const sortOptions = {};
+    if (column_name) {
+        sortOptions[column_name] = column_sort_order === 'asc' ? 1 : -1;
+    } else {
+        sortOptions['name'] = column_sort_order === 'asc' ? 1 : -1;
+    }
+
+    // Query the database for benefactors
+    Benefactor.find(query)
+        .sort(sortOptions)
+        .skip(parseInt(start))
+        .limit(parseInt(length))
+        .exec()
+        .then((benefactors) => {
+            // Respond with DataTables formatted data
+            res.json({
+                draw: parseInt(draw),
+                recordsTotal: totalRecords,
+                recordsFiltered: totalRecords,
+                data: benefactors,
+            });
+        })
+        .catch((err) => {
+            // Handle errors
+            res.status(500).json({
+                error: err.message,
+            });
+        });
+}
+
+
 module.exports = {
     renderCreateForm: renderCreateForm,
     renderEditForm: renderEditForm,
@@ -175,5 +251,6 @@ module.exports = {
     addBenefactor: addBenefactor,
     updateBenefactor: updateBenefactor,
     deleteBenefactor: deleteBenefactor,
-    getBenefactor: getBenefactor
+    getBenefactor: getBenefactor,
+    getAllBenefactors: getAllBenefactors
 }

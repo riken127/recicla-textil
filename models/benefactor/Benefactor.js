@@ -4,7 +4,7 @@
  */
 
 const mongoose = require('mongoose');
-const benefactorAddress = require('../Address');
+const Address = require('../Address'); // Assuming Address model exists
 // Define schema for PickPoint
 const PickPointSchema = new mongoose.Schema({
     street: { type: String, required: true },
@@ -16,7 +16,7 @@ const PickPointSchema = new mongoose.Schema({
 // Define schema for Benefactor
 const BenefactorSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    address: { type: benefactorAddress, required: true }, // Address schema reference
+    address: { type: Address.schema, required: true }, // Reference to Address schema
     username: { type: String, required: true },
     password: { type: String, required: true },
     email: { type: String, required: true },

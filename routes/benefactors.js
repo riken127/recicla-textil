@@ -16,4 +16,6 @@ router.get('/:id', benefactorController.getBenefactor);
 // delete user via mongoose middleware
 router.post('/delete', benefactorController.deleteBenefactor);
 
+router.post('/all-benefactors', benefactorController.getAllBenefactors);
+
 module.exports = router;
