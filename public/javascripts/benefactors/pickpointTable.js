@@ -225,11 +225,11 @@ $(document).ready(function () {
       }
     });
   
-    /*$(document).on("click", ".delete-button", function () {
+    $(document).on("click", ".delete-button", function () {
           var userId = $(this).data("userid");
           console.log(userId);
           openDeleteModal(userId);
-      });*/
+      });
   
     // Function to open delete modal
   });

@@ -1,3 +1,5 @@
+let currBenefactor;
+
 $(document).ready(function () {
   var dataTableOptions = {
     layout: {
@@ -36,7 +38,7 @@ $(document).ready(function () {
         title: "Pick Points",
         render: function (data, type, row) {
           if (data.length > 0) {
-            return `<a href="#" class="expand-button" onclick="openPickpointModal('${row._id}') title="${data.length} Pickpoints"><i class="fa-solid fa-up-right-and-down-left-from-center px-4 align-items-center"></i></a>`;
+            return `<a href="#" class="expand-button" onclick="openPickpointModal('${row._id}')" title="${data.length} Pickpoints"><i class="fa-solid fa-up-right-and-down-left-from-center px-4 align-items-center"></i></a>`;
           } else {
             return `<a href="#" class="expand-button" onclick="openPickpointModal('${row._id}')" title="This Benefactor has ${data.length} associated Pickpoints!"><i class="fa-solid fa-triangle-exclamation px-4 align-items-center"></i></a>`;
           }
@@ -72,7 +74,6 @@ $(document).ready(function () {
     paging: true,
     pagingType: "full_numbers",
   };
-
   var table = $("#benefactorsTable").DataTable(dataTableOptions);
 
   window.openDeleteModal = (benefactorId) => {
@@ -81,8 +82,11 @@ $(document).ready(function () {
   };
 
   window.openPickpointModal = (benefactorId) => {
+    console.log("abri o modal");
     $("#pickpointModal").modal("show");
+    currBenefactor = benefactorId;
   };
+
 
   // Function to open modal and fetch benefactorId data
   window.openEditModal = (id) => {
@@ -139,6 +143,8 @@ $(document).ready(function () {
     };
 
     const jsonData = JSON.stringify(benefactorData);
+
+    console.log(benefactorData);
     $.ajax({
       url: "/benefactors/update", // Replace with your endpoint for updating benefactor
       type: "POST",
@@ -146,7 +152,6 @@ $(document).ready(function () {
       contentType: "application/json",
       dataType: "json",
       success: function (response) {
-        console.log("Server response:", response);
         $("#editModal").modal("hide");
         table.ajax.reload();
       },
@@ -233,11 +238,9 @@ $(document).ready(function () {
     }
   });
 
-  /*$(document).on("click", ".delete-button", function () {
+  $(document).on("click", ".delete-button", function () {
         var userId = $(this).data("userid");
-        console.log(userId);
         openDeleteModal(userId);
-    });*/
+    });
 
-  // Function to open delete modal
 });
