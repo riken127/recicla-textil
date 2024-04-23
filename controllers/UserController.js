@@ -20,27 +20,26 @@ const { json } = require("express");
  * router.get('/all', userController.renderUsersTable);
  */
 function renderUsersTable(req, res, next) {
-  // Extracts the page number from the request body or defaults to 1
-  const page = req.body.page || 1;
-  // Query the database for users, skipping the appropriate number of documents based on the page number,
-  // and limiting the results to 10 users per page
-  User.find()
-    .skip((page - 1) * 10)
-    .limit(10)
-    .exec()
-    .then((users) => {
-      // Renders the "users/table" view with the retrieved users data
-      res.render("users/table", {
-        users: users,
-      });
-    })
-    .catch((err) => {
-      // If an error occurs during the database query or rendering, respond with a JSON error message
-      res.json({
-        message: err.message,
-        type: "danger",
-      });
-    });
+    // Extracts the page number from the request body or defaults to 1
+    const page = req.body.page || 1;
+    // Query the database for users, skipping the appropriate number of documents based on the page number,
+    // and limiting the results to 10 users per page
+    User.find()
+        .skip((page - 1) * 10)
+        .limit(10)
+        .exec()
+        .then((users) => {
+            // Renders the "users/table" view with the retrieved users data
+            res.render("users/table", {
+            });
+        })
+        .catch((err) => {
+            // If an error occurs during the database query or rendering, respond with a JSON error message
+            res.json({
+                message: err.message,
+                type: "danger",
+            });
+        });
 }
 
 /**
