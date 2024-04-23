@@ -16,14 +16,14 @@ const PickPointSchema = new mongoose.Schema({
 // Define schema for Benefactor
 const BenefactorSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    address: { type: Address.schema, required: true }, // Address schema reference
+    address: { type: Address.schema, required: true }, // Reference to Address schema
     username: { type: String, required: true },
     password: { type: String, required: true },
     email: { type: String, required: true },
     description: { type: String, required: true },
     phone: { type: String, required: true },
-    logo: { type: String, required: false },
-    banner: { type: String, required: false },
+    logo: { type: String},
+    banner: { type: String},
     createdAt: { type: Date, default: Date.now },
     lastUpdateAt: { type: Date, default: Date.now },
     pickpoints: [PickPointSchema] // Array of PickPoint documents
