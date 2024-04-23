@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var usersRouter = require('./routes/users');
+var benefactorsRouter = require('./routes/benefactors');
 var loginRouter = require('./routes/login');
 var dashboardRouter = require('./routes/dashboard');
 
@@ -24,6 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/benefactors', benefactorsRouter);
 app.use('/login', loginRouter);
 app.use('/dashboard', dashboardRouter);
 

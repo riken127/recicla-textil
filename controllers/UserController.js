@@ -31,7 +31,6 @@ function renderUsersTable(req, res, next) {
         .then((users) => {
             // Renders the "users/table" view with the retrieved users data
             res.render("users/table", {
-                users: users,
             });
         })
         .catch((err) => {
