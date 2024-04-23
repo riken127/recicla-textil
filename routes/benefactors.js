@@ -12,9 +12,9 @@ router.post('/all-benefactors', benefactorController.getAllBenefactors);
 
 router.get('/:id/pickpoints/all', pickpointController.renderPickpointsTable);
 router.post('/:id/pickpoints/add', pickpointController.addPickpoint);
-router.post('/:id/pickpoints/update', pickpointController.updatePickpoint);
+router.post('/:id/pickpoints/:idpp/update', pickpointController.updatePickpoint);
 router.get('/:id/pickpoints/:idpp', pickpointController.getPickpoint);
-router.post('/:id/pickpoints/delete/', pickpointController.deletePickpoint);
+router.delete('/:id/pickpoints/:idpp/delete', pickpointController.deletePickpoint);
 router.post('/:id/pickpoints/all-pickpoints', pickpointController.getAllPickpoints);
 
 module.exports = router;
