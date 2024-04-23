@@ -1,3 +1,5 @@
+let currBenefactor;
+
 $(document).ready(function () {
   var dataTableOptions = {
     layout: {
@@ -114,13 +116,14 @@ $(document).ready(function () {
 };
 
 
+
   // Function to open modal and fetch benefactorId data
   window.openEditModal = (id) => {
     if (id) {
       // If benefactor ID is provided, make an AJAX request to fetch benefactor data
       $.ajax({
         url: "/benefactors/" + id,
-        method: "GET",
+        method: "GET",  
         success: function (response) {
           // Populate form fields with retrieved benefactor data
           $("#editBenefactorId").val(response._id);
@@ -149,15 +152,16 @@ $(document).ready(function () {
 
   // Form submission event handler for edit modal
   $("#editBenefactorForm").submit(function (event) {
+    console.log("O lucas é meio burro")
     event.preventDefault(); // Prevent default form submission
 
     const benefactorData = {
-      benefactorId: $("#editBenefactorId").val(),
-      firstName: $("#editBenefactorName").val(),
+      id: $("#editBenefactorId").val(),
+      name: $("#editBenefactorName").val(),
       username: $("#editBenefactorUsername").val(),
       email: $("#editBenefactorEmail").val(),
-      password: $("#editPassword").val(),
-      roles: $("#editRoles").val(),
+      banner: $("#editBanner").val(),
+      logo: $("#editLogo").val(),
       address: {
         street: $("#editStreet").val(),
         city: $("#editCity").val(),
@@ -165,10 +169,15 @@ $(document).ready(function () {
         country: $("#editCountry").val(),
       },
       phone: editIti.getNumber(),
-      notify: $("#editNotify").is(":checked"),
     };
+    
+    if ($("#newPassword").val() != "") {
+      benefactorData.password = $("#newPassword").val();
+    }
 
     const jsonData = JSON.stringify(benefactorData);
+
+    console.log(benefactorData);
     $.ajax({
       url: "/benefactors/update", // Replace with your endpoint for updating benefactor
       type: "POST",
@@ -176,7 +185,6 @@ $(document).ready(function () {
       contentType: "application/json",
       dataType: "json",
       success: function (response) {
-        console.log("Server response:", response);
         $("#editModal").modal("hide");
         table.ajax.reload();
       },
