@@ -600,11 +600,10 @@
       aria-labelledby="pickpointModalLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="pickpointModalLabel">
-              <i class="fa-solid fa-warehouse"></i> Pickpoints
             </h5>
             <button
               type="button"
@@ -636,92 +635,88 @@
       </div>
     </div>
 
-    <div
-      class="modal fade"
-      id="pickpointModal"
-      aria-hidden="true"
-      aria-labelledby="pickpointLabel"
-      tabindex="-1"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="pickpointLabel">
-              <i class="fa-solid fa-warehouse"></i> PickPoint
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label" for="inputPickpointStreet"
-                  >Street</label
-                >
-                <input
-                  class="form-control"
-                  id="inputPickpointStreet"
-                  placeholder="Enter Street"
-                  type="text"
-                  required
-                />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="inputPickpointPostalCode"
-                  >Postal Code</label
-                >
-                <input
-                  class="form-control"
-                  id="inputPickpointPostalCode"
-                  placeholder="Enter Postal Code"
-                  type="text"
-                  required
-                />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="inputPickpointCity">City</label>
-                <input
-                  class="form-control"
-                  id="inputPickpointCity"
-                  placeholder="Enter City"
-                  type="text"
-                  required
-                />
-              </div>
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="createpickpointcountry" class="form-label"
-                    >Country</label
-                  >
-                  <br />
-                  <input
-                    type="text"
-                    id="createpickpointcountry"
-                    class="form-control"
-                    name="address.country"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button
-              class="btn btn-primary"
-              data-bs-target="#pickpointModal"
-              data-bs-toggle="modal"
-              data-bs-dismiss="modal"
+    <!-- New Pickpoint Modal -->
+<div
+class="modal fade"
+id="newPickpointModal"
+aria-hidden="true"
+aria-labelledby="pickpointLabel"
+tabindex="-1"
+>
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="pickpointLabel">
+        <i class="fa-solid fa-warehouse"></i> Create PickPoint
+      </h5>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <form id="createPickpointForm" action="/add" method="post" class="row g-3">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="inputPickpointStreet"
+            >Street</label
+          >
+          <input
+            class="form-control"
+            id="inputPickpointStreet"
+            placeholder="Enter Street"
+            type="text"
+            required
+          />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="inputPickpointPostalCode"
+            >Postal Code</label
+          >
+          <input
+            class="form-control"
+            id="inputPickpointPostalCode"
+            placeholder="Enter Postal Code"
+            type="text"
+            required
+          />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="inputPickpointCity">City</label>
+          <input
+            class="form-control"
+            id="inputPickpointCity"
+            placeholder="Enter City"
+            type="text"
+            required
+          />
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="createpickpointcountry" class="form-label"
+              >Country</label
             >
-              Add Pickpoint
-            </button>
+            <br />
+            <input
+              type="text"
+              id="createpickpointcountry"
+              class="form-control"
+              name="address.country"
+              required
+            />
           </div>
         </div>
       </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-dark">Create Pickpoint</button>
+      </div>
+      </form>
     </div>
+  </div>
+</div>
+</div>
 
     <!-- Delete Modal -->
     <div
@@ -760,6 +755,90 @@
         </div>
       </div>
     </div>
+
+    <!-- Edit Pickpoint Modal -->
+<div
+class="modal fade"
+id="editPickpointModal"
+aria-hidden="true"
+aria-labelledby="editPickpointLabel"
+tabindex="-1"
+>
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="editPickpointLabel">
+        <i class="fa-solid fa-warehouse"></i> Edit PickPoint
+      </h5>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <form id="editPickpointForm" action="/edit" method="post" class="row g-3">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="editPickpointStreet"
+            >Street</label
+          >
+          <input
+            class="form-control"
+            id="editPickpointStreet"
+            placeholder="Enter Street"
+            type="text"
+            required
+          />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="editPickpointPostalCode"
+            >Postal Code</label
+          >
+          <input
+            class="form-control"
+            id="editPickpointPostalCode"
+            placeholder="Enter Postal Code"
+            type="text"
+            required
+          />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="editPickpointCity">City</label>
+          <input
+            class="form-control"
+            id="editPickpointCity"
+            placeholder="Enter City"
+            type="text"
+            required
+          />
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="editpickpointcountry" class="form-label"
+              >Country</label
+            >
+            <br />
+            <input
+              type="text"
+              id="editpickpointcountry"
+              class="form-control"
+              name="address.country"
+              required
+            />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-dark">Edit Pickpoint</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 
