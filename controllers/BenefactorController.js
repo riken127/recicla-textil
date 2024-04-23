@@ -252,8 +252,7 @@ function updateBenefactor(req, res, next) {
     // Extract the benefactor ID from the request body.
     const benefactorId = req.body.benefactorId;
 
-    console.log(req.body);
-
+    console.log(req.body)
     // Object to hold the changes to be updated.
     const updateData = {};
 
@@ -296,6 +295,7 @@ function updateBenefactor(req, res, next) {
     Benefactor.findByIdAndUpdate(benefactorId, updateData, {new: true}) // Return updated document
         .then((updatedBenefactor) => {
             // If the benefactor is not found, respond with a JSON error message.
+            console.log("novo objeto: " + updatedBenefactor);
             if (!updatedBenefactor) {
                 return res.json({message: "Benefactor not found", type: "danger"});
             }
@@ -393,7 +393,6 @@ async function deleteBenefactor(req, res, next) {
  * router.post('/add', benefactorController.addBenefactor);
  */
 async function getAllBenefactors(req, res, next) {
-    console.log("Hello, World!")
     // Retrieve the total number of records in the database
     const totalRecords = await getTotalCount({});
 
