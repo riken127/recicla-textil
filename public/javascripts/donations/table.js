@@ -196,7 +196,7 @@ $("#createDonationForm").submit(function (event) {
             // If donation ID is provided, make an AJAX request to delete donation
             $.ajax({
                 url: "/donations/delete",
-                method: "POST",
+                method: "9",
                 data: JSON.stringify({
                     id: donationId
                 }),

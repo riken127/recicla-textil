@@ -60,16 +60,16 @@ function renderPickpointsTable(req, res, next) {
  * router.post('/add', benefactorController.addBenefactor);
  */
 async function getAllPickpoints(req, res, next) {
-    // Retrieve the total number of records in the database
-    const totalRecords = await getTotalCount({});
-
+    // Retrieve the benefactor ID from the request
+    const benefactorId = req.body.benefactorId;
+    console.log(benefactorId);
     // Retrieve DataTables parameters from the request
     const {draw, start, length, order, columns} = req.body;
     const search = req.body['search[value]'];
 
     // Determine the sorting parameters
     if (typeof order === "undefined") {
-        var attribute_name = 'street'; // Default sorting column
+        var attribute_name = 'pickpoints.country'; // Default sorting column
         var column_sort_order = 'desc'; // Default sorting order
     } else {
         var column_index = req.query.order?.[0]?.['column'];
@@ -81,10 +81,10 @@ async function getAllPickpoints(req, res, next) {
     var search_value = search;
 
     // Construct the MongoDB query based on the search value
-    const query = {};
+    const query = {_id: benefactorId};
 
     if (search_value) {
-        query['$text'] = {$search: search_value};
+        query['pickpoints.$text'] = {$search: search_value};
     }
 
     // Construct sorting options
@@ -92,30 +92,27 @@ async function getAllPickpoints(req, res, next) {
     if (column_name) {
         sortOptions[column_name] = column_sort_order === 'asc' ? 1 : -1;
     } else {
-        sortOptions['street'] = column_sort_order === 'asc' ? 1 : -1;
+        sortOptions['pickpoints.country'] = column_sort_order === 'asc' ? 1 : -1;
     }
 
-    // Query the database for benefactors
-    Benefactor.find(query)
-        .sort(sortOptions)
-        .skip(parseInt(start))
-        .limit(parseInt(length))
-        .exec()
-        .then((benefactors) => {
-            // Respond with DataTables formatted data
-            res.json({
-                draw: parseInt(draw),
-                recordsTotal: totalRecords,
-                recordsFiltered: totalRecords,
-                data: benefactors,
-            });
-        })
-        .catch((err) => {
-            // Handle errors
-            res.status(500).json({
-                error: err.message,
-            });
+// Query the database for the benefactor
+Benefactor.findOne(query)
+    .exec()
+    .then((benefactor) => {
+        // Respond with DataTables formatted data
+        res.json({
+            draw: parseInt(draw),
+            recordsTotal: benefactor.pickpoints.length,
+            recordsFiltered: benefactor.pickpoints.length,
+            data: benefactor.pickpoints, // Return only the pickpoints
         });
+    })
+    .catch((err) => {
+        // Handle errors
+        res.status(500).json({
+            error: err.message,
+        });
+    });
 }
 
 /**
