@@ -71,9 +71,9 @@ async function getAllBenefactors(req, res, next) {
         var attribute_name = 'name'; // Default sorting column
         var column_sort_order = 'desc'; // Default sorting order
     } else {
-        var column_index = req.query.order?.[0]?.['column'];
-        var column_name = req.query.columns?.[column_index]?.['data'];
-        var column_sort_order = req.query.order?.[0]?.['dir'];
+        var column_index = order[0]['column'];
+        var column_name = columns[column_index]['data'];
+        var column_sort_order = order[0]['dir'];
     }
 
     // Determine the search value

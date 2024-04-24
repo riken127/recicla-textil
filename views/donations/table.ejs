@@ -226,7 +226,7 @@
         </div>
   
         <div class="modal-body">
-        <input class="form-control" id="benefactorSearch" type="text" placeholder="Search by benefactor name...">
+        <input class="form-control" id="benefactorSearch" type="text" placeholder="Search...">
           <div id="benefactorContainer"></div> 
         </div>
   
@@ -248,20 +248,8 @@
             </div>
 
             <div class="modal-body">
-                <input class="form-control" id="pickPoint" type="text" placeholder="Search by city...">
-                <% benefactors.forEach(function(benefactor) { %>
-                    <% benefactor.pickpoints.forEach(function(pickPoint) { %>
-                        <div class="pickPoint-container" data-benefactor-id="<%= benefactor._id %>">
-                            <div class="d-flex align-items-center justify-content-between mt-2">
-                                <div>
-                                    <h5><%= pickPoint.country %>, <%= pickPoint.city %></h5>
-                                    <p><%= pickPoint.street %>, <%= pickPoint.postalCode %></p>
-                                </div>
-                                <button class="btn btn-primary select-pickPoint" data-id="<%= pickPoint._id %>" data-street="<%= pickPoint.street %>" data-city="<%= pickPoint.city %>" data-postalcode="<%= pickPoint.postalCode %>" data-country="<%= pickPoint.country %>">Select</button>     
-                            </div>
-                        </div>
-                    <% }); %>
-                <% }); %>
+                <input class="form-control" id="pickpointSearch" type="text" placeholder="Search by city...">
+                <div id="pickpointContainer"></div>
             </div>
 
             <div class="modal-footer">
@@ -527,26 +515,23 @@ $(document).ready(function() {
   
 </script>
 
-
 <script>
+
     $(document).ready(function() {
-    // Quando o modal de usuário é mostrado, remover o modal de criação da pilha de modais
-    $('#benefactorModal').on('show.bs.modal', function() {
-        $('body').addClass('test');
-        $('.modal-backdrop').last().css('z-index', 1051);
+        $('#benefactorModal').on('show.bs.modal', function() {
+            $('body').addClass('test');
+            $('.modal-backdrop').last().css('z-index', 1051);
+        });
+    
+        $('#benefactorModal').on('hidden.bs.modal', function() {
+            $('body').removeClass('test');
+            $('.modal-backdrop').last().css('z-index', 1040);
+            $('#createModal').modal('show');
+        });
     });
-
-    // Quando o modal de usuário é escondido, adicionar o modal de criação de volta à pilha de modais
-    $('#benefactor Modal').on('hidden.bs.modal', function() {
-        $('body').removeClass('test');
-        $('.modal-backdrop').last().css('z-index', 1040);
-        $('#createModal').modal('show'); // Mostrar o modal de criação novamente
-    });
-});
-
+    
     $('#benefactorSearch').on('input', function() {
         var searchValue = $(this).val();
-    
         $.ajax({
             url: '/benefactors/all-benefactors',
             type: 'POST',
@@ -570,16 +555,86 @@ $(document).ready(function() {
             }
         });
     });
-
+    
     $(document).ready(function() {
-        $('body').on('click', '.select-benefactor', function() {
-            var benefactorId = $(this).data('id');
-            $('#createBenefactorId').val(benefactorId);
-            $('#benefactorModal').modal("hide");
-        });
+    $('body').on('click', '.select-benefactor', function() {
+        var benefactorId = $(this).data('id');
+        var benefactorName = $(this).parent().find('h5').text();
+        $('#createBenefactorId').val(benefactorId);
+        $('#createBenefactor').val(benefactorName);
+        $('#selectedBenefactorId').val(benefactorId); // Adicione esta linha
+        $('#benefactorModal').modal("hide");
     });
+});
 </script>
+<script>
+    $(document).ready(function() {
+    $('#pickpointModal').on('show.bs.modal', function() {
+        $('body').addClass('test');
+        $('.modal-backdrop').last().css('z-index', 1051);
+    });
 
+    $('#pickpointModal').on('hidden.bs.modal', function() {
+        $('body').removeClass('test');
+        $('.modal-backdrop').last().css('z-index', 1040);
+        $('#createModal').modal('show');
+    });
+});
+
+$('#pickpointSearch').on('input', function() {
+    var searchValue = $(this).val();
+    var benefactorId = $('#selectedBenefactorId').val(); // Get the benefactor ID from the input field
+    $.ajax({
+        url: `/benefactors/${benefactorId}/pickpoints/all-pickpoints`,
+        type: 'POST',
+        data: { 
+            'search[value]': searchValue, 
+            length: 10,
+            benefactorId: benefactorId // Send the benefactorId in the request body
+        },
+        success: function(pickpoints) {
+            $('#pickpointContainer').empty(); 
+            console.log(pickpoints);
+            console.log(pickpoints.data[0]); // Print the first pickpoint
+            console.log(pickpoints.data[1]); // Print the first pickpoint
+            console.log(pickpoints.data[2]); // Print the first pickpoint
+            pickpoints.data.forEach((pickpoint) => { // Use .data
+                if (pickpoint && typeof pickpoint === 'object') { // Check if pickpoint is not null and is an object
+                    $('#pickpointContainer').append(`
+                        <div class="pickpoint-container">
+                            <div class="d-flex align-items-center justify-content-between mt-2">
+                                <div>
+                                    <h5>${pickpoint.street}, ${pickpoint.city}</h5>
+                                    <p>${pickpoint.postalCode}, ${pickpoint.country}</p>
+                                </div>
+                                <button class="btn btn-primary select-pickpoint" data-id="${pickpoint._id}">Select</button>
+                            </div>
+                        </div>
+                    `);
+                }
+            });
+        }
+    });
+});
+
+$(document).ready(function() {
+    $('body').on('click', '.select-pickpoint', function() {
+        var pickpointId = $(this).data('id');
+        var pickpointStreet = $(this).parent().find('h5').text();
+        var pickpointCountry = $(this).parent().find('p').text().split(',')[1].trim(); // Get the country
+        var pickpointCity = $(this).parent().find('h5').text().split(',')[1].trim(); // Get the city
+        var pickpointPostalCode = $(this).parent().find('p').text().split(',')[0].trim(); // Get the postal code
+
+        $('#createPickpointId').val(pickpointId);
+        $('#createStreet').val(pickpointStreet);
+        $('#createCountry').val(pickpointCountry); // Set the country
+        $('#createCity').val(pickpointCity); // Set the city
+        $('#createPostalCode').val(pickpointPostalCode); // Set the postal code
+
+        $('#pickpointModal').modal("hide");
+    });
+});
+</script>
 
 <script>
 function formatLabel(label) {
