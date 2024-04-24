@@ -1,21 +1,34 @@
 $(document).ready(function () {
+    // Variables to store current benefactor and pickpoint IDs
     var currentBenefactorId;
     var currentPickpointId;
+
+    // Function to open delete pickpoint modal.
     window.openDeletePickpointModal = (pickPointId, benefactorId) => {
-        console.log(benefactorId + " " + pickPointId);
+        // Show delete pickpoint modal.
         $("#deletePickpointModal").modal("show");
+
+
+        // Set data attributes for confirmation.
         $("#confirmDelete").data({
             "benefactorid": benefactorId,
             "pickpointid": pickPointId,
         });
     };
 
+    // Function to open pickpoint modal.
     window.openPickpointModal = (benefactorId, benefactorName) => {
+        // Store current Benefactor ID.
         currentBenefactorId = benefactorId;
+
+
+        // Update modal title.
         $('#pickpointModalLabel').html(`Pickpoints for ${benefactorName}`);
 
+
+        // Check if DataTable is already initialized.
         if (!$.fn.DataTable.isDataTable('#pickpointsTable')) {
-            // Initialize DataTables if not already initialized
+            // Initialize DataTable.
             $('#pickpointsTable').DataTable({
                 ajax: {
                     url: `/benefactors/${benefactorId}/pickpoints/all`,
@@ -35,41 +48,52 @@ $(document).ready(function () {
                     }
                 ]
             });
+
         } else {
-            // If DataTables is already initialized, just reload the data
+            // Reload DataTable with new data source.
             $('#pickpointsTable').DataTable().ajax.url(`/benefactors/${benefactorId}/pickpoints/all`).load();
         }
 
+
+        // Show pickpoint modal.
         $("#pickpointModal").modal("show");
+
+
+        // Clear DataTable when modal is closed.
         $('#pickpointModal').on('hidden.bs.modal', function (e) {
-            // Use the DataTables API to clear the table
             $('#pickpointsTable').DataTable().clear().draw();
         });
+
     };
 
 
+    // Function to open delete pickpoint modal.
     window.openDeletePickpointModal = (id) => {
-
+        // Store current pickpoint ID.
         currentPickpointId = id;
 
+        // Show delete pickpoint modal.
         $('#deletePickpointModal').modal('show');
     };
 
-// Função para abrir o modal de edição e preencher os campos do formulário
+
+    // Function to open edit pickpoint modal.
     window.openEditPickpointModal = (pickpointId) => {
+        // Store pickpoint ID to global variable.
         window.pickpointToEdit = pickpointId;
-        // Faça uma solicitação AJAX para buscar os dados do Pickpoint
+
+        // AJAX request to fetch pickpoint data.
         $.ajax({
             url: `/benefactors/${currentBenefactorId}/pickpoints/${pickpointId}`,
             method: "GET",
             success: function (response) {
-                // Preencha os campos do formulário com os dados do Pickpoint
+                // Populate form fields with pickpoint data.
                 $("#editPickpointStreet").val(response.street);
                 $("#editPickpointPostalCode").val(response.postalCode);
                 $("#editPickpointCity").val(response.city);
                 $("#editpickpointcountry").val(response.country);
 
-                // Abra o modal de edição
+                // Show edit pickpoint modal.
                 $("#editPickpointModal").modal("show");
             },
             error: function (xhr, status, error) {
@@ -78,11 +102,12 @@ $(document).ready(function () {
         });
     };
 
-// Manipulador de eventos para o formulário de edição
-    $("#editPickpointForm").submit(function (event) {
-        event.preventDefault(); // Evite a submissão padrão do formulário
 
-        // Crie um objeto com os dados do Pickpoint
+    // Submit edit pickpoint form.
+    $("#editPickpointForm").submit(function (event) {
+        event.preventDefault(); // Prevent default form submission.
+
+        // Construct pickpoint data object from form fields.
         const pickpointData = {
             street: $("#editPickpointStreet").val(),
             postalCode: $("#editPickpointPostalCode").val(),
@@ -90,10 +115,11 @@ $(document).ready(function () {
             country: $("#editpickpointcountry").val(),
         };
 
-        // Converta o objeto de dados em uma string JSON
+
         const jsonData = JSON.stringify(pickpointData);
 
-        // Envie uma solicitação AJAX para a rota de atualização
+
+        // AJAX request to update pickpoint.
         $.ajax({
             url: `/benefactors/${currentBenefactorId}/pickpoints/${window.pickpointToEdit}/update`,
             type: "POST",
@@ -102,9 +128,9 @@ $(document).ready(function () {
             dataType: "json",
             success: function (response) {
                 console.log("Pickpoint updated successfully:", response);
-                // Feche o modal de edição
+                // Close edit pickpoint modal.
                 $("#editPickpointModal").modal("hide");
-                // Recarregue a tabela de Pickpoints
+                // Reload pickpoints table.
                 $('#pickpointsTable').DataTable().ajax.reload();
             },
             error: function (error) {
@@ -113,9 +139,12 @@ $(document).ready(function () {
         });
     });
 
+
+    // Submit create pickpoint form.
     $(document).on('submit', '#createPickpointForm', function (event) {
         event.preventDefault(); // Prevent default form submission
-        console.log("Create Pickpoint form submitted");
+
+        // Construct pickpoint data object from form fields.
         const pickpointData = {
             street: $("#inputPickpointStreet").val(),
             city: $("#inputPickpointCity").val(),
@@ -123,27 +152,29 @@ $(document).ready(function () {
             country: $("#createpickpointcountry").val(),
         };
 
-        // Convert data object to JSON string
-        const jsonData = JSON.stringify(pickpointData);
-        // Send AJAX request
 
+        const jsonData = JSON.stringify(pickpointData);
+
+
+        // AJAX request to add new pickpoint
         $.ajax({
-            url: `/benefactors/${currentBenefactorId}/pickpoints/add`, // Use a variável global aqui
+            url: `/benefactors/${currentBenefactorId}/pickpoints/add`,
             type: "POST",
             data: jsonData,
             contentType: "application/json",
             dataType: "json",
 
-            success: function (response) {
-                console.log("Pickpoint created successfully:", response);
-                // Handle successful creation (e.g., close modal, show confirmation)
-                $("#newPickpointModal").modal("hide"); // Close the newPickpointModal
-                $("#createPickpointForm")[0].reset();
 
-                // Close the create modal and open the pickpoints modal
+            success: function (response) {
+                // Close pickpoint modal.
+                $("#newPickpointModal").modal("hide");
+                // Reset form fields.
+                $("#createPickpointForm")[0].reset();
+                // Close create modal and open pickpoint modal for the current benefactor.
                 $("#createModal").modal("hide");
                 openPickpointModal(currentBenefactorId, $("#editBenefactorName").val());
             },
+
 
             error: function (error) {
                 console.error("Error creating Pickpoint:", error);
@@ -151,21 +182,26 @@ $(document).ready(function () {
             },
         });
 
+
+        // Reload pickpoints table.
         $('#pickpointsTable').DataTable().ajax.reload();
     });
 
 
+    // Confirm delete action for pickpoint.
     $('#confirmPickpointDelete').on('click', function (e) {
         $.ajax({
             url: `/benefactors/${currentBenefactorId}/pickpoints/${currentPickpointId}`,
             method: 'DELETE',
             success: (response) => {
+                // Close delete pickpoint modal.
                 $("#deletePickpointModal").modal("hide");
+                // Reload pickpoints table.
                 $('#pickpointsTable').DataTable().ajax.reload();
             },
             error: (xhr, status, error) => {
                 console.error('Failed to delete pickpoint', xhr.responseText);
             }
         });
-    })
+    });
 });

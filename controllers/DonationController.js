@@ -26,7 +26,7 @@ function renderDonationsTable(req, res, next) {
     const page = req.body.page || 1;
     // Query the database for donations, skipping the appropriate number of documents based on the page number,
     // and limiting the results to 10 donations per page
-    Donation.find({ activityType: "donation" })
+    Donation.find({activityType: "donation"})
         .skip((page - 1) * 10)
         .limit(10)
         .exec()
@@ -38,7 +38,7 @@ function renderDonationsTable(req, res, next) {
             res.render("donations/table", {
                 donations: donations,
                 users: users,
-                benefactors : benefactors
+                benefactors: benefactors
             });
         })
         .catch((err) => {
@@ -49,6 +49,7 @@ function renderDonationsTable(req, res, next) {
             });
         });
 }
+
 /**
  * Retrieves all users with DataTables parameters.
  *
@@ -86,7 +87,7 @@ async function getAllDonations(req, res, next) {
     var search_value = search;
 
     // Construct the MongoDB query based on the search value
-    const query = { activityType: "donation" };
+    const query = {activityType: "donation"};
 
     if (search_value) {
         query['$text'] = {$search: search_value};
@@ -206,7 +207,7 @@ function addDonation(req, res, next) {
         userId: donationData.userId,
         activityType: donationData.activityType,
         timestamp: donationData.timestamp,
-        details: donationData.details,      
+        details: donationData.details,
         ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
     });
 
@@ -229,7 +230,6 @@ function addDonation(req, res, next) {
             });
         });
 }
-
 
 
 /**

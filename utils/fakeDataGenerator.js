@@ -1,4 +1,4 @@
-const { faker} = require('@faker-js/faker');
+const {faker} = require('@faker-js/faker');
 
 async function returnUserData(numUsers) {
     try {
@@ -35,7 +35,7 @@ async function returnBenefactorsData(numBenefactors) {
     try {
         const benefactors = [];
         for (let i = 0; i < numBenefactors; i++) {
-            const numPickpoints = faker.datatype.number({ min: 1, max: 9 }); // Random number of pickpoints between 1 and 5
+            const numPickpoints = faker.datatype.number({min: 1, max: 9}); // Random number of pickpoints between 1 and 5
             const pickpoints = [];
             for (let j = 0; j < numPickpoints; j++) {
                 const pickpoint = {

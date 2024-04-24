@@ -5,6 +5,7 @@ function filterAndAssign(target, source) {
         }
     }
 }
+
 module.exports = {
     filterAndAssign,
 }

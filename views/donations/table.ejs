@@ -54,12 +54,14 @@
                                         <label for="createUserId" class="form-label">User</label>
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <input type="text" class="form-control" id="createUserId" name="userId" readonly>
+                                                <input type="text" class="form-control" id="createUserId" name="userId"
+                                                       readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal">
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#userModal">
                                                     Select User
                                                 </button>
                                             </div>
@@ -69,13 +71,15 @@
                                         <label for="createBenefactor" class="form-label">Benefactor</label>
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <input type="text" class="form-control" id="createBenefactor" name="benefactor" readonly>
+                                                <input type="text" class="form-control" id="createBenefactor"
+                                                       name="benefactor" readonly>
                                                 <input type="hidden" id="selectedBenefactorId" name="benefactorId">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#benefactorModal">
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#benefactorModal">
                                                     Select Benefactor
                                                 </button>
                                             </div>
@@ -84,106 +88,116 @@
                                 </div>
                             </div>
                         </div>
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingCreateTwo">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseCreateTwo" aria-expanded="false"
-                                    aria-controls="collapseCreateTwo">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingCreateTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseCreateTwo" aria-expanded="false"
+                                        aria-controls="collapseCreateTwo">
                                     Item Details
-                            </button>
-                        </h2>
-                        <div id="collapseCreateTwo" class="accordion-collapse collapse"
-                             aria-labelledby="headingCreateTwo" data-bs-parent="#accordionCreate">
-                            <div class="accordion-body">
-                                <table id="itemsTable" class="table">
-                                    <thead>
-                                      <tr>
-                                        <th scope="col">Brand</th>
-                                        <th scope="col">Weight</th>
-                                        <th scope="col">Size</th>
-                                        <th scope="col">Type of item</th>
-                                        <th scope="col">Photo of the item</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                  </table>
-                                  
-                                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                                    Add Item
-                                  </button>
-                            </div>
-                            <input type="hidden" id="items" name="items">
-                        </div>
-                    </div>
+                                </button>
+                            </h2>
+                            <div id="collapseCreateTwo" class="accordion-collapse collapse"
+                                 aria-labelledby="headingCreateTwo" data-bs-parent="#accordionCreate">
+                                <div class="accordion-body">
+                                    <table id="itemsTable" class="table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Brand</th>
+                                            <th scope="col">Weight</th>
+                                            <th scope="col">Size</th>
+                                            <th scope="col">Type of item</th>
+                                            <th scope="col">Photo of the item</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
 
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingCreateThree">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseCreateThree" aria-expanded="false"
-                                    aria-controls="collapseCreateThree">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#addItemModal">
+                                        Add Item
+                                    </button>
+                                </div>
+                                <input type="hidden" id="items" name="items">
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingCreateThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseCreateThree" aria-expanded="false"
+                                        aria-controls="collapseCreateThree">
                                     Order Information
-                            </button>
-                        </h2>
-                        <div id="collapseCreateThree" class="accordion-collapse collapse"
-                             aria-labelledby="headingCreateThree" data-bs-parent="#accordionCreate">
-                            <div class="accordion-body">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="mb-2">
-                                            <label for="totalWeight" class="form-label">Total Weight</label>
-                                            <input type="text" class="form-control" id="totalWeight" name="totalWeight" readonly>
+                                </button>
+                            </h2>
+                            <div id="collapseCreateThree" class="accordion-collapse collapse"
+                                 aria-labelledby="headingCreateThree" data-bs-parent="#accordionCreate">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-2">
+                                                <label for="totalWeight" class="form-label">Total Weight</label>
+                                                <input type="text" class="form-control" id="totalWeight"
+                                                       name="totalWeight" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-2">
+                                                <label for="numberItens" class="form-label">Number of Itens</label>
+                                                <input type="text" class="form-control" id="numberItens"
+                                                       name="numberItens" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-2">
+                                                <label for="createPickpoint" class="form-label">Pickpoint</label><br>
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#pickpointModal">
+                                                    Select Pickpoint
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-2">                              
-                                            <label for="numberItens" class="form-label">Number of Itens</label>
-                                            <input type="text" class="form-control" id="numberItens" name="numberItens" readonly>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="createcountry" class="form-label">Country</label>
+                                                <input type="text" class="form-control" id="createCountry"
+                                                       name="country" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="createCity" class="form-label">City</label>
+                                                <input type="text" class="form-control" id="createCity" name="city"
+                                                       readonly>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-2">
-                                            <label for="createPickpoint" class="form-label">Pickpoint</label><br>
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pickpointModal">
-                                                Select Pickpoint
-                                            </button>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="createStreet" class="form-label">Street</label>
+                                                <input type="text" class="form-control" id="createStreet" name="street"
+                                                       readonly>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="createcountry" class="form-label">Country</label>
-                                            <input type="text" class="form-control" id="createCountry" name="country" readonly>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="createPostalCode" class="form-label">Postal Code</label>
+                                                <input type="text" class="form-control" id="createPostalCode"
+                                                       name="postalCode" readonly>
+                                            </div>
                                         </div>
+                                        <input type="hidden" id="createActivityType" name="activityType"
+                                               value="donation">
+                                        <input type="hidden" id="createTimestamp" name="timestamp"
+                                               value="<%= new Date().toISOString() %>">
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="createCity" class="form-label">City</label>
-                                            <input type="text" class="form-control" id="createCity" name="city" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="createStreet" class="form-label">Street</label>
-                                            <input type="text" class="form-control" id="createStreet" name="street" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="createPostalCode" class="form-label">Postal Code</label>
-                                            <input type="text" class="form-control" id="createPostalCode" name="postalCode" readonly>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" id="createActivityType" name="activityType" value="donation">
-                                    <input type="hidden" id="createTimestamp" name="timestamp" value="<%= new Date().toISOString() %>">
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Create Donation</button>
@@ -196,45 +210,46 @@
 
 <div class="modal" id="userModal">
     <div class="modal-dialog">
-      <div class="modal-content">
-  
-        <div class="modal-header">
-          <h4 class="modal-title">Users</h4>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Users</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <input class="form-control" id="userSearch" type="text" placeholder="Search...">
+                <div id="userContainer"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+
         </div>
-  
-        <div class="modal-body">
-          <input class="form-control" id="userSearch" type="text" placeholder="Search...">
-          <div id="userContainer"></div> 
-        </div>
-  
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-        </div>
-  
-      </div>
     </div>
 </div>
 
 <div class="modal" id="benefactorModal">
     <div class="modal-dialog">
-      <div class="modal-content">
-  
-        <div class="modal-header">
-          <h4 class="modal-title">Benefactor</h4>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Benefactor</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <input class="form-control" id="benefactorSearch" type="text"
+                       placeholder="Search by benefactor name...">
+                <div id="benefactorContainer"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+
         </div>
-  
-        <div class="modal-body">
-        <input class="form-control" id="benefactorSearch" type="text" placeholder="Search by benefactor name...">
-          <div id="benefactorContainer"></div> 
-        </div>
-  
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-        </div>
-  
-      </div>
     </div>
 </div>
 
@@ -257,7 +272,11 @@
                                     <h5><%= pickPoint.country %>, <%= pickPoint.city %></h5>
                                     <p><%= pickPoint.street %>, <%= pickPoint.postalCode %></p>
                                 </div>
-                                <button class="btn btn-primary select-pickPoint" data-id="<%= pickPoint._id %>" data-street="<%= pickPoint.street %>" data-city="<%= pickPoint.city %>" data-postalcode="<%= pickPoint.postalCode %>" data-country="<%= pickPoint.country %>">Select</button>     
+                                <button class="btn btn-primary select-pickPoint" data-id="<%= pickPoint._id %>"
+                                        data-street="<%= pickPoint.street %>" data-city="<%= pickPoint.city %>"
+                                        data-postalcode="<%= pickPoint.postalCode %>"
+                                        data-country="<%= pickPoint.country %>">Select
+                                </button>
                             </div>
                         </div>
                     <% }); %>
@@ -274,70 +293,71 @@
 
 <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addItemModalLabel">Add Item</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="mb-2">
-                        <label for="brand" class="form-label">Brand</label>
-                        <input type="text" class="form-control" id="brand" name="brand">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addItemModalLabel">Add Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-2">
+                            <label for="brand" class="form-label">Brand</label>
+                            <input type="text" class="form-control" id="brand" name="brand">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-2">
+                            <label for="weight" class="form-label">Weight</label>
+                            <input type="text" class="form-control" id="weight" name="weight">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-2">
+                            <label for="size" class="form-label">Size</label>
+                            <input type="text" class="form-control" id="size" name="size">
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="mb-2">                              
-                        <label for="weight" class="form-label">Weight</label>
-                        <input type="text" class="form-control" id="weight" name="weight">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="itemType" class="form-label">Type of item</label>
+                            <input type="text" class="form-control" id="itemType" name="itemType">
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="mb-2">
-                        <label for="size" class="form-label">Size</label>
-                        <input type="text" class="form-control" id="size" name="size">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="itemPhoto" class="form-label">Item Photo</label>
+                            <input type="file" class="form-control" id="itemPhoto" name="itemPhoto" accept="image/*">
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="itemType" class="form-label">Type of item</label>
-                        <input type="text" class="form-control" id="itemType" name="itemType">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="itemPhoto" class="form-label">Item Photo</label>
-                        <input type="file" class="form-control" id="itemPhoto" name="itemPhoto" accept="image/*">
-                    </div>
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveItem">Save changes</button>
             </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="saveItem">Save changes</button>
-        </div>
-      </div>
     </div>
 </div>
 
-<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="detailsModalLabel">Detalhes</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Detalhes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="detailsModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
         </div>
-        <div class="modal-body" id="detailsModalBody">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
 <!-- Delete Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -357,8 +377,8 @@
         </div>
     </div>
 </div>
-  
- <!-- Add this hidden input field to your form -->
+
+<!-- Add this hidden input field to your form -->
 <input type="hidden" id="selectedUserId" name="userId">
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -369,7 +389,7 @@
     // When the modal is shown, set the timestamp to the current date and time
     $('#createModal').on('show.bs.modal', function (event) {
         var now = new Date();
-        var datetimeLocal = now.toISOString().slice(0,19);
+        var datetimeLocal = now.toISOString().slice(0, 19);
         $('#createTimestamp').val(datetimeLocal);
     });
 
@@ -389,118 +409,118 @@
     });
 </script>
 <script>
-    $(document).ready(function() {
-        $('.select-pickPoint').click(function() {
-        var street = $(this).data('street');
-        var city = $(this).data('city');
-        var postalCode = $(this).data('postalcode');
-        var country = $(this).data('country');
+    $(document).ready(function () {
+        $('.select-pickPoint').click(function () {
+            var street = $(this).data('street');
+            var city = $(this).data('city');
+            var postalCode = $(this).data('postalcode');
+            var country = $(this).data('country');
 
-        $('#createStreet').val(street);
-        $('#createCity').val(city);
-        $('#createPostalCode').val(postalCode);
-        $('#createCountry').val(country);
+            $('#createStreet').val(street);
+            $('#createCity').val(city);
+            $('#createPostalCode').val(postalCode);
+            $('#createCountry').val(country);
 
-        $('#pickpointModal').modal('hide');
-    });
-    
+            $('#pickpointModal').modal('hide');
+        });
+
         $('#pickpointModal').on('hidden.bs.modal', function (e) {
             $('#createModal').modal('show');
         });
-    
-        $('#pickpointSearch').on('keyup', function() {
+
+        $('#pickpointSearch').on('keyup', function () {
             var value = $(this).val().toLowerCase();
-            $('.pickPoint-container').filter(function() {
+            $('.pickPoint-container').filter(function () {
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
         });
     });
-    </script>
-    
+</script>
+
 <script>
-$('#saveItem').on('click', function() {
-    // Get the values from the form fields
-    var brand = $('#brand').val();
-    var weight = parseInt($('#weight').val()) || 0; // Convert to number and use 0 if not a number
-    var size = $('#size').val();
-    var itemType = $('#itemType').val();
-    var itemPhoto = $('#itemPhoto')[0].files[0]; // Get the selected file
+    $('#saveItem').on('click', function () {
+        // Get the values from the form fields
+        var brand = $('#brand').val();
+        var weight = parseInt($('#weight').val()) || 0; // Convert to number and use 0 if not a number
+        var size = $('#size').val();
+        var itemType = $('#itemType').val();
+        var itemPhoto = $('#itemPhoto')[0].files[0]; // Get the selected file
 
-    // Check if all fields have valid values before adding the item
-    if (brand && weight && size && itemType && itemPhoto) {
-        // Create an object URL for the file
-        var objectUrl = URL.createObjectURL(itemPhoto);
+        // Check if all fields have valid values before adding the item
+        if (brand && weight && size && itemType && itemPhoto) {
+            // Create an object URL for the file
+            var objectUrl = URL.createObjectURL(itemPhoto);
 
-        // Add a new row to the table with the values
-        $('#itemsTable tbody').append('<tr><td class="item-brand">' + brand + '</td><td class="item-weight">' + weight + '</td><td class="item-size">' + size + '</td><td class="item-type">' + itemType + '</td><td><img src="' + objectUrl + '" alt="Item Photo" width="50" height="50"></td></tr>');
-    }
-
-    // Clear the form fields
-    $('#brand').val('');
-    $('#weight').val('');
-    $('#size').val('');
-    $('#itemType').val('');
-    $('#itemPhoto').val('');
-
-    // Close the modal
-    $('#addItemModal').modal('hide');
-
-    // Open the create donation modal
-    $('#createModal').modal('show');
-
-    // Update the total weight and number of items
-    updateTotals();
-});
-
-function updateTotals() {
-    var totalWeight = 0;
-    var numberOfItems = 0;
-
-    $('#itemsTable tbody tr').each(function() {
-        var weight = parseInt($(this).find('.item-weight').text()) || 0;
-        var brand = $(this).find('.item-brand').text();
-
-        // Only count the item if it has a valid brand and weight
-        if (brand && weight) {
-            totalWeight += weight;
-            numberOfItems++;
+            // Add a new row to the table with the values
+            $('#itemsTable tbody').append('<tr><td class="item-brand">' + brand + '</td><td class="item-weight">' + weight + '</td><td class="item-size">' + size + '</td><td class="item-type">' + itemType + '</td><td><img src="' + objectUrl + '" alt="Item Photo" width="50" height="50"></td></tr>');
         }
+
+        // Clear the form fields
+        $('#brand').val('');
+        $('#weight').val('');
+        $('#size').val('');
+        $('#itemType').val('');
+        $('#itemPhoto').val('');
+
+        // Close the modal
+        $('#addItemModal').modal('hide');
+
+        // Open the create donation modal
+        $('#createModal').modal('show');
+
+        // Update the total weight and number of items
+        updateTotals();
     });
 
-    // Update the total weight and number of items fields
-    $('#totalWeight').val(totalWeight);
-    $('#numberItens').val(numberOfItems);
-}
+    function updateTotals() {
+        var totalWeight = 0;
+        var numberOfItems = 0;
+
+        $('#itemsTable tbody tr').each(function () {
+            var weight = parseInt($(this).find('.item-weight').text()) || 0;
+            var brand = $(this).find('.item-brand').text();
+
+            // Only count the item if it has a valid brand and weight
+            if (brand && weight) {
+                totalWeight += weight;
+                numberOfItems++;
+            }
+        });
+
+        // Update the total weight and number of items fields
+        $('#totalWeight').val(totalWeight);
+        $('#numberItens').val(numberOfItems);
+    }
 
 </script>
 <script>
-$(document).ready(function() {
-    // Quando o modal de usuário é mostrado, remover o modal de criação da pilha de modais
-    $('#userModal').on('show.bs.modal', function() {
-        $('body').addClass('test');
-        $('.modal-backdrop').last().css('z-index', 1051);
+    $(document).ready(function () {
+        // Quando o modal de usuário é mostrado, remover o modal de criação da pilha de modais
+        $('#userModal').on('show.bs.modal', function () {
+            $('body').addClass('test');
+            $('.modal-backdrop').last().css('z-index', 1051);
+        });
+
+        // Quando o modal de usuário é escondido, adicionar o modal de criação de volta à pilha de modais
+        $('#userModal').on('hidden.bs.modal', function () {
+            $('body').removeClass('test');
+            $('.modal-backdrop').last().css('z-index', 1040);
+            $('#createModal').modal('show'); // Mostrar o modal de criação novamente
+        });
     });
 
-    // Quando o modal de usuário é escondido, adicionar o modal de criação de volta à pilha de modais
-    $('#userModal').on('hidden.bs.modal', function() {
-        $('body').removeClass('test');
-        $('.modal-backdrop').last().css('z-index', 1040);
-        $('#createModal').modal('show'); // Mostrar o modal de criação novamente
-    });
-});
+    $('#userSearch').on('input', function () {
+        var searchValue = $(this).val();
 
-$('#userSearch').on('input', function() {
-    var searchValue = $(this).val();
-
-    $.ajax({
-        url: '/users/all-users',
-        type: 'POST',
-        data: { 'search[value]': searchValue, length: 10 },
-        success: function(users) {
-            $('#userContainer').empty(); // Limpar o container antes de adicionar novos usuários
-            console.log(users);
-            users.data.forEach((user) => {
-                $('#userContainer').append(`
+        $.ajax({
+            url: '/users/all-users',
+            type: 'POST',
+            data: {'search[value]': searchValue, length: 10},
+            success: function (users) {
+                $('#userContainer').empty(); // Limpar o container antes de adicionar novos usuários
+                console.log(users);
+                users.data.forEach((user) => {
+                    $('#userContainer').append(`
                     <div class="user-container">
                         <div class="d-flex align-items-center justify-content-between mt-2">
                             <div>
@@ -512,47 +532,47 @@ $('#userSearch').on('input', function() {
                         </div>
                     </div>
                 `);
-            });
-        }
+                });
+            }
+        });
     });
-});
 
-$(document).ready(function() {
-    $('body').on('click', '.select-user', function() {
-        var userId = $(this).data('id');
-        $('#createUserId').val(userId);
-        $('#userModal').modal("hide");
+    $(document).ready(function () {
+        $('body').on('click', '.select-user', function () {
+            var userId = $(this).data('id');
+            $('#createUserId').val(userId);
+            $('#userModal').modal("hide");
+        });
     });
-});
-  
+
 </script>
 
 
 <script>
-    $(document).ready(function() {
-    // Quando o modal de usuário é mostrado, remover o modal de criação da pilha de modais
-    $('#benefactorModal').on('show.bs.modal', function() {
-        $('body').addClass('test');
-        $('.modal-backdrop').last().css('z-index', 1051);
+    $(document).ready(function () {
+        // Quando o modal de usuário é mostrado, remover o modal de criação da pilha de modais
+        $('#benefactorModal').on('show.bs.modal', function () {
+            $('body').addClass('test');
+            $('.modal-backdrop').last().css('z-index', 1051);
+        });
+
+        // Quando o modal de usuário é escondido, adicionar o modal de criação de volta à pilha de modais
+        $('#benefactor Modal').on('hidden.bs.modal', function () {
+            $('body').removeClass('test');
+            $('.modal-backdrop').last().css('z-index', 1040);
+            $('#createModal').modal('show'); // Mostrar o modal de criação novamente
+        });
     });
 
-    // Quando o modal de usuário é escondido, adicionar o modal de criação de volta à pilha de modais
-    $('#benefactor Modal').on('hidden.bs.modal', function() {
-        $('body').removeClass('test');
-        $('.modal-backdrop').last().css('z-index', 1040);
-        $('#createModal').modal('show'); // Mostrar o modal de criação novamente
-    });
-});
-
-    $('#benefactorSearch').on('input', function() {
+    $('#benefactorSearch').on('input', function () {
         var searchValue = $(this).val();
-    
+
         $.ajax({
             url: '/benefactors/all-benefactors',
             type: 'POST',
-            data: { 'search[value]': searchValue, length: 10 },
-            success: function(benefactors) {
-                $('#benefactorContainer').empty(); 
+            data: {'search[value]': searchValue, length: 10},
+            success: function (benefactors) {
+                $('#benefactorContainer').empty();
                 console.log(benefactors);
                 benefactors.data.forEach((benefactor) => {
                     $('#benefactorContainer').append(`
@@ -571,8 +591,8 @@ $(document).ready(function() {
         });
     });
 
-    $(document).ready(function() {
-        $('body').on('click', '.select-benefactor', function() {
+    $(document).ready(function () {
+        $('body').on('click', '.select-benefactor', function () {
             var benefactorId = $(this).data('id');
             $('#createBenefactorId').val(benefactorId);
             $('#benefactorModal').modal("hide");
@@ -582,28 +602,29 @@ $(document).ready(function() {
 
 
 <script>
-function formatLabel(label) {
-    // Split the label on uppercase letters
-    var words = label.split(/(?=[A-Z])/);
+    function formatLabel(label) {
+        // Split the label on uppercase letters
+        var words = label.split(/(?=[A-Z])/);
 
-    // Convert the first letter of each word to uppercase and the rest to lowercase
-    words = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+        // Convert the first letter of each word to uppercase and the rest to lowercase
+        words = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
 
-    // Join the words back together with spaces
-    return words.join(' ');
-} 
-$(document).on('click', '.details-btn', function() {
-    var details = $(this).data('details');
-    var itemsList = "";
-    var orderInfoList = "";
+        // Join the words back together with spaces
+        return words.join(' ');
+    }
 
-    var orderInfoKeys = ['totalWeight', 'numberOfItems', 'country', 'city', 'street', 'postalCode'];
+    $(document).on('click', '.details-btn', function () {
+        var details = $(this).data('details');
+        var itemsList = "";
+        var orderInfoList = "";
 
-    for (var key in details) {
-        var label = formatLabel(key);
+        var orderInfoKeys = ['totalWeight', 'numberOfItems', 'country', 'city', 'street', 'postalCode'];
 
-        if (key === 'items') {
-    itemsList += `
+        for (var key in details) {
+            var label = formatLabel(key);
+
+            if (key === 'items') {
+                itemsList += `
     <div class="accordion-item">
         <h2 class="accordion-header" id="heading${key}">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${key}" aria-expanded="false" aria-controls="collapse${key}">
@@ -625,8 +646,8 @@ $(document).on('click', '.details-btn', function() {
                     <tbody>
     `;
 
-    details[key].forEach(function(item) {
-        itemsList += `
+                details[key].forEach(function (item) {
+                    itemsList += `
             <tr>
                 <td>${item.brand}</td>
                 <td>${item.weight}</td>
@@ -635,25 +656,25 @@ $(document).on('click', '.details-btn', function() {
                 <td><img src="${item.imageUrl}" alt="${item.type}"></td>
             </tr>
         `;
-    });
+                });
 
-    itemsList += `
+                itemsList += `
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
     `;
-} else if (orderInfoKeys.includes(key)) {
-            orderInfoList += `
+            } else if (orderInfoKeys.includes(key)) {
+                orderInfoList += `
                 <li class="details-item">
                     <strong>${label}:</strong> ${details[key]}
                 </li>
             `;
+            }
         }
-    }
 
-    var orderInfoAccordion = `
+        var orderInfoAccordion = `
     <div class="accordion-item">
         <h2 class="accordion-header" id="headingOrderInfo">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOrderInfo" aria-expanded="false" aria-controls="collapseOrderInfo">
@@ -670,12 +691,13 @@ $(document).on('click', '.details-btn', function() {
     </div>
 `;
 
-    $('#detailsModalBody').html(`<h3 style="text-align: center;">Benefactor Name: ${details.benefactor}</h3><div class="accordion" id="accordionDetails">${itemsList}${orderInfoAccordion}</div>`);    $('#detailsModal').modal('show');
-});
+        $('#detailsModalBody').html(`<h3 style="text-align: center;">Benefactor Name: ${details.benefactor}</h3><div class="accordion" id="accordionDetails">${itemsList}${orderInfoAccordion}</div>`);
+        $('#detailsModal').modal('show');
+    });
 
-$(document).on('click', '.modal-footer .btn', function() {
-    $('#detailsModal').modal('hide');
-});
+    $(document).on('click', '.modal-footer .btn', function () {
+        $('#detailsModal').modal('hide');
+    });
 
 </script>
 

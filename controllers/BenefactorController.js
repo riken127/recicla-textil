@@ -5,6 +5,7 @@ const fs = require("fs");
 const objectMapper = require("../utils/objectMapper");
 const {json} = require("express");
 
+
 /**
  * Renders the table of benefactors.
  *
@@ -19,7 +20,7 @@ const {json} = require("express");
  * // Usage:
  * router.get('/all', benefactorController.renderBenefactorsTable);
  */
-function renderBenefactorsTable(req, res, next) { 
+function renderBenefactorsTable(req, res, next) {
     // Extracts the page number from the request body or defaults to 1
     const page = req.body.page || 1;
     // Query the database for benefactors, skipping the appropriate number of documents based on the page number,
@@ -42,6 +43,7 @@ function renderBenefactorsTable(req, res, next) {
             });
         });
 }
+
 
 /**
  * Retrieves all benefactors with DataTables parameters.
@@ -117,6 +119,7 @@ async function getAllBenefactors(req, res, next) {
         });
 }
 
+
 /**
  * Retrieves the total count of benefactors based on a query.
  *
@@ -136,6 +139,7 @@ async function getTotalCount(query) {
         throw err;
     }
 }
+
 
 /**
  * Retrieves a benefactor by ID.
@@ -175,6 +179,7 @@ function getBenefactor(req, res, next) {
         });
 }
 
+
 /**
  * Adds a new benefactor to the database.
  *
@@ -207,7 +212,7 @@ function addBenefactor(req, res, next) {
         phone: benefactorData.phone || "", // Default to empty string if not provided
         logo: benefactorData.logo || "", // Default to empty string if not provided
         banner: benefactorData.banner || "", // Default to empty string if not provided
-        pickpoints: benefactorData.pickpoints || [] ,// Default to empty array if not provided
+        pickpoints: benefactorData.pickpoints || [],// Default to empty array if not provided
     });
 
     // Save the new benefactor to the database
@@ -229,6 +234,7 @@ function addBenefactor(req, res, next) {
             });
         });
 }
+
 
 /**
  * Updates a benefactor in the database.
@@ -313,6 +319,7 @@ function updateBenefactor(req, res, next) {
         });
 }
 
+
 /**
  * Deletes a benefactor from the database.
  *
@@ -339,7 +346,7 @@ async function deleteBenefactor(req, res, next) {
         // Delete the benefactor from the database using the benefactor ID.
         const result = await Benefactor.findByIdAndDelete(id);
 
-        const { logo, banner } = result;
+        const {logo, banner} = result;
 
         // If the deletion is successful and benefactor document contains a logo
         if (logo) {
@@ -375,80 +382,6 @@ async function deleteBenefactor(req, res, next) {
             type: "danger",
         });
     }
-}
-
-/**
- * Retrieves all benefactors with DataTables parameters.
- *
- * This function retrieves all benefactors from the database while considering DataTables parameters
- * such as pagination, sorting, and searching. It constructs MongoDB queries based on the parameters
- * and returns the benefactors data in a format suitable for DataTables.
- *
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- * @param {Function} next - The next middleware function in the request-response cycle.
- * @returns {void}
- * @example
- * // Usage:
- * router.post('/add', benefactorController.addBenefactor);
- */
-async function getAllBenefactors(req, res, next) {
-    // Retrieve the total number of records in the database
-    const totalRecords = await getTotalCount({});
-
-    // Retrieve DataTables parameters from the request
-    const {draw, start, length, order, columns} = req.body;
-    const search = req.body['search[value]'];
-
-    // Determine the sorting parameters
-    if (typeof order === "undefined") {
-        var attribute_name = 'name'; // Default sorting column
-        var column_sort_order = 'desc'; // Default sorting order
-    } else {
-        var column_index = req.query.order?.[0]?.['column'];
-        var column_name = req.query.columns?.[column_index]?.['data'];
-        var column_sort_order = req.query.order?.[0]?.['dir'];
-    }
-
-    // Determine the search value
-    var search_value = search;
-
-    // Construct the MongoDB query based on the search value
-    const query = {};
-
-    if (search_value) {
-        query['$text'] = {$search: search_value};
-    }
-
-    // Construct sorting options
-    const sortOptions = {};
-    if (column_name) {
-        sortOptions[column_name] = column_sort_order === 'asc' ? 1 : -1;
-    } else {
-        sortOptions['name'] = column_sort_order === 'asc' ? 1 : -1;
-    }
-
-    // Query the database for benefactors
-    Benefactor.find(query)
-        .sort(sortOptions)
-        .skip(parseInt(start))
-        .limit(parseInt(length))
-        .exec()
-        .then((benefactors) => {
-            // Respond with DataTables formatted data
-            res.json({
-                draw: parseInt(draw),
-                recordsTotal: totalRecords,
-                recordsFiltered: totalRecords,
-                data: benefactors,
-            });
-        })
-        .catch((err) => {
-            // Handle errors
-            res.status(500).json({
-                error: err.message,
-            });
-        });
 }
 
 

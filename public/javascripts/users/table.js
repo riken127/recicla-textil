@@ -1,22 +1,27 @@
 $(document).ready(function () {
+    // DataTable options.
     var dataTableOptions = {
+        // Layout customization.
         layout: {
             topStart: {
                 buttons: [
                     {
+                        // Button to open create modal.
                         text: '<i class="fas fa-plus"></i> &nbsp; New User',
                         className: "btn btn-primary",
                         action: function (e, dt, node, config) {
-                            $("#createModal").modal("show"); // Open the create modal when the button is clicked
+                            $("#createModal").modal("show");
                         },
                     },
                 ],
             },
         },
+        // DataTable settings.
         "processing": true,
         "searchable": true,
         "serverSide": true,
         "ajax": {
+            // Endpoint for fetching data.
             url: "http://localhost:3000/users/all-users",
             type: "POST",
             data: function (d) {
@@ -24,6 +29,7 @@ $(document).ready(function () {
                 return d;
             }
         },
+        // Columns configuration.
         "columns": [
             {
                 "data": null,
@@ -56,6 +62,7 @@ $(document).ready(function () {
             },
             {"data": "language", "title": "Language"},
             {
+                // Actions column.
                 "data": null,
                 "title": "Actions",
                 "className": "text-center",
@@ -68,23 +75,25 @@ $(document).ready(function () {
         "pagingType": "full_numbers"
     };
 
-
+    // Initialize DataTable.
     var table = $("#usersTable").DataTable(dataTableOptions);
 
+    // Function to open delete modal.
     window.openDeleteModal = (userId) => {
         console.log(userId)
         $("#deleteModal").modal("show");
         $("#confirmDelete").data("userid", userId);
     }
-    // Function to open modal and fetch user data
+
+    // Function to open edit modal.
     window.openEditModal = (id) => {
         if (id) {
-            // If user ID is provided, make an AJAX request to fetch user data
+            // AJAX request to fetch user data for editing.
             $.ajax({
                 url: "/users/" + id,
                 method: "GET",
                 success: function (response) {
-                    // Populate form fields with retrieved user data
+                    // Populate edit modal with user data.
                     $("#editUserId").val(response._id);
                     $("#editFirstName").val(response.firstName);
                     $("#editLastName").val(response.lastName);
@@ -96,7 +105,6 @@ $(document).ready(function () {
                     $("#editCity").val(response.address.city);
                     $("#editPostalCode").val(response.address.postalCode);
                     $("#editcountry").countrySelect("setCountry", response.address.country);
-                    //$("#editphone").val(response.phone);
                     editIti.setNumber(response.phone);
                     $("#editLanguage").val(response.language);
                     $("#editModal").modal("show");
@@ -112,11 +120,12 @@ $(document).ready(function () {
         }
     }
 
-    // Form submission event handler for edit modal
+    // Submit edit user form.
     $("#editUserForm").submit(function (event) {
-        event.preventDefault(); // Prevent default form submission
-
+        event.preventDefault();
+        // Construct user data object from form fields.
         const userData = {
+            // Populate with form fields.
             userId: $("#editUserId").val(),
             firstName: $("#editFirstName").val(),
             lastName: $("#editLastName").val(),
@@ -135,13 +144,14 @@ $(document).ready(function () {
             notify: $("#editNotify").is(":checked"),
         };
 
+        // Get language for country and then submit form.
         getLanguageForCountry(userData.address.country)
             .then(language => {
                 userData.language = language;
-
                 const jsonData = JSON.stringify(userData);
+                // AJAX request to update user.
                 $.ajax({
-                    url: "/users/update", // Replace with your endpoint for updating user
+                    url: "/users/update",
                     type: "POST",
                     data: jsonData,
                     contentType: "application/json",
@@ -156,42 +166,40 @@ $(document).ready(function () {
                     },
                 });
             })
-
     });
 
-    // Function to get language based on country code
+    // Function to get language for country.
     function getLanguageForCountry(countryName) {
+        // Fetch language data from restAPI.
         return fetch(`https://restcountries.com/v3.1/name/${countryName}`)
             .then(response => response.json())
             .then(data => {
-                // Retrieve the primary language spoken in the country
                 const languages = data[0].languages;
-                // Assuming the first language listed is the primary one, you can retrieve its name
                 const primaryLanguageCode = Object.keys(languages)[0];
                 const primaryLanguageName = languages[primaryLanguageCode];
                 return primaryLanguageName;
             })
             .catch(error => {
                 console.error('Error fetching country data:', error);
-                return null;
+                return 'English';
             });
     }
 
-    // Form submission event handler for create modal
+    // Submit create user data
     $("#createUserForm").submit(function (event) {
-        event.preventDefault(); // Prevent default form submission
-
+        event.preventDefault();
+        // Construct user data object from form fields.
 
         const userData = {
+            // Populate with form field values.
             firstName: $("#createFirstName").val(),
             lastName: $("#createLastName").val(),
             username: $("#createUsername").val(),
             email: $("#createEmail").val(),
             password: $("#createPassword").val(),
-            roles: $("#createRoles")
-                .val()
-                .split(",")
-                .map((role) => role.trim()),
+            roles: $("#createRoles").val(),
+            //.split(",")
+            //.map((role) => role.trim()),
             address: {
                 street: $("#createStreet").val(),
                 city: $("#createCity").val(),
@@ -199,20 +207,18 @@ $(document).ready(function () {
                 country: $("#createcountry").val(),
             },
             phone: createIti.getNumber(),
-            language: null, // Placeholder for language
+            language: null,
             notify: $("#createNotify").is(":checked"),
         };
 
-        // Get the language for the selected country
+        // Get language for country and then submit form.
         getLanguageForCountry(userData.address.country)
             .then(language => {
-                // Set the user's language based on the country
                 userData.language = language;
 
-                // Convert data object to JSON string
                 const jsonData = JSON.stringify(userData);
-                // Send AJAX request
-                console.log(userData)
+
+                // AJAX request to add new user.
                 $.ajax({
                     url: "/users/add",
                     type: "POST",
@@ -221,7 +227,6 @@ $(document).ready(function () {
                     dataType: "json",
                     success: function (response) {
                         console.log("User created successfully:", response);
-                        // Handle successful creation (e.g., close modal, show confirmation)
                         $("#createModal").modal("hide");
                         $("#createUserForm")[0].reset();
                     },
@@ -237,11 +242,11 @@ $(document).ready(function () {
     });
 
 
-    // Click event listener for delete confirmation button
+    // Confirm delete action.
     $(document).on("click", "#confirmDelete", function () {
         var userId = $(this).data("userid");
         if (userId) {
-            // If user ID is provided, make an AJAX request to delete user
+            // AJAX request to delete user.
             $.ajax({
                 url: "/users/delete/",
                 method: "POST",
@@ -252,7 +257,6 @@ $(document).ready(function () {
                 dataType: "json",
                 success: function (response) {
                     console.log("User deleted successfully:", response);
-                    // Handle successful deletion (e.g., close modal, refresh table)
                     $("#deleteModal").modal("hide");
                     table.ajax.reload();
                 },
@@ -264,14 +268,4 @@ $(document).ready(function () {
             console.error("User ID is missing.");
         }
     });
-
-    /*$(document).on("click", ".delete-button", function () {
-        var userId = $(this).data("userid");
-        console.log(userId);
-        openDeleteModal(userId);
-    });*/
-
-
-    // Function to open delete modal
-
-})
+});

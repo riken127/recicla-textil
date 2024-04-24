@@ -23,24 +23,24 @@ function renderPickpointsTable(req, res, next) {
     const benefactorId = req.params.id;
 
     Benefactor.findById(benefactorId)
-    .exec()
-    .then((benefactor) => {
-        if (!benefactor) {
-            return res.status(404).json({
-                message: "Benefactor not found",
+        .exec()
+        .then((benefactor) => {
+            if (!benefactor) {
+                return res.status(404).json({
+                    message: "Benefactor not found",
+                    type: "danger",
+                });
+            }
+
+            // Return the pickpoints of the benefactor as JSON
+            res.json(benefactor.pickpoints);
+        })
+        .catch((err) => {
+            res.status(500).json({
+                message: err.message,
                 type: "danger",
             });
-        }
-
-        // Return the pickpoints of the benefactor as JSON
-        res.json(benefactor.pickpoints);
-    })
-    .catch((err) => {
-        res.status(500).json({
-            message: err.message,
-            type: "danger",
         });
-    });
 }
 
 
@@ -151,7 +151,7 @@ async function getTotalCount(query) {
  * @returns {void}
  * @example
  * // Usage:
-router.get('/:id/pickpoints/:idpp', benefactorController.getBenefactor);
+ router.get('/:id/pickpoints/:idpp', benefactorController.getBenefactor);
  */
 function getPickpoint(req, res, next) {
     // Extract the benefactor ID from the route parameters
@@ -162,7 +162,7 @@ function getPickpoint(req, res, next) {
     Benefactor.findById(benefactorId)
         .then((benefactor) => {
             // If the benefactor is not found, respond with a 404 error
-        
+
             if (!benefactor) {
                 return res.status(404).json({message: "Benefactor not found"});
             }
@@ -207,18 +207,18 @@ function addPickpoint(req, res) {
 
     Benefactor.findByIdAndUpdate(
         benefactorId,
-        { $push: { pickpoints: pickpointData } },
-        { new: true, runValidators: true }
+        {$push: {pickpoints: pickpointData}},
+        {new: true, runValidators: true}
     )
-    .then((updatedBenefactor) => {
-        res.json({
-            message: "Pickpoint added successfully",
-            benefactor: updatedBenefactor
+        .then((updatedBenefactor) => {
+            res.json({
+                message: "Pickpoint added successfully",
+                benefactor: updatedBenefactor
+            });
+        })
+        .catch((err) => {
+            res.status(500).json({message: err.message});
         });
-    })
-    .catch((err) => {
-        res.status(500).json({ message: err.message });
-    });
 }
 
 /**
@@ -247,14 +247,14 @@ function updatePickpoint(req, res, next) {
     Benefactor.findById(benefactorId)
         .then((benefactor) => {
             if (!benefactor) {
-                return res.status(404).json({ message: "Benefactor not found" });
+                return res.status(404).json({message: "Benefactor not found"});
             }
 
             // Find the pickpoint in the benefactor's pickpoints array
             const pickpoint = benefactor.pickpoints.id(pickpointId);
 
             if (!pickpoint) {
-                return res.status(404).json({ message: "Pickpoint not found" });
+                return res.status(404).json({message: "Pickpoint not found"});
             }
 
             // Update the pickpoint with the new data
@@ -270,7 +270,7 @@ function updatePickpoint(req, res, next) {
             });
         })
         .catch((err) => {
-            res.status(500).json({ message: err.message });
+            res.status(500).json({message: err.message});
         });
 }
 
@@ -304,13 +304,13 @@ async function deletePickpoint(req, res, next) {
         const benefactor = await Benefactor.findById(benefactorId);
 
         if (!benefactor) {
-            return res.status(404).json({ message: "Benefactor not found", type: "danger" });
+            return res.status(404).json({message: "Benefactor not found", type: "danger"});
         }
 
         const pickpointToRemove = pickPointId;
 
         if (!pickpointToRemove) {
-            return res.status(404).json({ message: "Pickpoint not found", type: "danger" });
+            return res.status(404).json({message: "Pickpoint not found", type: "danger"});
         }
 
         // Remove the pickpoint from the benefactor's pickpoints array.
@@ -322,15 +322,15 @@ async function deletePickpoint(req, res, next) {
                 break;
             }
         }
-        
+
         // Save the benefactor back to the database.
         await benefactor.save();
 
         console.log(benefactor.pickpoints)
-        res.status(200).json({ message: "Pickpoint deleted successfully", type: "success" });
+        res.status(200).json({message: "Pickpoint deleted successfully", type: "success"});
     } catch (err) {
         console.error(`Error: ${err}`);
-        res.status(500).json({ message: err.message, type: "danger" });
+        res.status(500).json({message: err.message, type: "danger"});
     }
 }
 

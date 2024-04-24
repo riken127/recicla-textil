@@ -1,30 +1,38 @@
+// Variable to store the currently selected benefactorId.
 let currBenefactor;
 
+// Document ready function.
 $(document).ready(function () {
+    // DataTable options.
     var dataTableOptions = {
         layout: {
+            // Layout customization.
             topStart: {
                 buttons: [
                     {
+                        // Button to open create modal.
                         text: '<i class="fas fa-plus"></i> &nbsp; New Benefactor',
                         className: "btn btn-primary",
                         action: function (e, dt, node, config) {
-                            $("#createModal").modal("show"); // Open the create modal when the button is clicked
+                            $("#createModal").modal("show");
                         },
                     },
                 ],
             },
         },
+        // DataTable settings.
         processing: true,
         searchable: true,
         serverSide: true,
         ajax: {
+            // Endpoint for fetching data.
             url: "http://localhost:3000/benefactors/all-benefactors",
             type: "POST",
             data: function (d) {
                 return d;
             },
         },
+        // Columns configuration.
         columns: [
             {
                 data: null,
@@ -37,6 +45,7 @@ $(document).ready(function () {
                 data: "pickpoints",
                 title: "Pick Points",
                 render: function (data, type, row) {
+                    // Render PickPoints column with associated count.
                     if (data.length > 0) {
                         return `<a href="#" class="expand-button" onclick="openPickpointModal('${row._id}', '${row.name}')" title="${data.length} Pickpoints"><i class="fa-solid fa-up-right-and-down-left-from-center px-4 align-items-center"></i></a>`;
                     } else {
@@ -63,6 +72,7 @@ $(document).ready(function () {
             },
 
             {
+                // Actions column.
                 data: null,
                 title: "Actions",
                 className: "text-center",
@@ -75,17 +85,20 @@ $(document).ready(function () {
         pagingType: "full_numbers",
     };
 
+
+    // Initialize DataTable.
     var table = $("#benefactorsTable").DataTable(dataTableOptions);
 
-    // Function to open modal and fetch benefactorId data
+
+    // Function to open edit modal for benefactor.
     window.openEditModal = (id) => {
         if (id) {
-            // If benefactor ID is provided, make an AJAX request to fetch benefactor data
+            // AJAX request to fetch benefactor data for editing.
             $.ajax({
                 url: "/benefactors/" + id,
                 method: "GET",
                 success: function (response) {
-                    // Populate form fields with retrieved benefactor data
+                    // Populate edit modal with benefactor data.
                     $("#editBenefactorId").val(response._id);
                     $("#editBenefactorName").val(response.name);
                     $("#editDescription").val(response.description);
@@ -99,7 +112,6 @@ $(document).ready(function () {
                     editIti.setNumber(response.phone);
                     $("#editModal").modal("show");
                     var form = document.getElementById("editBenefactorForm");
-                    //form.action = "update";
                 },
                 error: function (xhr, status, error) {
                     console.error(xhr.responseText);
@@ -110,11 +122,14 @@ $(document).ready(function () {
         }
     };
 
-    // Form submission event handler for edit modal
-    $("#editBenefactorForm").submit(function (event) {
-        event.preventDefault(); // Prevent default form submission
 
+    // Submit edit benefactor form.
+    $("#editBenefactorForm").submit(function (event) {
+        event.preventDefault();
+
+        // Construct benefactor data object from form fields.
         const benefactorData = {
+            // Populate benefactor data object from form fields.
             benefactorId: $("#editBenefactorId").val(),
             name: $("#editBenefactorName").val(),
             username: $("#editBenefactorUsername").val(),
@@ -132,15 +147,16 @@ $(document).ready(function () {
             notify: $("#editNotify").is(":checked"),
         };
 
+
         const jsonData = JSON.stringify(benefactorData);
+        // AJAX request to update benefactor.
         $.ajax({
-            url: "/benefactors/update", // Replace with your endpoint for updating benefactor
+            url: "/benefactors/update",
             type: "POST",
             data: jsonData,
             contentType: "application/json",
             dataType: "json",
             success: function (response) {
-                console.log("Server response:", response);
                 $("#editModal").modal("hide");
                 table.ajax.reload();
             },
@@ -149,12 +165,15 @@ $(document).ready(function () {
             },
         });
         table.ajax.reload();
-    })
-    // Form submission event handler for create modal
+    });
+
+    // Submit create benefactor form.
     $("#createBenefactorForm").submit(function (event) {
         event.preventDefault(); // Prevent default form submission
 
+        // Construct benefactor data object from form fields.
         const benefactorData = {
+            // Populate with form field values.
             name: $("#createName").val(),
             username: $("#createUsername").val(),
             email: $("#createEmail").val(),
@@ -172,11 +191,10 @@ $(document).ready(function () {
         };
 
 
-        // Convert data object to JSON string
         const jsonData = JSON.stringify(benefactorData);
-        // Send AJAX request
-        console.log(benefactorData);
 
+
+        // AJAX request to add new benefactor.
         $.ajax({
             url: "/benefactors/add",
             type: "POST",
@@ -185,8 +203,6 @@ $(document).ready(function () {
             dataType: "json",
 
             success: function (response) {
-                console.log("Benefactor created successfully:", response);
-                // Handle successful creation (e.g., close modal, show confirmation)
                 $("#createModal").modal("hide");
                 $("#createBenefactorForm")[0].reset();
             },
@@ -199,10 +215,15 @@ $(document).ready(function () {
         table.ajax.reload();
     });
 
+
+    // Function to open delete modal for benefactor.
     window.openDeleteModal = (benefactorId) => {
         currBenefactor = benefactorId;
         $("#deleteBenefactorModal").modal("show");
     }
+
+
+    // Confirm delete action for benefactor.
     $('#confirmBenefactorDelete').on('click', function () {
         $.ajax({
             url: `/benefactors/delete`,
@@ -210,7 +231,6 @@ $(document).ready(function () {
             data: JSON.stringify({id: currBenefactor}),
             contentType: "application/json",
             success: function (response) {
-                console.log('Pickpoint deleted successfully:', response);
                 $('#deleteBenefactorModal').modal('hide');
             },
             error: function (xhr, status, error) {

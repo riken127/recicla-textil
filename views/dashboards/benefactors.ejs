@@ -113,33 +113,33 @@
 </div>
 
 <div class="jumbotron py-3">
-  <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <h1 class="display-6">Pickpoint Distribution</h1>
-      </div>
-      <div class="col-lg-6">
-        <div class="card bg-white border-0 shadow">
-          <div class="card-body">
-            <h2 class="card-title">Country Distribution</h2>
-            <div class="chart-container" style="padding: 20px;">
-              <canvas id="pickpointCountries" style="width:100%; height:auto;"></canvas>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-6">Pickpoint Distribution</h1>
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <div class="card bg-white border-0 shadow">
-          <div class="card-body">
-            <h2 class="card-title">City Distribution</h2>
-            <div class="chart-container" style="padding: 20px;">
-              <canvas id="pickpointCities" style="width:100%; height:auto;"></canvas>
+            <div class="col-lg-6">
+                <div class="card bg-white border-0 shadow">
+                    <div class="card-body">
+                        <h2 class="card-title">Country Distribution</h2>
+                        <div class="chart-container" style="padding: 20px;">
+                            <canvas id="pickpointCountries" style="width:100%; height:auto;"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
+            <div class="col-lg-6">
+                <div class="card bg-white border-0 shadow">
+                    <div class="card-body">
+                        <h2 class="card-title">City Distribution</h2>
+                        <div class="chart-container" style="padding: 20px;">
+                            <canvas id="pickpointCities" style="width:100%; height:auto;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 <script>
     const ba = document.getElementById("benefactorActivity");
@@ -202,52 +202,52 @@
                     }
                 }
             },
-          plugins: {
-              legend: {
-                labels: {
-                  color: 'white'
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'white'
+                    }
                 }
-              }
-          }
+            }
         }
     });
 
     new Chart(ppci, {
-      type: 'bar',
-      data: {
-        labels: <%- JSON.stringify(pickpointCities.map(item => item._id))%>,
-        datasets: [{
-          label: 'Number of PickPoints p/ City (Top 10).',
-          data: <%= JSON.stringify(pickpointCities.map(item => item.totalPickpoints))%>,
-          borderWidth: 1,
-          backgroundColor: [
-            '#960000',
-            '#775400',
-            '#00946e',
-            '#005977',
-            '#00475e',
-          ],
-        }]
-      }
+        type: 'bar',
+        data: {
+            labels: <%- JSON.stringify(pickpointCities.map(item => item._id)) %>,
+            datasets: [{
+                label: 'Number of PickPoints p/ City (Top 10).',
+                data: <%= JSON.stringify(pickpointCities.map(item => item.totalPickpoints)) %>,
+                borderWidth: 1,
+                backgroundColor: [
+                    '#960000',
+                    '#775400',
+                    '#00946e',
+                    '#005977',
+                    '#00475e',
+                ],
+            }]
+        }
     });
     new Chart(ppco, {
-      type: 'bar',
-      data: {
-        labels: <%- JSON.stringify(pickpointCountries.map(item => item._id))%>,
-        datasets: [{
-          label: 'Number of PickPoints p/Country (Top 10).',
-          data: <%= JSON.stringify(pickpointCountries.map(item => item.totalPickpoints))%>,
-          borderWidth: 1,
-          backgroundColor: [
-            '#ff6868',
-            '#ffbe76',
-            '#ffe07c',
-            '#dcff87',
-            '#bcff94',
-            '#90ffd9',
-          ]
-        }]
-      }
+        type: 'bar',
+        data: {
+            labels: <%- JSON.stringify(pickpointCountries.map(item => item._id)) %>,
+            datasets: [{
+                label: 'Number of PickPoints p/Country (Top 10).',
+                data: <%= JSON.stringify(pickpointCountries.map(item => item.totalPickpoints)) %>,
+                borderWidth: 1,
+                backgroundColor: [
+                    '#ff6868',
+                    '#ffbe76',
+                    '#ffe07c',
+                    '#dcff87',
+                    '#bcff94',
+                    '#90ffd9',
+                ]
+            }]
+        }
     });
     new Chart(bct, {
         type: 'bar',
@@ -272,7 +272,7 @@
         data: {
             labels: <%- JSON.stringify(benefactorCities.map(item => item._id)) %>,
             datasets: [{
-              label: 'Number of Benefactors p/ City (Top 10)',
+                label: 'Number of Benefactors p/ City (Top 10)',
                 data: <%= JSON.stringify(benefactorCities.map(item => item.count)) %>,
                 borderWidth: 1,
                 backgroundColor: [
