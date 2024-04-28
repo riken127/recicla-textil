@@ -1,17 +1,21 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-var donationController = require('../controllers/DonationController');
+var donationController = require("../controllers/DonationController");
+var itemsController = require("../controllers/ItemController");
 
-// the main page, that contains the datatables' plugin, and all the modals'.
-router.get('/all', donationController.renderDonationsTable);
-// get user information via get, sends a request to which is than rendered in frontend via ajax.
-router.get('/:id', donationController.getDonation)
-// get all users by json (server-side processing route, connects with ajax's create table in frontend)
-router.post('/all-donations', donationController.getAllDonations);
-// add user via mongoose middleware, sends mongoose object via POSTs' body via create modals' form
-router.post('/add', donationController.addDonation)
-// delete user via mongoose middleware, sends mongoose object via post's body.
-router.post('/delete', donationController.deleteDonation);
+router.get("/all", donationController.renderDonationsTable);
+router.get("/:id", donationController.getDonation);
+router.post("/all-donations", donationController.getAllDonations);
+router.post("/add", donationController.addDonation);
+router.post("/delete", donationController.deleteDonation);
+router.post("/update", donationController.updateDonation);
+
+router.get('/:id/items/all', itemsController.renderItemsTable);
+router.post('/:id/items/add', itemsController.addItem);
+router.post('/:id/items/:idpp/update', itemsController.updateItem);
+router.get('/:id/items/:idit', itemsController.getItem);
+router.delete('/:id/items/:idItem/delete', itemsController.deleteItem);
+router.post('/:id/items/all-items', itemsController.getAllItems);
 
 // route exportation
 module.exports = router;
