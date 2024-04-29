@@ -109,8 +109,20 @@ $(document).ready(function () {
                     $("#editCity").val(response.address.city);
                     $("#editPostalCode").val(response.address.postalCode);
                     $("#editCountry").val(response.address.country);
+                    $("#editPassword").val(response.password);
+                    $("#editConfirmPassword").val(response.password);
                     editIti.setNumber(response.phone);
                     $("#editModal").modal("show");
+                    if (!response.logo && $("#logoHint").is(":hidden")) {
+                        $("#logoHint").show();
+                    } else {
+                        $("#logoHint").hide();
+                    }
+                    if (!response.banner && $("#bannerHint").is(":hidden")) {
+                        $("#bannerHint").show();
+                    } else {
+                        $("#bannerHint").hide();
+                    }
                     var form = document.getElementById("editBenefactorForm");
                 },
                 error: function (xhr, status, error) {
@@ -126,8 +138,18 @@ $(document).ready(function () {
     // Submit edit benefactor form.
     $("#editBenefactorForm").submit(function (event) {
         event.preventDefault();
-
         // Construct benefactor data object from form fields.
+        let password = $("#editPassword").val();
+        let confirmPassword = $("#editConfirmPassword").val();
+
+        if (password !== confirmPassword) {
+            $("#editErrorMessage").text("Error: Passwords do not match");
+            $("#editErrorAlert").addClass("show").removeClass("fade").css("display", "block");
+            return;
+        }
+
+        let bannerImage = $("#editBanner").prop("files")[0];
+        let logoImage = $("#editLogo").prop("files")[0];
         const benefactorData = {
             // Populate benefactor data object from form fields.
             benefactorId: $("#editBenefactorId").val(),
@@ -145,6 +167,7 @@ $(document).ready(function () {
             },
             phone: editIti.getNumber(),
             notify: $("#editNotify").is(":checked"),
+            image: (bannerImage || logoImage) ? 'y' : null
         };
 
 
@@ -157,11 +180,18 @@ $(document).ready(function () {
             contentType: "application/json",
             dataType: "json",
             success: function (response) {
+                if (bannerImage) {
+                    uploadBannerImage(benefactorData.benefactorId, bannerImage);
+                    uploadLogoImage(benefactorData.benefactorId, logoImage);
+                }
                 $("#editModal").modal("hide");
+                $("#editBenefactorForm")[0].reset();
                 table.ajax.reload();
             },
             error: function (error) {
                 console.error("Error:", error);
+                $("#editErrorMessage").text("Error: " + error.responseJSON.message);
+                $("#editErrorAlert").addClass("show").removeClass("fade").css("display", "block");
             },
         });
         table.ajax.reload();
@@ -171,15 +201,27 @@ $(document).ready(function () {
     $("#createBenefactorForm").submit(function (event) {
         event.preventDefault(); // Prevent default form submission
 
+        // Get password and confirm password values.
+        let password = $("#createPassword").val();
+        let confirmPassword = $("#createConfirmPassword").val();
+
+        if (password !== confirmPassword) {
+            $("#createErrorMessage").text("Passwords do not match");
+            $("#createErrorAlert").addClass("show").removeClass("fade").css("display", "block");
+            return;
+        }
+
+        let logoImageFile = $("#createLogo").prop("files")[0];
+        let bannerImageFile = $("#createBanner").prop("files")[0];
         // Construct benefactor data object from form fields.
         const benefactorData = {
             // Populate with form field values.
             name: $("#createName").val(),
             username: $("#createUsername").val(),
             email: $("#createEmail").val(),
-            password: $("#createPassword").val(),
-            banner: $("#createBanner").val(),
-            logo: $("#createLogo").val(),
+            password: password,
+            banner: bannerImageFile ? 'y' : null,
+            logo: logoImageFile ? 'y' : null,
             description: $("#createDescription").val(),
             address: {
                 street: $("#createStreet").val(),
@@ -201,21 +243,70 @@ $(document).ready(function () {
             data: jsonData,
             contentType: "application/json",
             dataType: "json",
+            success:  (response) => {
+                if (bannerImageFile) {
+                    uploadBannerImage(response.result, bannerImageFile);
+                }
 
-            success: function (response) {
-                $("#createModal").modal("hide");
-                $("#createBenefactorForm")[0].reset();
+                if (logoImageFile) {
+                    uploadLogoImage(response.result, logoImageFile);
+                }
+
+                    $("#createModal").modal("hide");
+                    $("#createBenefactorForm")[0].reset();
+                    table.ajax.reload();
             },
-
             error: function (error) {
                 console.error("Error creating Benefactor:", error);
+                $("#createErrorMessage").text("Error: " + error.responseJSON.message);
+                $("#createErrorAlert").addClass("show").removeClass("fade").css("display", "block");
             },
         });
-
-        table.ajax.reload();
     });
 
+    function uploadBannerImage(benefactorId, bannerImageFile) {
+        const formData = new FormData();
+        formData.append('entityType', 'benefactor');
+        formData.append('entitySubType', 'profile')
+        formData.append('entityId', benefactorId);
+        formData.append('banner', bannerImageFile, benefactorId + '-banner.jpg');
 
+        $.ajax({
+           url: '/benefactors/upload/banner',
+           type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: (response) => {
+               console.log('Image uploaded successfully', response);
+               table.ajax.reload();
+            },
+            error: (error) => {
+               console.error("Error uploading image:", error);
+            }
+        });
+    }
+    function uploadLogoImage(benefactorId, logoImageFile) {
+        const formData = new FormData();
+        formData.append('entityType', 'benefactor');
+        formData.append('entitySubType', 'profile')
+        formData.append('entityId', benefactorId);
+        formData.append('logo', logoImageFile, benefactorId + '-logo.jpg');
+        $.ajax({
+            url: '/benefactors/upload/logo',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: (response) => {
+                console.log('Image uploaded successfully', response);
+                table.ajax.reload();
+            },
+            error: (error) => {
+                console.error("Error uploading image:", error);
+            }
+        });
+    }
     // Function to open delete modal for benefactor.
     window.openDeleteModal = (benefactorId) => {
         currBenefactor = benefactorId;

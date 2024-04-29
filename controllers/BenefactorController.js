@@ -4,7 +4,7 @@ const Address = require("../models/Address");
 const fs = require("fs");
 const objectMapper = require("../utils/objectMapper");
 const {json} = require("express");
-
+const path = require("path");
 
 /**
  * Renders the table of benefactors.
@@ -66,7 +66,7 @@ async function getAllBenefactors(req, res, next) {
 
     // Retrieve DataTables parameters from the request
     const {draw, start, length, order, columns} = req.body;
-    const search = req.body['search[value]'];
+    const search = req.body["search[value]"];
 
     // Determine the sorting parameters
     if (typeof order === "undefined") {
@@ -85,9 +85,12 @@ async function getAllBenefactors(req, res, next) {
     const query = {};
 
     if (search_value) {
-        query['$text'] = {$search: search_value};
+        query["$or"] = [
+            {"name" : {$regex: search_value, $options: "i"}},
+            {"username" : {$regex: search_value, $options: "i"}},
+            {"email": {$regex: search_value, $options: "i"}},
+        ]
     }
-
     // Construct sorting options
     const sortOptions = {};
     if (column_name) {
@@ -200,39 +203,58 @@ function getBenefactor(req, res, next) {
 function addBenefactor(req, res, next) {
     // Extract benefactor data from the request body
     const benefactorData = req.body;
-    console.log(req.body);
-    // Create a new benefactor object with default values for optional fields
-    let benefactor = new Benefactor({
-        name: benefactorData.name || "", // Default to empty string if not provided
-        address: benefactorData.address || {}, // Default to empty object if address is not provided
-        username: benefactorData.username || "", // Default to empty string if not provided
-        password: benefactorData.password || "", // Default to empty string if not provided
-        email: benefactorData.email || "", // Default to empty string if not provided
-        description: benefactorData.description || "", // Default to empty string if not provided
-        phone: benefactorData.phone || "", // Default to empty string if not provided
-        logo: benefactorData.logo || "", // Default to empty string if not provided
-        banner: benefactorData.banner || "", // Default to empty string if not provided
-        pickpoints: benefactorData.pickpoints || [],// Default to empty array if not provided
-    });
 
-    // Save the new benefactor to the database
-    benefactor.save()
-        .then((savedBenefactor) => {
-            // Set a success message in the session
-            req.session.message = {
-                type: "success",
-                message: savedBenefactor.name + " was added successfully.",
-            };
-            // Redirect to the "/all" route
-            res.redirect("/all");
+    // Check if the provided username, email, or phone number exists in the database
+    Benefactor.findOne({$or: [{username: benefactorData.username}, {email: benefactorData.email}, {phone: benefactorData.phone}]})
+        .then((existingBenefactor) => {
+            if (existingBenefactor) {
+                // If a benefactor with the same username, email, phone number already exists, return an error message.
+                let errorMessage = "";
+                if (existingBenefactor.username === benefactorData.username) {
+                    errorMessage = "Username already exists";
+                } else if (existingBenefactor.email === benefactorData.email) {
+                    errorMessage = "Email already exists.";
+                } else if (existingBenefactor.phone === benefactorData.phone) {
+                    errorMessage = "Phone number already exists.";
+                }
+                res.status(400).json({ message: errorMessage, type: "danger" });
+            } else {
+                // Create a new benefactor object with default values for optional fields
+                let benefactor = new Benefactor({
+                    name: benefactorData.name || "", // Default to empty string if not provided
+                    address: benefactorData.address || {}, // Default to empty object if address is not provided
+                    username: benefactorData.username || "", // Default to empty string if not provided
+                    password: benefactorData.password || "", // Default to empty string if not provided
+                    email: benefactorData.email || "", // Default to empty string if not provided
+                    description: benefactorData.description || "", // Default to empty string if not provided
+                    phone: benefactorData.phone || "", // Default to empty string if not provided
+                    logo: benefactorData.logo || "", // Default to empty string if not provided
+                    banner: benefactorData.banner || "", // Default to empty string if not provided
+                    pickpoints: benefactorData.pickpoints || [],// Default to empty array if not provided
+                });
+
+                // Save the new benefactor to the database
+                benefactor.save()
+                    .then((savedBenefactor) => {
+                        if ((benefactorData.banner || benefactorData.logo) && !fs.existsSync('./uploads/benefactors/' + savedBenefactor._id)) {
+                            fs.mkdirSync('./uploads/benefactors/' + savedBenefactor._id + '/profile/', {recursive: true});
+                        }
+                        // Set a success message in the session
+                        res.status(200).json({
+                            type: "success",
+                            result: savedBenefactor._id,
+                        });
+                    })
+                    .catch((err) => {
+                        // If an error occurs during the save process, respond with a JSON error message
+                        res.status(500).json({message: err.message, type: 'danger'});
+                    });
+            }
         })
         .catch((err) => {
-            // If an error occurs during the save process, respond with a JSON error message
-            res.json({
-                message: err.message,
-                type: "danger"
-            });
-        });
+            // If an error occurs during the search process, respond with a JSON error message.
+            res.status(500).json({message: err.message, type: 'danger'});
+        })
 }
 
 
@@ -258,7 +280,6 @@ function updateBenefactor(req, res, next) {
     // Extract the benefactor ID from the request body.
     const benefactorId = req.body.benefactorId;
 
-    console.log(req.body)
     // Object to hold the changes to be updated.
     const updateData = {};
 
@@ -284,39 +305,57 @@ function updateBenefactor(req, res, next) {
         }
     }
 
-    // Handle nested properties like address
-    if (req.body.address) {
-        const addressUpdates = {};
-        // Loop through address properties.
-        for (const addressProp in req.body.address) {
-            if (req.body.address.hasOwnProperty(addressProp)) {
-                addressUpdates[addressProp] = req.body.address[addressProp];
+    Benefactor.findOne({
+        $and: [
+            { _id: { $ne: benefactorId } },
+            { $or: [
+                    { email: updateData.email },
+                    { phone: updateData.phone },
+                ]}
+        ]
+    })
+        .then(existingBenefactor => {
+            // Handle nested properties like address
+            if (req.body.address) {
+                const addressUpdates = {};
+                // Loop through address properties.
+                for (const addressProp in req.body.address) {
+                    if (req.body.address.hasOwnProperty(addressProp)) {
+                        addressUpdates[addressProp] = req.body.address[addressProp];
+                    }
+                }
+                // Update address field in the update data.
+                updateData.address = addressUpdates;
             }
-        }
-        // Update address field in the update data.
-        updateData.address = addressUpdates;
-    }
 
-    // Update the benefactor in the database
-    Benefactor.findByIdAndUpdate(benefactorId, updateData, {new: true}) // Return updated document
-        .then((updatedBenefactor) => {
-            // If the benefactor is not found, respond with a JSON error message.
-            console.log("novo objeto: " + updatedBenefactor);
-            if (!updatedBenefactor) {
-                return res.json({message: "Benefactor not found", type: "danger"});
-            }
-            // Set a success message in the session.
-            req.session.message = {
-                type: "success",
-                message: updatedBenefactor.name + " was updated successfully.",
-            };
-            // Redirect to the '/all' route.
-            res.redirect("/all");
+            // Update the benefactor in the database
+            Benefactor.findByIdAndUpdate(benefactorId, updateData, {new: true}) // Return updated document
+                .then((updatedBenefactor) => {
+                    if (req.body.image && !fs.existsSync('./uploads/benefactors/' + benefactorId + '/profile')) {
+                        fs.mkdirSync('./uploads/benefactors/' + benefactorId + '/profile/', {recursive: true} );
+                    }
+
+                    // If the benefactor is not found, respond with a JSON error message.
+                    if (!updatedBenefactor) {
+                        return res.json({message: "Benefactor not found", type: "danger"});
+                    }
+                    // Set a success message in the session.
+                    req.session.message = {
+                        type: "success",
+                        message: updatedBenefactor.name + " was updated successfully.",
+                    };
+                    // Redirect to the '/all' route.
+                    res.redirect("/all");
+                })
+                .catch((err) => {
+                    // If an error occurs during the update process, respond with a JSON error message.
+                    res.json({message: err.message, type: "danger"});
+                });
         })
-        .catch((err) => {
-            // If an error occurs during the update process, respond with a JSON error message.
-            res.json({message: err.message, type: "danger"});
+        .catch(err => {
+           res.json({message: err.message, type: "danger"});
         });
+
 }
 
 
@@ -384,6 +423,49 @@ async function deleteBenefactor(req, res, next) {
     }
 }
 
+function uploadBanner(req, res, next) {
+    try {
+        const originalFilename = req.file.originalname;
+
+        // Build the image URL based on storage strategy
+        const bannerUrl = path.join('./uploads/benefactors', '/' + req.body.entityId, '/profile/', originalFilename);
+
+        Benefactor.findByIdAndUpdate(req.body.entityId, {
+            banner: bannerUrl,
+        })
+            .then((updatedBenefactor) => {
+                res.json({message: "Banner uploaded successfully.", type: "success"});
+            })
+            .catch(error => {
+                res.status(500).json({ error: 'Failed to upload banner.'});
+            });
+    } catch(error) {
+        console.error('Error uploading image', error);
+        res.status(500).json({ error: 'Failed to upload banner.'});
+    }
+}
+
+function uploadLogo(req, res, next) {
+    try {
+        const originalFilename = req.file.originalname;
+
+        // Build the image URL based on storage strategy.
+        const logoUrl = path.join('./uploads/benefactors', '/' + req.body.entityId, '/profile/', originalFilename);
+
+        Benefactor.findByIdAndUpdate(req.body.entityId, {
+            logo: logoUrl,
+        })
+            .then((updatedBenefactor) => {
+                res.json({message: 'Logo uploaded successfully.', type: 'success'});
+            })
+            .catch((error) => {
+                res.status(500).json({error: 'Failed to upload logo.'});
+            });
+    } catch(error) {
+        console.error('Error uploading image', error);
+        res.status(500).json({error: 'Failed to upload logo.'})
+    }
+}
 
 module.exports = {
     renderBenefactorsTable: renderBenefactorsTable,
@@ -391,5 +473,7 @@ module.exports = {
     updateBenefactor: updateBenefactor,
     deleteBenefactor: deleteBenefactor,
     getBenefactor: getBenefactor,
-    getAllBenefactors: getAllBenefactors
+    getAllBenefactors: getAllBenefactors,
+    uploadBanner: uploadBanner,
+    uploadLogo: uploadLogo
 }

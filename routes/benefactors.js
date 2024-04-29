@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const benefactorController = require('../controllers/BenefactorController');
 const pickpointController = require('../controllers/PickpointController');
-
+const upload = require('../middleware/multerMiddleware');
 
 // Retrieves benefactors table
 router.get('/all', benefactorController.renderBenefactorsTable);
@@ -16,6 +16,10 @@ router.get('/:id', benefactorController.getBenefactor);
 router.post('/delete/', benefactorController.deleteBenefactor);
 // Retrieves all benefactors
 router.post('/all-benefactors', benefactorController.getAllBenefactors);
+// Upload benefactor banner
+router.post('/upload/banner/', upload.single('banner'), benefactorController.uploadBanner);
+// Upload benefactor logo
+router.post('/upload/logo', upload.single('logo'), benefactorController.uploadLogo);
 // Retrieves all pickpoints table for a certain benefactor
 router.get('/:id/pickpoints/all', pickpointController.renderPickpointsTable);
 // Adds a new pickpoint to a benefactor

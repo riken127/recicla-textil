@@ -98,18 +98,24 @@ $(document).ready(function () {
                     $("#editFirstName").val(response.firstName);
                     $("#editLastName").val(response.lastName);
                     $("#editRoles").val(response.roles.join(", "));
+                    if (!response.image && $("#pfpHint").is(":hidden")) {
+                        $("#pfpHint").show();
+                    } else {
+                        $("#pfpHint").hide();
+                    }
                     $("#editUsername").val(response.username);
                     $("#editEmail").val(response.email);
                     $("#editPassword").val(response.password);
+                    $("#editConfirmPassword").val(response.password);
                     $("#editStreet").val(response.address.street);
                     $("#editCity").val(response.address.city);
                     $("#editPostalCode").val(response.address.postalCode);
                     $("#editcountry").countrySelect("setCountry", response.address.country);
                     editIti.setNumber(response.phone);
+                    $("#editRoles").val(response.roles[0]).change();
+                        $("#editNotify")[0].checked = response.notify;
                     $("#editLanguage").val(response.language);
                     $("#editModal").modal("show");
-                    var form = document.getElementById("editUserForm");
-                    form.action = "update";
                 },
                 error: function (xhr, status, error) {
                     console.error(xhr.responseText);
@@ -124,6 +130,16 @@ $(document).ready(function () {
     $("#editUserForm").submit(function (event) {
         event.preventDefault();
         // Construct user data object from form fields.
+        let password = $("#editPassword").val();
+        let confirmPassword = $("#editConfirmPassword").val();
+
+        if (password !== confirmPassword) {
+            $("#editErrorMessage").text("Error: Passwords do not match");
+            $("#editErrorAlert").addClass("show").removeClass("fade").css("display", "block");
+            return;
+        }
+
+        let imageFile = $("#editImage").prop("files")[0];
         const userData = {
             // Populate with form fields.
             userId: $("#editUserId").val(),
@@ -137,11 +153,12 @@ $(document).ready(function () {
                 street: $("#editStreet").val(),
                 city: $("#editCity").val(),
                 postalCode: $("#editPostalCode").val(),
-                country: $("#createcountry").val(),
+                country: $("#editcountry").val(),
             },
             phone: editIti.getNumber(),
             language: null,
             notify: $("#editNotify").is(":checked"),
+            image: imageFile ? 'y' : null
         };
 
         // Get language for country and then submit form.
@@ -156,18 +173,51 @@ $(document).ready(function () {
                     data: jsonData,
                     contentType: "application/json",
                     dataType: "json",
-                    success: function (response) {
-                        console.log("Server response:", response);
-                        $("#editModal").modal("hide");
-                        table.ajax.reload();
+                    success:  (response) => {
+                        if (imageFile) {
+                            uploadEditImage(userData.userId, imageFile);
+                        } else {
+                            $("#editModal").modal("hide")
+                            $("#editUserForm")[0].reset();
+                            table.ajax.reload();
+                        }
                     },
-                    error: function (error) {
+                    error: (error) => {
                         console.error("Error:", error);
+                        $("#editErrorMessage").text("Error: " + error.responseJSON.message);
+                        $("#editErrorAlert").addClass("show").removeClass("fade").css("display", "block");
                     },
                 });
             })
+            .catch(error => {
+                console.error("Error getting language for country:", error);
+            });
+        table.ajax.reload();
     });
 
+    function uploadEditImage(userId, imageFile) {
+        const formData = new FormData();
+        formData.append('entityType', 'user');
+        formData.append('entityId', userId);
+        formData.append('image', imageFile, userId + '.jpg');
+
+        $.ajax({
+            url: "/users/upload",
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: (response) => {
+                $("#editModal").modal("hide");
+                $("#editUserForm")[0].reset();
+                table.ajax.reload();
+            },
+            error: (error) => {
+                $("#editErrorMessage").text("Error: ", error.message);
+                $("#editErrorAlert").addClass("show").removeClass("fade").css("display", "block");
+            }
+        });
+    }
     // Function to get language for country.
     function getLanguageForCountry(countryName) {
         // Fetch language data from restAPI.
@@ -188,18 +238,30 @@ $(document).ready(function () {
     // Submit create user data
     $("#createUserForm").submit(function (event) {
         event.preventDefault();
-        // Construct user data object from form fields.
 
+        // Get password and confirm password values
+        let password = $("#createPassword").val();
+        let confirmPassword = $("#createConfirmPassword").val();
+
+        // Check if passwords match
+        if (password !== confirmPassword) {
+            // Display error message in the modal
+            $("#createErrorMessage").text("Passwords do not match");
+            $("#createErrorAlert").addClass("show").removeClass("fade").css("display", "block");
+            return; // Stop form submission
+        }
+
+        let imageFile = $("#createImage").prop("files")[0];
+
+        // Construct user data object from form fields.
         const userData = {
             // Populate with form field values.
             firstName: $("#createFirstName").val(),
             lastName: $("#createLastName").val(),
             username: $("#createUsername").val(),
             email: $("#createEmail").val(),
-            password: $("#createPassword").val(),
+            password: password,
             roles: $("#createRoles").val(),
-            //.split(",")
-            //.map((role) => role.trim()),
             address: {
                 street: $("#createStreet").val(),
                 city: $("#createCity").val(),
@@ -209,6 +271,7 @@ $(document).ready(function () {
             phone: createIti.getNumber(),
             language: null,
             notify: $("#createNotify").is(":checked"),
+            image: imageFile ? 'y' : null,
         };
 
         // Get language for country and then submit form.
@@ -225,13 +288,20 @@ $(document).ready(function () {
                     data: jsonData,
                     contentType: "application/json",
                     dataType: "json",
-                    success: function (response) {
-                        console.log("User created successfully:", response);
-                        $("#createModal").modal("hide");
-                        $("#createUserForm")[0].reset();
+                    success: (response) => {
+                        if (imageFile) {
+                            uploadCreateImage(response.result, imageFile);
+                        } else {
+                            $("#createModal").modal("hide");
+                            $("#createUserForm")[0].reset();
+                            table.ajax.reload();
+                        }
                     },
-                    error: function (error) {
+                    error: (error) => {
                         console.error("Error creating user:", error);
+                        // Display error message in the modal
+                        $("#createErrorMessage").text("Error: " + error.responseJSON.message);
+                        $("#createErrorAlert").addClass("show").removeClass("fade").css("display", "block");
                     },
                 });
             })
@@ -241,7 +311,28 @@ $(document).ready(function () {
         table.ajax.reload();
     });
 
-
+    function uploadCreateImage(userId, imageFile) {
+        const formData = new FormData();
+        formData.append('entityType', 'user');
+        formData.append('entityId', userId);
+        formData.append('image', imageFile, userId + '.jpg');
+        $.ajax({
+            url: '/users/upload/',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: (response) => {
+                console.log('Image uploaded successfully', response);
+                $("#createModal").modal("hide");
+                $("#createUserForm")[0].reset();
+                table.ajax.reload();
+            },
+            error: (error) => {
+                console.error("Error uploading image:", error);
+            }
+        });
+    }
     // Confirm delete action.
     $(document).on("click", "#confirmDelete", function () {
         var userId = $(this).data("userid");

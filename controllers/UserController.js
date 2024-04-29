@@ -4,7 +4,7 @@ const Address = require("../models/Address");
 const fs = require("fs");
 const objectMapper = require("../utils/objectMapper");
 const {json} = require("express");
-
+const path = require("path");
 
 /**
  * Renders the table of users.
@@ -61,7 +61,6 @@ function renderUsersTable(req, res, next) {
 async function getAllUsers(req, res, next) {
     // Retrieve the total number of records in the database
     const totalRecords = await getTotalCount({});
-    console.log(req.body);
     // Retrieve DataTables parameters from the request
     let {draw, start, length, order, columns} = req.body;
     const search = req.body["search[value]"];
@@ -201,41 +200,60 @@ function getUser(req, res, next) {
 function addUser(req, res, next) {
     // Extract user data from the request body
     const userData = req.body;
-    // Create a new user object with default values for optional fields
-    let user = new User({
-        lastName: userData.lastName,
-        firstName: userData.firstName,
-        username: userData.username || "", // Default to empty string if not provided
-        email: userData.email || "", // Default to empty string if not provided
-        password: userData.password || "", // Default to empty string if not provided
-        image: userData.image || "", // Default to empty string if not provided
-        roles: userData.roles || ["user"], // Default to "user" if roles are not provided
-        address: userData.address || {}, // Default to empty object if address is not provided
-        phone: userData.phone || "", // Default to empty string if not provided
-        language: userData.language || "", // Default to empty string if not provided
-        notify: userData.notify || false, // Default to false if notify is not provided
-    });
 
-    // Save the new user to the database
-    user
-        .save()
-        .then((savedUser) => {
-            // Set a success message in the session
-            req.session.message = {
-                type: "success",
-                message: savedUser.firstName + " was added successfully.",
-            };
-            // Redirect to the "/all" route
-            res.redirect("/all");
+    // Check if the provided username, email, or phone number already exist in the database
+    User.findOne({ $or: [{ username: userData.username }, { email: userData.email }, { phone: userData.phone }] })
+        .then((existingUser) => {
+            if (existingUser) {
+                // If a user with the same username, email, or phone number already exists, return an error response
+                let errorMessage = "";
+                if (existingUser.username === userData.username) {
+                    errorMessage = "Username already exists.";
+                } else if (existingUser.email === userData.email) {
+                    errorMessage = "Email already exists.";
+                } else if (existingUser.phone === userData.phone) {
+                    errorMessage = "Phone number already exists.";
+                }
+                res.status(400).json({ message: errorMessage, type: "danger" });
+            } else {
+                // If no duplicate user found, proceed to save the new user
+                let user = new User({
+                    lastName: userData.lastName,
+                    firstName: userData.firstName,
+                    username: userData.username || "", // Default to empty string if not provided
+                    email: userData.email || "", // Default to empty string if not provided
+                    password: userData.password || "", // Default to empty string if not provided
+                    image: "",
+                    roles: userData.roles || ["user"], // Default to "user" if roles are not provided
+                    address: userData.address || {}, // Default to empty object if address is not provided
+                    phone: userData.phone || "", // Default to empty string if not provided
+                    language: userData.language || "", // Default to empty string if not provided
+                    notify: userData.notify || false, // Default to false if notify is not provided
+                });
+
+                // Save the new user to the database
+                user.save()
+                    .then((savedUser) => {
+                        if (req.body.image && !fs.existsSync('./uploads/users/' + savedUser._id)) {
+                            fs.mkdirSync('./uploads/users/' + savedUser._id, { recursive: true });
+                        }
+                        res.status(200).json({
+                            type: "success",
+                            result: savedUser._id,
+                        });
+                    })
+                    .catch((err) => {
+                        // If an error occurs during the save process, respond with a JSON error message
+                        res.status(500).json({ message: err.message, type: "danger" });
+                    });
+            }
         })
         .catch((err) => {
-            // If an error occurs during the save process, respond with a JSON error message
-            res.json({
-                message: err.message,
-                type: "danger",
-            });
+            // If an error occurs during the search process, respond with a JSON error message
+            res.status(500).json({ message: err.message, type: "danger" });
         });
 }
+
 
 
 /**
@@ -284,39 +302,69 @@ function updateUser(req, res, next) {
         }
     }
 
-    // Handle nested properties like address
-    if (req.body.address) {
-        const addressUpdates = {};
-        // Loop through address properties.
-        for (const addressProp in req.body.address) {
-            if (req.body.address.hasOwnProperty(addressProp)) {
-                addressUpdates[addressProp] = req.body.address[addressProp];
-            }
-        }
-        // Update address field in the update data.
-        updateData.address = addressUpdates;
-    }
+    // Check for existing user with the same email or phone number excluding the current user.
+    User.findOne({
+        $and: [
+            { _id: { $ne: userId } }, // Exclude current user
+            { $or: [
+                    { email: updateData.email },
+                    { phone: updateData.phone }
+                ]}
+        ]
+    })
+        .then(existingUser => {
+            if (existingUser) {
+                let errorMessage = "";
+                if (existingUser.email === updateData.email) {
+                    errorMessage = "Email already registered in another user.";
+                } else if (existingUser.phone === updateData.phone) {
+                    errorMessage = "Phone number already linked to another user account.";
+                }
+                return res.status(400).json({ message: errorMessage, type: "danger" });
+            } else {
+                // Handle nested properties like address
+                if (req.body.address) {
+                    const addressUpdates = {};
+                    // Loop through address properties.
+                    for (const addressProp in req.body.address) {
+                        if (req.body.address.hasOwnProperty(addressProp)) {
+                            addressUpdates[addressProp] = req.body.address[addressProp];
+                        }
+                    }
+                    // Update address field in the update data.
+                    updateData.address = addressUpdates;
+                }
 
-    // Update the user in the database
-    User.findByIdAndUpdate(userId, updateData, {new: true}) // Return updated document
-        .then((updatedUser) => {
-            // If the user is not found, respond with a JSON error message.
-            if (!updatedUser) {
-                return res.json({message: "User not found", type: "danger"});
+                // Update the user in the database
+                User.findByIdAndUpdate(userId, updateData, { new: true }) // Return updated document
+                    .then((updatedUser) => {
+                        if (req.body.image && !fs.existsSync('./uploads/users/' + updatedUser._id)) {
+                            fs.mkdirSync('./uploads/users/' + updatedUser._id, { recursive: true });
+                        }
+                        // If the user is not found, respond with a JSON error message.
+                        if (!updatedUser) {
+                            return res.json({ message: "User not found", type: "danger" });
+                        }
+                        // Set a success message in the session.
+                        req.session.message = {
+                            type: "success",
+                            message: updatedUser.firstName + " was updated successfully.",
+                        };
+                        // Redirect to the '/all' route.
+                        res.redirect("/all");
+                    })
+                    .catch((err) => {
+                        // If an error occurs during the update process, respond with a JSON error message.
+                        res.json({ message: err.message, type: "danger" });
+                    });
             }
-            // Set a success message in the session.
-            req.session.message = {
-                type: "success",
-                message: updatedUser.firstName + " was updated successfully.",
-            };
-            // Redirect to the '/all' route.
-            res.redirect("/all");
         })
-        .catch((err) => {
-            // If an error occurs during the update process, respond with a JSON error message.
-            res.json({message: err.message, type: "danger"});
+        .catch(err => {
+            // If an error occurs during the database query, respond with a JSON error message.
+            res.json({ message: err.message, type: "danger" });
         });
 }
+
 
 
 /**
@@ -370,6 +418,28 @@ async function deleteUser(req, res, next) {
     }
 }
 
+function uploadImage(req, res, next) {
+    try {
+        const originalFilename = req.file.originalname; // Original filename
+
+        // Build the image URL based on storage strategy
+        const imageUrl = path.join('./uploads/users/',req.body.entityId + '/', originalFilename);
+
+        User.findByIdAndUpdate(req.body.entityId, {
+            image: imageUrl, // Update user's image field with the URL
+        })
+            .then((updatedUser) => {
+                res.json({ message: 'Image uploaded successfully.', type: "success" });
+            })
+            .catch((error) => {
+                res.status(500).json({ error: 'Failed to upload image' });
+            });
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        res.status(500).json({ error: 'Failed to upload image' });
+    }
+}
+
 module.exports = {
     renderUsersTable: renderUsersTable,
     addUser: addUser,
@@ -377,4 +447,5 @@ module.exports = {
     deleteUser: deleteUser,
     getUser: getUser,
     getAllUsers: getAllUsers,
+    uploadImage: uploadImage
 };
