@@ -244,10 +244,10 @@ $("#createDonationForm").submit(function (event) {
             $("#editDonationPickpointId").val(pickpointId);
             $("#editActivityType").val(response.activityType);
             $("#editTimestamp").val(response.timestamp);
-            $("#editCountry").val(country);
-            $("#editCity").val(city);
-            $("#editStreet").val(street);
-            $("#editPostalCode").val(postalCode);
+            // Address fields
+            $("#editPickpointAddress").val(
+              `${street}, ${city}, ${country}, ${postalCode}`
+            );
             // Open the edit modal
             $("#editModal").modal("show");
           } catch (error) {
@@ -388,4 +388,450 @@ $("#createDonationForm").submit(function (event) {
       });
     });
   }
+});
+
+// Script to select User to Create a Donation
+
+$(document).ready(function () {
+  $("#userModal").on("show.bs.modal", function () {
+    $("body").addClass("test");
+    $(".modal-backdrop").last().css("z-index", 1051);
+  });
+
+  $("#userModal").on("hidden.bs.modal", function () {
+    $("body").removeClass("test");
+    $(".modal-backdrop").last().css("z-index", 1040);
+    $("#createModal").modal("show");
+  });
+});
+
+$("#userSearch").on("input", function () {
+  var searchValue = $(this).val();
+
+  $.ajax({
+    url: "/users/all-users",
+    type: "POST",
+    data: { "search[value]": searchValue, length: 10 },
+    success: function (users) {
+      $("#userContainer").empty();
+      users.data.forEach((user) => {
+        $("#userContainer").append(`
+        <div class="user-container">
+            <div class="d-flex align-items-center justify-content-between mt-2">
+                <div>
+                    <h5>${user.username}</h5>
+                    <h6>${user.firstName} ${user.lastName}</h6>
+                    <p>${user._id}</p>
+                </div>
+                <button class="btn btn-primary select-create-user" data-id="${user._id}" >Select</button>
+            </div>
+        </div>
+    `);
+      });
+    },
+  });
+});
+
+$(document).ready(function () {
+  $("body").on("click", ".select-create-user", function () {
+    // Get the user information
+    var userId = $(this).data("id");
+    var userName = $(this).parent().find("h5").text();
+    // Set the user information in the input fields
+    $("#createUserId").val(userId);
+    $("#createUserName").val(userName);
+    // Hide the user modal
+    $("#userModal").modal("hide");
+  });
+});
+
+// Script to select Benefactor to Create a Donation
+
+$(document).ready(function () {
+  $("#benefactorModal").on("show.bs.modal", function () {
+    $("body").addClass("test");
+    $(".modal-backdrop").last().css("z-index", 1051);
+  });
+
+  $("#benefactorModal").on("hidden.bs.modal", function () {
+    $("body").removeClass("test");
+    $(".modal-backdrop").last().css("z-index", 1040);
+  });
+});
+
+$("#benefactorSearch").on("input", function () {
+  var searchValue = $(this).val();
+  $.ajax({
+    url: "/benefactors/all-benefactors",
+    type: "POST",
+    data: { "search[value]": searchValue, length: 10 },
+    success: function (benefactors) {
+      $("#benefactorContainer").empty();
+      benefactors.data.forEach((benefactor) => {
+        $("#benefactorContainer").append(`
+                  <div class="benefactor-container">
+                      <div class="d-flex align-items-center justify-content-between mt-2">
+                          <div>
+                              <h5>${benefactor.name}</h5>
+                              <p>${benefactor._id}</p>
+                          </div>
+                          <button class="btn btn-primary select-create-benefactor" data-id="${benefactor._id}">Select</button>
+                      </div>
+                  </div>
+              `);
+      });
+    },
+  });
+});
+
+$(document).ready(function () {
+  $("body").on("click", ".select-create-benefactor", function () {
+    // Get the benefactor information
+    var benefactorId = $(this).data("id");
+    var benefactorName = $(this).parent().find("h5").text();
+    // Set the benefactor information in the input fields
+    $("#createBenefactorId").val(benefactorId);
+    $("#createBenefactorName").val(benefactorName);
+    // Hide the benefactor modal and show the pickpoint modal
+    $("#benefactorModal").modal("hide");
+    $("#pickpointModal").modal("show");
+    $("#pickpointInfo").show();
+  });
+});
+
+// Select Pickpoint to Create a Donation
+
+$(document).ready(function () {
+  $(".select-pickPoint").click(function () {
+    var street = $(this).data("street");
+    var city = $(this).data("city");
+    var postalCode = $(this).data("postalcode");
+    var country = $(this).data("country");
+    var pickpointId = $(this).data("_id");
+
+    $("#createStreet").val(street);
+    $("#createCity").val(city);
+    $("#createPostalCode").val(postalCode);
+    $("#createCountry").val(country);
+    $("#createDonationPickpointId").val(pickpointId);
+
+    $("#pickpointModal").modal("hide");
+    $("#pickpointInfo").show();
+  });
+
+  $("#pickpointModal").on("hidden.bs.modal", function (e) {
+    $("#createModal").modal("show");
+  });
+
+  $("#pickpointSearch").on("keyup", function () {
+    var value = $(this).val().toLowerCase();
+    $(".pickPoint-container").filter(function () {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});
+
+// Script to select pickpoint to create a Donation
+
+$(document).ready(function () {
+  $("#pickpointModal").on("show.bs.modal", function () {
+    $("body").addClass("test");
+    $(".modal-backdrop").last().css("z-index", 1051);
+  });
+
+  $("#pickpointModal").on("hidden.bs.modal", function () {
+    $("body").removeClass("test");
+    $(".modal-backdrop").last().css("z-index", 1040);
+  });
+});
+
+$("#pickpointSearch").on("input", function () {
+  var searchValue = $(this).val();
+  var benefactorId = $("#createBenefactorId").val(); // Get the benefactor ID from the input field
+  $.ajax({
+    url: `/benefactors/${benefactorId}/pickpoints/all-pickpoints`,
+    type: "POST",
+    data: {
+      "search[value]": searchValue,
+      length: 10,
+      benefactorId: benefactorId, // Send the benefactorId in the request body
+    },
+    success: function (pickpoints) {
+      $("#pickpointContainer").empty();
+      pickpoints.data.forEach((pickpoint) => {
+        // Use .data
+        if (pickpoint && typeof pickpoint === "object") {
+          // Check if pickpoint is not null and is an object
+          $("#pickpointContainer").append(`
+              <div class="pickpoint-container">
+                  <div class="d-flex align-items-center justify-content-between mt-2">
+                      <div>
+                          <h5>${pickpoint.street}, ${pickpoint.city}</h5>
+                          <p>${pickpoint.postalCode}, ${pickpoint.country}</p>
+                      </div>
+                      <button class="btn btn-primary select-pickpoint" data-id="${pickpoint._id}">Select</button>
+                  </div>
+              </div>
+          `);
+        }
+      });
+    },
+  });
+});
+
+$(document).ready(function () {
+  $("body").on("click", ".select-pickpoint", function () {
+    var pickpointId = $(this).data("id");
+    var pickpointStreet = $(this).parent().find("h5").text();
+    var pickpointCountry = $(this)
+      .parent()
+      .find("p")
+      .text()
+      .split(",")[1]
+      .trim(); // Get the country
+    var pickpointCity = $(this)
+      .parent()
+      .find("h5")
+      .text()
+      .split(",")[1]
+      .trim(); // Get the city
+    var pickpointPostalCode = $(this)
+      .parent()
+      .find("p")
+      .text()
+      .split(",")[0]
+      .trim(); // Get the postal code
+
+    $("#createDonationPickpointId").val(pickpointId); // Set the pickpoint ID
+
+    $("#createPickpointAddress").val(
+      `${pickpointStreet}, ${pickpointCity}, ${pickpointPostalCode}, ${pickpointCountry}`
+    ); // Set the pickpoint address in the input field
+
+    $("#pickpointInfo").removeAttr("hidden");
+    $("#pickpointModal").modal("hide");
+  });
+});
+
+// Script to select User to Edit a Donation
+
+$(document).ready(function () {
+  $("#editUserModal").on("show.bs.modal", function () {
+    $("body").addClass("test");
+    $(".modal-backdrop").last().css("z-index", 1051);
+  });
+
+  $("#editUserModal").on("hidden.bs.modal", function () {
+    $("body").removeClass("test");
+    $(".modal-backdrop").last().css("z-index", 1040);
+    $("#editModal").modal("show");
+  });
+});
+
+$("#editUserSearch").on("input", function () {
+  var searchValue = $(this).val();
+
+  $.ajax({
+    url: "/users/all-users",
+    type: "POST",
+    data: { "search[value]": searchValue, length: 10 },
+    success: function (users) {
+      $("#editUserContainer").empty();
+      users.data.forEach((user) => {
+        $("#editUserContainer").append(`
+      <div class="user-container">
+          <div class="d-flex align-items-center justify-content-between mt-2">
+              <div>
+                  <h5>${user.username}</h5>
+                  <h6>${user.firstName} ${user.lastName}</h6>
+                  <p>${user._id}</p>
+              </div>
+              <button class="btn btn-primary select-edit-user" data-id="${user._id}">Select</button>
+          </div>
+      </div>
+  `);
+      });
+    },
+  });
+});
+
+$(document).ready(function () {
+  $("body").on("click", ".select-edit-user", function () {
+    // Get the user information
+    var userId = $(this).data("id");
+    var userName = $(this).parent().find("h5").text();
+    // Set the user information in the input fields
+    $("#editUserId").val(userId);
+    $("#editUserName").val(userName);
+    // Hide the user modal
+    $("#editUserModal").modal("hide");
+  });
+});
+
+// Script to select Benefactor to Edit a Donation
+
+$(document).ready(function () {
+  $("#editBenefactorModal").on("show.bs.modal", function () {
+    $("body").addClass("test");
+    $(".modal-backdrop").last().css("z-index", 1051);
+  });
+
+  $("#editBenefactorModal").on("hidden.bs.modal", function () {
+    $("body").removeClass("test");
+    $(".modal-backdrop").last().css("z-index", 1040);
+  });
+});
+
+$("#editBenefactorSearch").on("input", function () {
+  var searchValue = $(this).val();
+  $.ajax({
+    url: "/benefactors/all-benefactors",
+    type: "POST",
+    data: { "search[value]": searchValue, length: 10 },
+    success: function (benefactors) {
+      $("#editBenefactorContainer").empty();
+      console.log(benefactors);
+      benefactors.data.forEach((benefactor) => {
+        $("#editBenefactorContainer").append(`
+          <div class="benefactor-container">
+              <div class="d-flex align-items-center justify-content-between mt-2">
+                  <div>
+                      <h5>${benefactor.name}</h5>
+                      <p>${benefactor._id}</p>
+                  </div>
+                  <button class="btn btn-primary select-edit-benefactor" data-id="${benefactor._id}">Select</button>
+              </div>
+          </div>
+      `);
+      });
+    },
+  });
+});
+
+$(document).ready(function () {
+  $("body").on("click", ".select-edit-benefactor", function () {
+    // Get the benefactor information
+    var benefactorId = $(this).data("id");
+    var benefactorName = $(this).parent().find("h5").text();
+    // Set the benefactor information in the input fields
+    $("#editBenefactorId").val(benefactorId);
+    $("#editBenefactorName").val(benefactorName);
+    // Hide the benefactor modal and show the pickpoint modal
+    $("#editBenefactorModal").modal("hide");
+    $("#editPickpointModal").modal("show");
+  });
+});
+
+// Select Pickpoint to Edit a Donation
+
+$(document).ready(function () {
+  $(".select-edit-pickPoint").click(function () {
+    // Get the pickpoint information
+    var street = $(this).data("street");
+    var city = $(this).data("city");
+    var postalCode = $(this).data("postalcode");
+    var country = $(this).data("country");
+    var pickpointId = $(this).data("_id");
+    // Set the pickpoint information in the input fields
+    $("#editStreet").val(street);
+    $("#editCity").val(city);
+    $("#editPostalCode").val(postalCode);
+    $("#editCountry").val(country);
+    $("#editDonationPickpointId").val(pickpointId);
+    // Hide the pickpoint modal and show the pickpoint information
+    $("#editPickpointModal").modal("hide");
+  });
+
+  $("#editPickpointModal").on("hidden.bs.modal", function (e) {
+    $("#editModal").modal("show");
+  });
+
+  $("#editPickpointSearch").on("keyup", function () {
+    var value = $(this).val().toLowerCase();
+    $(".pickPoint-container").filter(function () {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});
+
+// Script to select pickpoint to edit a Donation
+
+$(document).ready(function () {
+  $("#editPickpointModal").on("show.bs.modal", function () {
+    $("body").addClass("test");
+    $(".modal-backdrop").last().css("z-index", 1051);
+  });
+
+  $("#editPickpointModal").on("hidden.bs.modal", function () {
+    $("body").removeClass("test");
+    $(".modal-backdrop").last().css("z-index", 1040);
+  });
+});
+
+$("#editPickpointSearch").on("input", function () {
+  var searchValue = $(this).val();
+  var benefactorId = $("#editBenefactorId").val(); // Get the benefactor ID from the input field
+  $.ajax({
+    url: `/benefactors/${benefactorId}/pickpoints/all-pickpoints`,
+    type: "POST",
+    data: {
+      "search[value]": searchValue,
+      length: 10,
+      benefactorId: benefactorId, // Send the benefactorId in the request body
+    },
+    success: function (pickpoints) {
+      $("#editPickpointContainer").empty();
+      pickpoints.data.forEach((pickpoint) => {
+        // Use .data
+        if (pickpoint && typeof pickpoint === "object") {
+          // Check if pickpoint is not null and is an object
+          $("#editPickpointContainer").append(`
+              <div class="pickpoint-container">
+                  <div class="d-flex align-items-center justify-content-between mt-2">
+                      <div>
+                          <h5>${pickpoint.street}, ${pickpoint.city}</h5>
+                          <p>${pickpoint.postalCode}, ${pickpoint.country}</p>
+                      </div>
+                      <button class="btn btn-primary select-edit-pickpoint" title="${pickpoint._id}" data-id="${pickpoint._id}">Select</button>
+                  </div>
+              </div>
+          `);
+        }
+      });
+    },
+  });
+});
+
+$(document).ready(function () {
+  $("body").on("click", ".select-edit-pickpoint", function () {
+    var pickpointId = $(this).data("id");
+    var pickpointStreet = $(this).parent().find("h5").text();
+    var pickpointCountry = $(this)
+      .parent()
+      .find("p")
+      .text()
+      .split(",")[1]
+      .trim(); // Get the country
+    var pickpointCity = $(this)
+      .parent()
+      .find("h5")
+      .text()
+      .split(",")[1]
+      .trim(); // Get the city
+    var pickpointPostalCode = $(this)
+      .parent()
+      .find("p")
+      .text()
+      .split(",")[0]
+      .trim(); // Get the postal code
+
+    $("#editDonationPickpointId").val(pickpointId);
+
+    $("#editPickpointAddress").val(
+      `${pickpointStreet}, ${pickpointCity}, ${pickpointPostalCode}, ${pickpointCountry}`
+    );  
+
+    $("#editPickpointModal").modal("hide");
+    $("editModal").modal("show");
+  });
 });

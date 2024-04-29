@@ -119,70 +119,40 @@
               </div>
               <!--Pickpoint Information-->
               <div id="pickpointInfo" hidden>
-                <input
-                  type="hidden"
-                  id="createDonationPickpointId"
-                  name="pickpointId"
-                />
                 <div class="row">
                   <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="createCountry" class="form-label"
-                        >Country</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="createCountry"
-                        name="country"
-                        readonly
-                      />
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="createCity" class="form-label">City</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="createCity"
-                        name="city"
-                        readonly
-                      />
-                    </div>
+                    <label for="createPickpointAddress" class="form-label"
+                      >Pickpoint Address</label
+                    >
+                    <input
+                    type="hidden"
+                    id="createDonationPickpointId"
+                    name="pickpointId"
+                  />
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="createStreet" class="form-label"
-                        >Street</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="createStreet"
-                        name="street"
-                        readonly
-                      />
-                    </div>
+                  <div class="col-md-9">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="createPickpointAddress"
+                      readonly
+                    />
                   </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="createPostalCode" class="form-label"
-                        >Postal Code</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="createPostalCode"
-                        name="postalCode"
-                        readonly
-                      />
-                    </div>
+                  <div class="col-md-3">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#pickpointModal"
+                    >
+                      <i class="fa-solid fa-plus"></i>
+                    </button>
                   </div>
-                  <input type="hidden" id="createTimestamp" name="timestamp" />
                 </div>
+                </div>
+                <input type="hidden" id="createTimestamp" name="timestamp" />
               </div>
               <div class="modal-footer">
                 <button type="submit" class="btn btn-primary">
@@ -387,73 +357,39 @@
               </div>
               <!--Pickpoint Information-->
               <div id="editPickpointInfo">
+                <label for="editPickpointAddress" class="form-label"
+                >Pickpoint Address</label>
                 <input
                   type="hidden"
                   id="editDonationPickpointId"
                   name="pickpointId"
                 />
                 <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="editCountry" class="form-label"
-                        >Country</label
-                      >
+                  <div class="row mb-3">
+                    <div class="col-md-9">
                       <input
                         type="text"
                         class="form-control"
-                        id="editCountry"
-                        name="country"
+                        id="editPickpointAddress"
                         readonly
                       />
                     </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="editCity" class="form-label">City</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="editCity"
-                        name="city"
-                        readonly
-                      />
+                    <div class="col-md-3">
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editPickpointModal"
+                      >
+                        <i class="fa-solid fa-plus"></i>
+                      </button>
                     </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="editStreet" class="form-label">Street</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="editStreet"
-                        name="street"
-                        readonly
-                      />
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="editPostalCode" class="form-label"
-                        >Postal Code</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="editPostalCode"
-                        name="postalCode"
-                        readonly
-                      />
-                    </div>
-                  </div>
-                  <input
-                    type="hidden"
-                    id="editActivityType"
-                    name="activityType"
-                  />
-                  <input type="hidden" id="editTimestamp" name="timestamp" />
-                </div>
+
+
+                <input type="hidden" id="editTimestamp" name="timestamp" />
+                
               </div>
               <div class="modal-footer">
                 <button type="submit" class="btn btn-primary">
@@ -945,7 +881,7 @@
             <button
               type="button"
               class="btn-close"
-              data-bs-dismiss="moda l"
+              data-bs-dismiss="modal"
               aria-label="Close"
             ></button>
           </div>
@@ -1178,460 +1114,6 @@
     <!--SCRIPTS-->
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-
-    <!-- Script to select User to Create a Donation -->
-    <script>
-      $(document).ready(function () {
-        $("#userModal").on("show.bs.modal", function () {
-          $("body").addClass("test");
-          $(".modal-backdrop").last().css("z-index", 1051);
-        });
-
-        $("#userModal").on("hidden.bs.modal", function () {
-          $("body").removeClass("test");
-          $(".modal-backdrop").last().css("z-index", 1040);
-          $("#createModal").modal("show");
-        });
-      });
-
-      $("#userSearch").on("input", function () {
-        var searchValue = $(this).val();
-
-        $.ajax({
-          url: "/users/all-users",
-          type: "POST",
-          data: { "search[value]": searchValue, length: 10 },
-          success: function (users) {
-            $("#userContainer").empty();
-            users.data.forEach((user) => {
-              $("#userContainer").append(`
-              <div class="user-container">
-                  <div class="d-flex align-items-center justify-content-between mt-2">
-                      <div>
-                          <h5>${user.username}</h5>
-                          <h6>${user.firstName} ${user.lastName}</h6>
-                          <p>${user._id}</p>
-                      </div>
-                      <button class="btn btn-primary select-create-user" data-id="${user._id}" >Select</button>
-                  </div>
-              </div>
-          `);
-            });
-          },
-        });
-      });
-
-      $(document).ready(function () {
-        $("body").on("click", ".select-create-user", function () {
-          // Get the user information
-          var userId = $(this).data("id");
-          var userName = $(this).parent().find("h5").text();
-          // Set the user information in the input fields
-          $("#createUserId").val(userId);
-          $("#createUserName").val(userName);
-          // Hide the user modal
-          $("#userModal").modal("hide");
-        });
-      });
-    </script>
-
-    <!-- Script to select Benefactor to Create a Donation -->
-    <script>
-      $(document).ready(function () {
-        $("#benefactorModal").on("show.bs.modal", function () {
-          $("body").addClass("test");
-          $(".modal-backdrop").last().css("z-index", 1051);
-        });
-
-        $("#benefactorModal").on("hidden.bs.modal", function () {
-          $("body").removeClass("test");
-          $(".modal-backdrop").last().css("z-index", 1040);
-        });
-      });
-
-      $("#benefactorSearch").on("input", function () {
-        var searchValue = $(this).val();
-        $.ajax({
-          url: "/benefactors/all-benefactors",
-          type: "POST",
-          data: { "search[value]": searchValue, length: 10 },
-          success: function (benefactors) {
-            $("#benefactorContainer").empty();
-            benefactors.data.forEach((benefactor) => {
-              $("#benefactorContainer").append(`
-                        <div class="benefactor-container">
-                            <div class="d-flex align-items-center justify-content-between mt-2">
-                                <div>
-                                    <h5>${benefactor.name}</h5>
-                                    <p>${benefactor._id}</p>
-                                </div>
-                                <button class="btn btn-primary select-create-benefactor" data-id="${benefactor._id}">Select</button>
-                            </div>
-                        </div>
-                    `);
-            });
-          },
-        });
-      });
-
-      $(document).ready(function () {
-        $("body").on("click", ".select-create-benefactor", function () {
-          // Get the benefactor information
-          var benefactorId = $(this).data("id");
-          var benefactorName = $(this).parent().find("h5").text();
-          // Set the benefactor information in the input fields
-          $("#createBenefactorId").val(benefactorId);
-          $("#createBenefactorName").val(benefactorName);
-          // Hide the benefactor modal and show the pickpoint modal
-          $("#benefactorModal").modal("hide");
-          $("#pickpointModal").modal("show");
-          $("#pickpointInfo").show();
-        });
-      });
-    </script>
-
-    <!--Select Pickpoint to Create a Donation-->
-    <script>
-      $(document).ready(function () {
-        $(".select-pickPoint").click(function () {
-          var street = $(this).data("street");
-          var city = $(this).data("city");
-          var postalCode = $(this).data("postalcode");
-          var country = $(this).data("country");
-          var pickpointId = $(this).data("_id");
-
-          $("#createStreet").val(street);
-          $("#createCity").val(city);
-          $("#createPostalCode").val(postalCode);
-          $("#createCountry").val(country);
-          $("#createDonationPickpointId").val(pickpointId);
-
-          $("#pickpointModal").modal("hide");
-          $("#pickpointInfo").show();
-        });
-
-        $("#pickpointModal").on("hidden.bs.modal", function (e) {
-          $("#createModal").modal("show");
-        });
-
-        $("#pickpointSearch").on("keyup", function () {
-          var value = $(this).val().toLowerCase();
-          $(".pickPoint-container").filter(function () {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-          });
-        });
-      });
-    </script>
-
-    <!-- Script to select pickpoint to create a Donation -->
-    <script>
-      $(document).ready(function () {
-        $("#pickpointModal").on("show.bs.modal", function () {
-          $("body").addClass("test");
-          $(".modal-backdrop").last().css("z-index", 1051);
-        });
-
-        $("#pickpointModal").on("hidden.bs.modal", function () {
-          $("body").removeClass("test");
-          $(".modal-backdrop").last().css("z-index", 1040);
-        });
-      });
-
-      $("#pickpointSearch").on("input", function () {
-        var searchValue = $(this).val();
-        var benefactorId = $("#createBenefactorId").val(); // Get the benefactor ID from the input field
-        $.ajax({
-          url: `/benefactors/${benefactorId}/pickpoints/all-pickpoints`,
-          type: "POST",
-          data: {
-            "search[value]": searchValue,
-            length: 10,
-            benefactorId: benefactorId, // Send the benefactorId in the request body
-          },
-          success: function (pickpoints) {
-            $("#pickpointContainer").empty();
-            pickpoints.data.forEach((pickpoint) => {
-              // Use .data
-              if (pickpoint && typeof pickpoint === "object") {
-                // Check if pickpoint is not null and is an object
-                $("#pickpointContainer").append(`
-                    <div class="pickpoint-container">
-                        <div class="d-flex align-items-center justify-content-between mt-2">
-                            <div>
-                                <h5>${pickpoint.street}, ${pickpoint.city}</h5>
-                                <p>${pickpoint.postalCode}, ${pickpoint.country}</p>
-                            </div>
-                            <button class="btn btn-primary select-pickpoint" data-id="${pickpoint._id}">Select</button>
-                        </div>
-                    </div>
-                `);
-              }
-            });
-          },
-        });
-      });
-
-      $(document).ready(function () {
-        $("body").on("click", ".select-pickpoint", function () {
-          var pickpointId = $(this).data("id");
-          var pickpointStreet = $(this).parent().find("h5").text();
-          var pickpointCountry = $(this)
-            .parent()
-            .find("p")
-            .text()
-            .split(",")[1]
-            .trim(); // Get the country
-          var pickpointCity = $(this)
-            .parent()
-            .find("h5")
-            .text()
-            .split(",")[1]
-            .trim(); // Get the city
-          var pickpointPostalCode = $(this)
-            .parent()
-            .find("p")
-            .text()
-            .split(",")[0]
-            .trim(); // Get the postal code
-
-          $("#createStreet").val(pickpointStreet); // Set the street
-          $("#createCountry").val(pickpointCountry); // Set the country
-          $("#createCity").val(pickpointCity); // Set the city
-          $("#createPostalCode").val(pickpointPostalCode); // Set the postal code
-          $("#createDonationPickpointId").val(pickpointId); // Set the pickpoint ID
-
-          $("#pickpointInfo").removeAttr("hidden");
-          $("#pickpointModal").modal("hide");
-        });
-      });
-    </script>
-
-    <!-- Script to select User to Edit a Donation -->
-    <script>
-      $(document).ready(function () {
-        $("#editUserModal").on("show.bs.modal", function () {
-          $("body").addClass("test");
-          $(".modal-backdrop").last().css("z-index", 1051);
-        });
-
-        $("#editUserModal").on("hidden.bs.modal", function () {
-          $("body").removeClass("test");
-          $(".modal-backdrop").last().css("z-index", 1040);
-          $("#editModal").modal("show");
-        });
-      });
-
-      $("#editUserSearch").on("input", function () {
-        var searchValue = $(this).val();
-
-        $.ajax({
-          url: "/users/all-users",
-          type: "POST",
-          data: { "search[value]": searchValue, length: 10 },
-          success: function (users) {
-            $("#editUserContainer").empty();
-            users.data.forEach((user) => {
-              $("#editUserContainer").append(`
-            <div class="user-container">
-                <div class="d-flex align-items-center justify-content-between mt-2">
-                    <div>
-                        <h5>${user.username}</h5>
-                        <h6>${user.firstName} ${user.lastName}</h6>
-                        <p>${user._id}</p>
-                    </div>
-                    <button class="btn btn-primary select-edit-user" data-id="${user._id}">Select</button>
-                </div>
-            </div>
-        `);
-            });
-          },
-        });
-      });
-
-      $(document).ready(function () {
-        $("body").on("click", ".select-edit-user", function () {
-          // Get the user information
-          var userId = $(this).data("id");
-          var userName = $(this).parent().find("h5").text();
-          // Set the user information in the input fields
-          $("#editUserId").val(userId);
-          $("#editUserName").val(userName);
-          // Hide the user modal
-          $("#editUserModal").modal("hide");
-        });
-      });
-    </script>
-
-    <!-- Script to select Benefactor to Edit a Donation -->
-    <script>
-      $(document).ready(function () {
-        $("#editBenefactorModal").on("show.bs.modal", function () {
-          $("body").addClass("test");
-          $(".modal-backdrop").last().css("z-index", 1051);
-        });
-
-        $("#editBenefactorModal").on("hidden.bs.modal", function () {
-          $("body").removeClass("test");
-          $(".modal-backdrop").last().css("z-index", 1040);
-        });
-      });
-
-      $("#editBenefactorSearch").on("input", function () {
-        var searchValue = $(this).val();
-        $.ajax({
-          url: "/benefactors/all-benefactors",
-          type: "POST",
-          data: { "search[value]": searchValue, length: 10 },
-          success: function (benefactors) {
-            $("#editBenefactorContainer").empty();
-            console.log(benefactors);
-            benefactors.data.forEach((benefactor) => {
-              $("#editBenefactorContainer").append(`
-                <div class="benefactor-container">
-                    <div class="d-flex align-items-center justify-content-between mt-2">
-                        <div>
-                            <h5>${benefactor.name}</h5>
-                            <p>${benefactor._id}</p>
-                        </div>
-                        <button class="btn btn-primary select-edit-benefactor" data-id="${benefactor._id}">Select</button>
-                    </div>
-                </div>
-            `);
-            });
-          },
-        });
-      });
-
-      $(document).ready(function () {
-        $("body").on("click", ".select-edit-benefactor", function () {
-          // Get the benefactor information
-          var benefactorId = $(this).data("id");
-          var benefactorName = $(this).parent().find("h5").text();
-          // Set the benefactor information in the input fields
-          $("#editBenefactorId").val(benefactorId);
-          $("#editBenefactorName").val(benefactorName);
-          // Hide the benefactor modal and show the pickpoint modal
-          $("#editBenefactorModal").modal("hide");
-          $("#editPickpointModal").modal("show");
-        });
-      });
-    </script>
-
-    <!--Select Pickpoint to Edit a Donation-->
-    <script>
-      $(document).ready(function () {
-        $(".select-edit-pickPoint").click(function () {
-          // Get the pickpoint information
-          var street = $(this).data("street");
-          var city = $(this).data("city");
-          var postalCode = $(this).data("postalcode");
-          var country = $(this).data("country");
-          var pickpointId = $(this).data("_id");
-          // Set the pickpoint information in the input fields
-          $("#editStreet").val(street);
-          $("#editCity").val(city);
-          $("#editPostalCode").val(postalCode);
-          $("#editCountry").val(country);
-          $("#editDonationPickpointId").val(pickpointId);
-          // Hide the pickpoint modal and show the pickpoint information
-          $("#editPickpointModal").modal("hide");
-        });
-
-        $("#editPickpointModal").on("hidden.bs.modal", function (e) {
-          $("#editModal").modal("show");
-        });
-
-        $("#editPickpointSearch").on("keyup", function () {
-          var value = $(this).val().toLowerCase();
-          $(".pickPoint-container").filter(function () {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-          });
-        });
-      });
-    </script>
-
-    <!-- Script to select pickpoint to edit a Donation -->
-    <script>
-      $(document).ready(function () {
-        $("#editPickpointModal").on("show.bs.modal", function () {
-          $("body").addClass("test");
-          $(".modal-backdrop").last().css("z-index", 1051);
-        });
-
-        $("#editPickpointModal").on("hidden.bs.modal", function () {
-          $("body").removeClass("test");
-          $(".modal-backdrop").last().css("z-index", 1040);
-        });
-      });
-
-      $("#editPickpointSearch").on("input", function () {
-        var searchValue = $(this).val();
-        var benefactorId = $("#editBenefactorId").val(); // Get the benefactor ID from the input field
-        $.ajax({
-          url: `/benefactors/${benefactorId}/pickpoints/all-pickpoints`,
-          type: "POST",
-          data: {
-            "search[value]": searchValue,
-            length: 10,
-            benefactorId: benefactorId, // Send the benefactorId in the request body
-          },
-          success: function (pickpoints) {
-            $("#editPickpointContainer").empty();
-            pickpoints.data.forEach((pickpoint) => {
-              // Use .data
-              if (pickpoint && typeof pickpoint === "object") {
-                // Check if pickpoint is not null and is an object
-                $("#editPickpointContainer").append(`
-                    <div class="pickpoint-container">
-                        <div class="d-flex align-items-center justify-content-between mt-2">
-                            <div>
-                                <h5>${pickpoint.street}, ${pickpoint.city}</h5>
-                                <p>${pickpoint.postalCode}, ${pickpoint.country}</p>
-                            </div>
-                            <button class="btn btn-primary select-edit-pickpoint" title="${pickpoint._id}" data-id="${pickpoint._id}">Select</button>
-                        </div>
-                    </div>
-                `);
-              }
-            });
-          },
-        });
-      });
-
-      $(document).ready(function () {
-        $("body").on("click", ".select-edit-pickpoint", function () {
-          var pickpointId = $(this).data("id");
-          var pickpointStreet = $(this).parent().find("h5").text();
-          var pickpointCountry = $(this)
-            .parent()
-            .find("p")
-            .text()
-            .split(",")[1]
-            .trim(); // Get the country
-          var pickpointCity = $(this)
-            .parent()
-            .find("h5")
-            .text()
-            .split(",")[1]
-            .trim(); // Get the city
-          var pickpointPostalCode = $(this)
-            .parent()
-            .find("p")
-            .text()
-            .split(",")[0]
-            .trim(); // Get the postal code
-
-          $("#editDonationPickpointId").val(pickpointId);
-          $("#editStreet").val(pickpointStreet);
-          $("#editCountry").val(pickpointCountry); // Set the country
-          $("#editCity").val(pickpointCity); // Set the city
-          $("#editPostalCode").val(pickpointPostalCode); // Set the postal code
-
-          $("#editPickpointModal").modal("hide");
-          $("editModal").modal("show");
-        });
-      });
-    </script>
 
     <!-- DataTables JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
