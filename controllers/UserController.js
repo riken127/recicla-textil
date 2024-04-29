@@ -210,7 +210,7 @@ function addUser(req, res, next) {
                 if (existingUser.username === userData.username) {
                     errorMessage = "Username already exists.";
                 } else if (existingUser.email === userData.email) {
-                    errorMessage = "Email already exists.";
+                    errorMessage = "E-mail already exists.";
                 } else if (existingUser.phone === userData.phone) {
                     errorMessage = "Phone number already exists.";
                 }

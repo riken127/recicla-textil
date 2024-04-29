@@ -173,6 +173,8 @@ $(document).ready(function () {
                 // Close create modal and open pickpoint modal for the current benefactor.
                 $("#createModal").modal("hide");
                 openPickpointModal(currentBenefactorId, $("#editBenefactorName").val());
+                $("#pickpointsTable").ajax.reload();
+                $("#benefactorsTable").ajax.reload();
             },
 
 

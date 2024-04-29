@@ -73,9 +73,9 @@ async function getAllBenefactors(req, res, next) {
         var attribute_name = 'name'; // Default sorting column
         var column_sort_order = 'desc'; // Default sorting order
     } else {
-        var column_index = req.query.order?.[0]?.['column'];
-        var column_name = req.query.columns?.[column_index]?.['data'];
-        var column_sort_order = req.query.order?.[0]?.['dir'];
+        var column_index = order[0]['column'];
+        var column_name = columns[column_index]['data'];
+        var column_sort_order = order[0]['dir'];
     }
 
     // Determine the search value
@@ -315,42 +315,56 @@ function updateBenefactor(req, res, next) {
         ]
     })
         .then(existingBenefactor => {
-            // Handle nested properties like address
-            if (req.body.address) {
-                const addressUpdates = {};
-                // Loop through address properties.
-                for (const addressProp in req.body.address) {
-                    if (req.body.address.hasOwnProperty(addressProp)) {
-                        addressUpdates[addressProp] = req.body.address[addressProp];
-                    }
+            if (existingBenefactor) {
+                let errorMessage = "";
+                if (existingBenefactor.username === updateData.username) {
+                    errorMessage = "Username already exists.";
+                } else if (existingBenefactor.email === updateData.email) {
+                    errorMessage = "E-mail already exists.";
+                } else if (existingBenefactor.phone === updateData.phone) {
+                    errorMessage = "Phone number already exists.";
                 }
-                // Update address field in the update data.
-                updateData.address = addressUpdates;
+                res.status(400).json(
+                    { message: errorMessage, type: "danger"}
+                );
+            } else {
+                // Handle nested properties like address
+                if (req.body.address) {
+                    const addressUpdates = {};
+                    // Loop through address properties.
+                    for (const addressProp in req.body.address) {
+                        if (req.body.address.hasOwnProperty(addressProp)) {
+                            addressUpdates[addressProp] = req.body.address[addressProp];
+                        }
+                    }
+                    // Update address field in the update data.
+                    updateData.address = addressUpdates;
+                }
+
+                // Update the benefactor in the database
+                Benefactor.findByIdAndUpdate(benefactorId, updateData, {new: true}) // Return updated document
+                    .then((updatedBenefactor) => {
+                        if (req.body.image && !fs.existsSync('./uploads/benefactors/' + benefactorId + '/profile')) {
+                            fs.mkdirSync('./uploads/benefactors/' + benefactorId + '/profile/', {recursive: true});
+                        }
+
+                        // If the benefactor is not found, respond with a JSON error message.
+                        if (!updatedBenefactor) {
+                            return res.json({message: "Benefactor not found", type: "danger"});
+                        }
+                        // Set a success message in the session.
+                        req.session.message = {
+                            type: "success",
+                            message: updatedBenefactor.name + " was updated successfully.",
+                        };
+                        // Redirect to the '/all' route.
+                        res.redirect("/all");
+                    })
+                    .catch((err) => {
+                        // If an error occurs during the update process, respond with a JSON error message.
+                        res.json({message: err.message, type: "danger"});
+                    });
             }
-
-            // Update the benefactor in the database
-            Benefactor.findByIdAndUpdate(benefactorId, updateData, {new: true}) // Return updated document
-                .then((updatedBenefactor) => {
-                    if (req.body.image && !fs.existsSync('./uploads/benefactors/' + benefactorId + '/profile')) {
-                        fs.mkdirSync('./uploads/benefactors/' + benefactorId + '/profile/', {recursive: true} );
-                    }
-
-                    // If the benefactor is not found, respond with a JSON error message.
-                    if (!updatedBenefactor) {
-                        return res.json({message: "Benefactor not found", type: "danger"});
-                    }
-                    // Set a success message in the session.
-                    req.session.message = {
-                        type: "success",
-                        message: updatedBenefactor.name + " was updated successfully.",
-                    };
-                    // Redirect to the '/all' route.
-                    res.redirect("/all");
-                })
-                .catch((err) => {
-                    // If an error occurs during the update process, respond with a JSON error message.
-                    res.json({message: err.message, type: "danger"});
-                });
         })
         .catch(err => {
            res.json({message: err.message, type: "danger"});
