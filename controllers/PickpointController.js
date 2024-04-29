@@ -62,7 +62,6 @@ function renderPickpointsTable(req, res, next) {
 async function getAllPickpoints(req, res, next) {
     // Retrieve the benefactor ID from the request
     const benefactorId = req.body.benefactorId;
-    console.log(benefactorId);
     // Retrieve DataTables parameters from the request
     const {draw, start, length, order, columns} = req.body;
     const search = req.body['search[value]'];
@@ -164,6 +163,7 @@ function getPickpoint(req, res, next) {
                 return res.status(404).json({message: "Benefactor not found"});
             }
             const pickPoint = benefactor.pickpoints.find(pp => pp._id.toString() === pickPointId);
+            console.log("id: "+pickPointId.toString);
 
             if (!pickPoint) {
                 return res.status(404).json({message: "Pickpoint not found"});
