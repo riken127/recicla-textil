@@ -100,9 +100,7 @@ async function getTotalCount(query) {
 }
 
 function addDonation(req, res, next) {
-  // Extract user data from the request body
   const donationData = req.body;
-  // Create a new user object with default values for optional fields
   let donation = new Donation({
     userId: donationData.userId,
     activityType: donationData.activityType,
@@ -110,20 +108,15 @@ function addDonation(req, res, next) {
     details: donationData.details,
     ip: req.headers["x-forwarded-for"] || req.connection.remoteAddress,
   });
-  // Save the new user to the database
   donation
     .save()
     .then((savedDonation) => {
-      // Set a success message in the session
-      req.session.message = {
+      res.status(200).json({
         type: "success",
-        message: "Donation added successfully",
-      };
-      // Redirect to the "/all" route
-      res.redirect("/all");
+        result: savedDonation._id,
+      });
     })
     .catch((err) => {
-      // If an error occurs during the save process, respond with a JSON error message
       res.json({
         message: err.message,
         type: "danger",

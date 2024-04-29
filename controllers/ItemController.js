@@ -155,7 +155,7 @@ async function deleteItem(req, res, next) {
  function getItem(req, res, next) {
      // Extract the donation ID from the route parameters
      const donationId = req.params.id; // Assuming the donation ID is passed as a route parameter
-     const itemId = req.params.idit;
+     const itemId = req.params.itemId;
  
      // Find the donation in the database by its ID
      Donation.findById(donationId)
@@ -182,44 +182,65 @@ async function deleteItem(req, res, next) {
  }
 
  function updateItem(req, res, next) {
-     // Extract the donation ID from the route parameters
-     const donationId = req.params.id; // Assuming the donation ID is passed as a route parameter
-     const itemId = req.params.idit;
-     const itemData = req.body;
- 
-     // Find the donation in the database by its ID
-     Donation.findById(donationId)
-         .then((donation) => {
-             // If the donation is not found, respond with a 404 error
-             if (!donation) {
-                 return res.status(404).json({message: "Donation not found"});
-             }
-             const item = donation.details.items.id(itemId);
- 
-             if (!item) {
-                 return res.status(404).json({message: "Item not found"});
-             }
- 
-             // Update the item with the new data
-             item.set(itemData);
+  // Extract the donation ID from the route parameters
+  const donationId = req.params.id; // Assuming the donation ID is passed as a route parameter
+  const itemId = req.params.itemId;
+  const itemData = req.body;
 
-             // Save the updated donation
-                return donation.save();
-          })
-          .then((updatedDonation) => {
-              // Respond with the updated donation
-              res.json(updatedDonation);
-          })
-          .catch((err) => {
-              // If an error occurs during the update process, log the error
-              console.error("Error updating item:", err);
-              // Respond with a 500 error
-              res.status(500).json({message: "Internal Server Error"});
-          });
- }
+  console.log("Updating item with ID:", itemId);
+  console.log("Updating donation with ID:", donationId);
+  console.log("Received data:", itemData);
 
+  // Find the donation the database its ID
+  Donation.findById(donationId)
+      .then((donation) => {
+          // If the donation is not found, respond with a 404 error
+          if (!donation) {
+              return res.status(404).json({message: "Donation not found"});
+          }
+          
+          // Find the item in the donation
+          const item = donation.details.items.find(item => item._id.toString() === itemId);
 
+          console.log("Item updated successfully:", item);
 
+          // If the item is not found, respond with a 404 error
+          if (!item) {
+              return res.status(404).json({message: "Item not found"});
+          }
+
+          // Update the item with the new data
+          item.brand = itemData.brand;
+          item.weight = itemData.weight;
+          item.size = itemData.size;
+          item.type = itemData.type;
+          item.photo = itemData.photo;
+
+          // Inform Mongoose that the item has been updated
+          donation.markModified('details.items');
+
+          // Update the total weight
+          donation.details.totalWeight = donation.details.items.reduce((total, item) => total + Number(item.weight.value), 0);
+
+          // Inform Mongoose that the totalWeight has been updated
+          donation.markModified('details.totalWeight');
+
+          // Save the updated donation
+          return donation.save();
+       })
+       .then((updatedDonation) => {
+           // Respond with the updated donation
+           res.json(updatedDonation);
+       })
+       .catch((err) => {
+           // If an error occurs during the update process, log the error
+           console.error("Error updating item:", err);
+           // Respond with a 500 error
+           if (!res.headersSent) {
+               res.status(500).json({message: "Internal Server Error"});
+           }
+       });
+}
 
 module.exports = {
   getAllItems: getAllItems,

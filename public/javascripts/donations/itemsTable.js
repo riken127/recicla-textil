@@ -128,8 +128,9 @@ $(document).ready(function () {
       },
     });
   };
-// Confirm Edit action for item.
-     $("#confirmEditItem").on("click", function (e) {
+
+  // Confirm Edit action for item.
+     $("#updateItem").on("click", function (e) {
      // Create a data object with the form data
      const itemData = {
           _id: currentItemId,
@@ -144,7 +145,10 @@ $(document).ready(function () {
      };
      // Convert data object to JSON string
      const jsonData = JSON.stringify(itemData);
-     
+    
+     console.log("Editing donation with ID:", currentDonationId);
+    console.log("Editing item with ID:", currentItemId);  
+    console.log("Sending data: ", itemData);
      // Send AJAX request
      $.ajax({
           url: `/donations/${currentDonationId}/items/${currentItemId}/update`,

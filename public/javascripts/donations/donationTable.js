@@ -34,7 +34,7 @@ $(document).ready(function () {
     columns: [
       {
         data: "timestamp",
-        title: "Timestamp",
+        title: "Creation Date",
         render: function (data, type, row) {
           return new Date(data).toLocaleString().split(" GMT")[0];
         },
@@ -42,10 +42,11 @@ $(document).ready(function () {
       {
         data: "userId",
         title: "User ID",
+
       },
       {
-        data: "ip",
-        title: "IP",
+        data: "details.benefactorId",
+        title: "Benefactor ID",
       },
       {
         data: "details.items",
@@ -173,43 +174,44 @@ $(document).ready(function () {
   };
 
   // Form submission event handler for create modal
-  $("#createDonationForm").submit(function (event) {
-    event.preventDefault(); // Prevent default form submission
-    // Collect all items from the table
-    var items = [];
-    // Create the Donation Data object
-    const donationData = {
-      userId: $("#createUserId").val(), // Set the user ID
-      activityType: "donation", //set the activity type to donation
-      timestamp: new Date($("#createTimestamp").val()), // set the timestamp to the current date
-      details: {
-        benefactorId: $("#createBenefactorId").val(), // Set the benefactor ID
-        pickpointId: $("#createDonationPickpointId").val(), // Set the pickpoint ID
-        items: items,
-        totalWeight: 0, // Set the total weight to 0
-        numberOfItems: 0, // Set the number of items to 0
-      },
-      ip: 0,
-    };
-    // Send AJAX request
-    $.ajax({
-      url: "/donations/add",
-      type: "POST",
-      data: JSON.stringify(donationData), // Convert donationData to JSON string
-      contentType: "application/json",
-      dataType: "json",
-      success: function (response) {
-        console.log("Donation created successfully:", response);
-        // Handle successful creation (e.g., close modal, show confirmation)
-        $("#createModal").modal("hide");
-        $("#createDonationForm")[0].reset();
-      },
-    });
-    $("#pickpointInfo").attr("hidden", "");
-    table.ajax.reload();
-  
+$("#createDonationForm").submit(function (event) {
+  event.preventDefault(); // Prevent default form submission
+  // Collect all items from the table
+  var items = [];
+  // Create the Donation Data object
+  const donationData = {
+    userId: $("#createUserId").val(), // Set the user ID
+    activityType: "donation", //set the activity type to donation
+    timestamp: new Date($("#createTimestamp").val()), // set the timestamp to the current date
+    details: {
+      benefactorId: $("#createBenefactorId").val(), // Set the benefactor ID
+      pickpointId: $("#createDonationPickpointId").val(), // Set the pickpoint ID
+      items: items,
+      totalWeight: 0, // Set the total weight to 0
+      numberOfItems: 0, // Set the number of items to 0
+    },
+    ip: 0,
+  };
+  // Send AJAX request
+  $.ajax({
+    url: "/donations/add",
+    type: "POST",
+    data: JSON.stringify(donationData),
+    contentType: "application/json",
+    dataType: "json",
+    success: function (response) {
+      console.log("Donation created successfully:", response);
+      $("#createModal").modal("hide");
+      $("#createDonationForm")[0].reset();
+      console.log("Isto é o id: ", response.result);
+      window.itemsModal(response.result);
+      table.ajax.reload();
+    },
   });
-
+  $("#pickpointInfo").attr("hidden", "");
+  table.ajax.reload();
+});
+    
   // Function to open the Edit modal and populate the form fields with the existing data
   window.openEditModal = async (donationId) => {
     if (donationId) {
