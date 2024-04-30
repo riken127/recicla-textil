@@ -53,46 +53,112 @@ $(document).ready(function () {
     });
   };
 
+  
   // Form submission event handler for add item modal
-  $(document).on("submit", "#addItemForm", function (event) {
-    event.preventDefault(); // Prevent default form submission
-    // Create a data object with the form data
-    const itemData = {
-      _id: "",
-      brand: $("#brand").val(),
-      weight: {
-        value: $("#weight").val(),
-        unit: $("#weightUnit").val(),
-      },
-      size: $("#size").val(),
-      type: $("#itemType").val(),
-      photo: $("#itemPhoto").val(),
-    };
-    // Convert data object to JSON string
-    const jsonData = JSON.stringify(itemData);
+$(document).on("submit", "#addItemForm", function (event) {
+  event.preventDefault(); // Prevent default form submission
 
-    // Send AJAX request
-    console.log("Sending data: ", itemData);
-    $.ajax({
-      url: `/donations/${currentDonationId}/items/add`,
-      type: "POST",
-      data: jsonData,
-      contentType: "application/json",
-      dataType: "json",
-      success: function (response) {
-        console.log("Item created successfully:", response);
-        $("#addItemModal").modal("hide"); // Close the modal
-        $("#addItemForm")[0].reset(); // Reset the form
-        $("#itemsModal").modal("show"); // Open the items modal
-        $("#itemsTable").DataTable().ajax.reload(); //Reload Items table
-        $("donationsTable").DataTable().ajax.reload(); //Reload Donations table
-      },
-      error: function (error) {
-        console.error("Error creating Item:", error);
-        console.error("Server response:", error.responseText);
-      },
-    });
+  // Get donationId from somewhere (you need to implement this)
+  const donationId = currentDonationId;
+
+  // Fetch donation to get benefactorId
+  $.ajax({
+    url: `/donations/${donationId}`,
+    type: "GET",
+    success: function (donation) {
+      // Get benefactorId from donation details
+      const benefactorId = donation.details.benefactorId;
+
+      // Fetch benefactor to get points ratio
+      $.ajax({
+        url: `/benefactors/${benefactorId}`,
+        type: "GET",
+        success: function (benefactor) {
+          // Create a data object with the form data
+          const itemData = {
+            _id: "",
+            brand: $("#brand").val(),
+            weight: {
+              value: $("#weight").val(),
+              unit: $("#weightUnit").val(),
+            },
+            size: $("#size").val(),
+            type: $("#itemType").val(),
+            photo: $("#itemPhoto").val(),
+          };
+
+          // Calculate points to add to user
+          const pointsToAdd = itemData.weight.value * (benefactor.convertationRatio.points / benefactor.convertationRatio.value);
+          console.log("Adding points to user:", pointsToAdd);
+          console.log("Points ratio:", benefactor.convertationRatio.points, "/", benefactor.convertationRatio.value);
+          console.log("Points:", benefactor.convertationRatio.points);
+          console.log("Value:", benefactor.convertationRatio.value);
+          console.log("User ID:", donation.userId);
+          // Convert data object to JSON string
+          const jsonData = JSON.stringify(itemData);
+
+          // Send AJAX request
+          console.log("Sending data: ", itemData);
+          $.ajax({
+            url: `/donations/${currentDonationId}/items/add`,
+            type: "POST",
+            data: jsonData,
+            contentType: "application/json",
+            dataType: "json",
+            success: function (response) {
+              console.log("Item created successfully:", response);
+              $("#addItemModal").modal("hide"); // Close the modal
+              $("#addItemForm")[0].reset(); // Reset the form
+              $("#itemsModal").modal("show"); // Open the items modal
+              $("#itemsTable").DataTable().ajax.reload(); //Reload Items table
+              $("donationsTable").DataTable().ajax.reload(); //Reload Donations table
+
+              addPointsToUser(donation.userId, pointsToAdd);
+            },
+            error: function (error) {
+              console.error("Error creating Item:", error);
+              console.error("Server response:", error.responseText);
+            },
+          });
+        },
+        error: function (error) {
+          console.error("Error fetching Benefactor:", error);
+          console.error("Server response:", error.responseText);
+        },
+      });
+    },
+    error: function (error) {
+      console.error("Error fetching Donation:", error);
+      console.error("Server response:", error.responseText);
+    },
   });
+});
+
+// Function to add points to user
+function addPointsToUser(userId, pointsToAdd) {
+  // Create data object with userId and pointsToAdd
+  const data = {
+    userId: userId,
+    leafs: pointsToAdd
+  };
+
+  // Send AJAX request
+  $.ajax({
+    url: "/users/update",
+    type: "POST",
+    data: JSON.stringify(data),
+    contentType: "application/json",
+    dataType: "json",
+    success: function (response) {
+      console.log("User points updated successfully:", response);
+    },
+    error: function (error) {
+      console.error("Error updating user points:", error);
+      console.error("Server response:", error.responseText);
+    },
+  });
+}
+
 
   //Function to open the delete item modal
   window.openDeleteItemModal = (id) => {

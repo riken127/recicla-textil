@@ -1,971 +1,1143 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Benefactors</title>
     <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"
     />
     <script
-            crossorigin="anonymous"
-            src="https://kit.fontawesome.com/3eb5f00bae.js"
+      crossorigin="anonymous"
+      src="https://kit.fontawesome.com/3eb5f00bae.js"
     ></script>
     <link
-            rel="stylesheet"
-            type="text/css"
-            href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css"
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css"
     />
     <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/css/countrySelect.min.css"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/css/countrySelect.min.css"
     />
     <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/css/intlTelInput.css"
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/css/intlTelInput.css"
     />
     <style>
-        .country-select {
-            width: 100%;
-        }
+      .country-select {
+        width: 100%;
+      }
 
-        .iti {
-            width: 100%;
-        }
+      .iti {
+        width: 100%;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-<div class="container md-col-12 mb-3 py-4">
-    <table
-            id="benefactorsTable"
-            class="table table-striped display"
-            style="width: 100%"
-    ></table>
-</div>
-<!-- Edit Modal -->
-<div
-        class="modal fade"
-        id="editModal"
-        tabindex="-1"
-        aria-labelledby="editModal"
-        aria-hidden="true"
->
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">
-                    <i class="fa-solid fa-building"></i> Edit Benefactor
-                </h5>
-                <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                ></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center" role="alert"
-                     id="editErrorAlert" style="display: none;">
-                    <i class="fa-solid fa-circle-exclamation fa-shake fa-xl"></i>&nbsp;<span id="editErrorMessage">This is an error message</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <form id="editBenefactorForm" method="POST">
-                    <div class="accordion" id="accordionExample">
-                        <!-- Credentials Section -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingOne">
-                                <button
-                                        class="accordion-button"
-                                        type="button"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#collapseOne"
-                                        aria-expanded="true"
-                                        aria-controls="collapseOne"
-                                >
-                                    Credentials
-                                </button>
-                            </h2>
-                            <div
-                                    id="collapseOne"
-                                    class="accordion-collapse collapse show"
-                                    aria-labelledby="headingOne"
-                                    data-bs-parent="#accordionExample"
-                            >
-                                <div class="accordion-body">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <input
-                                                    type="hidden"
-                                                    id="editBenefactorId"
-                                                    name="editBenefactorId"
-                                            />
-                                            <div class="mb-3">
-                                                <label
-                                                        for="editBenefactorUsername"
-                                                        class="form-label"
-                                                >Username</label
-                                                >
-                                                <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        id="editBenefactorUsername"
-                                                        name="username"
-                                                        required
-                                                        readonly
-                                                />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="editBenefactorPhone"
-                                            >Phone Number</label
-                                            >
-                                            <input
-                                                    class="form-control"
-                                                    id="editBenefactorPhone"
-                                                    name="editBenefactorPhone"
-                                                    type="text"
-                                            />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="editBenefactorEmail"
-                                            >Email</label
-                                            >
-                                            <input
-                                                    class="form-control"
-                                                    id="editBenefactorEmail"
-                                                    type="email"
-                                            />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="editPassword"
-                                            >Password</label
-                                            >
-                                            <input
-                                                    class="form-control"
-                                                    id="editPassword"
-                                                    type="password"
-                                                    placeholder="Your Password"
-                                            />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="editConfirmPassword"
-                                            >Confirm Password</label
-                                            >
-                                            <input
-                                                    class="form-control"
-                                                    id="editConfirmPassword"
-                                                    type="password"
-                                                    placeholder="Confirm Your Password"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Profile Section -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="profileHeading">
-                                <button
-                                        class="accordion-button collapsed"
-                                        type="button"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#collapseProfile"
-                                        aria-expanded="false"
-                                        aria-controls="collapseProfile"
-                                >
-                                    Profile
-                                </button>
-                            </h2>
-                            <div
-                                    id="collapseProfile"
-                                    class="accordion-collapse collapse"
-                                    aria-labelledby="profileHeading"
-                                    data-bs-parent="#accordionExample"
-                            >
-                                <div class="accordion-body">
-                                    <div class="row g-3">
-                                        <div class="col-md-12">
-                                            <label class="form-label" for="editBenefactorName"
-                                            >Name</label
-                                            >
-                                            <input
-                                                    class="form-control"
-                                                    id="editBenefactorName"
-                                                    name="editBenefactorName"
-                                                    placeholder="Your Name"
-                                                    type="text"
-                                            />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="editLogo">Logo</label>
-                                            <input
-                                                    class="form-control"
-                                                    id="editLogo"
-                                                    name="editLogo"
-                                                    type="file"
-                                            />
-                                            <div class="form-text" id="logoHint">
-                                                Why don't you go ahead and add a logo!? <i
-                                                        class="fa-solid fa-wand-magic-sparkles"></i>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="editBanner"
-                                            >Banner Image</label
-                                            >
-                                            <input
-                                                    class="form-control"
-                                                    id="editBanner"
-                                                    name="editBanner"
-                                                    type="file"
-                                            />
-                                            <div class="form-text" id="bannerHint">
-                                                Why don't you go ahead and add a banner!? <i
-                                                        class="fa-solid fa-wand-magic-sparkles"></i>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label class="form-label" for="editDescription"
-                                            >Description</label
-                                            >
-                                            <textarea
-                                                    class="form-control"
-                                                    id="editBenefactorDescription"
-                                                    placeholder="Write description here..."
-                                                    style="height: 100px"
-                                            ></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Address Section -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="addressHeading">
-                                <button
-                                        class="accordion-button collapsed"
-                                        type="button"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#collapseAddress"
-                                        aria-expanded="false"
-                                        aria-controls="collapseAddress"
-                                >
-                                    Address
-                                </button>
-                            </h2>
-                            <div
-                                    id="collapseAddress"
-                                    class="accordion-collapse collapse"
-                                    aria-labelledby="addressHeading"
-                                    data-bs-parent="#accordionExample"
-                            >
-                                <div class="accordion-body">
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="editStreet"
-                                            >Street</label
-                                            >
-                                            <input
-                                                    class="form-control"
-                                                    id="editStreet"
-                                                    placeholder="Your Street"
-                                                    type="text"
-                                            />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="editPostalCode"
-                                            >Postal Code</label
-                                            >
-                                            <input
-                                                    class="form-control"
-                                                    id="editPostalCode"
-                                                    placeholder="Your Postal Code"
-                                                    type="text"
-                                            />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="editCity">City</label>
-                                            <input
-                                                    class="form-control"
-                                                    id="editCity"
-                                                    type="text"
-                                            />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="editCountry" class="form-label"
-                                                >Country</label
-                                                ><br/>
-                                                <input
-                                                        type="text"
-                                                        id="editCountry"
-                                                        class="form-control"
-                                                        name="address.country"
-                                                        required
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button
-                                type="button"
-                                class="btn btn-secondary"
-                                data-bs-dismiss="modal"
-                        >
-                            Close
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            Save Changes
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+  <body>
+    <div class="container md-col-12 mb-3 py-4">
+      <table
+        id="benefactorsTable"
+        class="table table-striped display"
+        style="width: 100%"
+      ></table>
     </div>
-</div>
-
-<!-- Create Modal -->
-<div
-        class="modal fade"
-        id="createModal"
-        tabindex="-1"
-        aria-labelledby="createModalLabel"
-        aria-hidden="true"
->
-    <div class="modal-dialog modal-lg">
+    <!-- Edit Modal -->
+    <div
+      class="modal fade"
+      id="editModal"
+      tabindex="-1"
+      aria-labelledby="editModal"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h5 class="modal-title" id="createModalLabel">
-                    <i class="fa-solid fa-building"></i> Create Benefactor
-                </h5>
-                <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                ></button>
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">
+              <i class="fa-solid fa-building"></i> Edit Benefactor
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div
+              class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center"
+              role="alert"
+              id="editErrorAlert"
+              style="display: none"
+            >
+              <i class="fa-solid fa-circle-exclamation fa-shake fa-xl"></i
+              >&nbsp;<span id="editErrorMessage">This is an error message</span>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
             </div>
-            <!-- Modal Body -->
-            <div class="modal-body">
-                <div class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center" role="alert"
-                     id="createErrorAlert" style="display: none;">
-                    <i class="fa-solid fa-circle-exclamation fa-shake fa-xl"></i>&nbsp;<span id="createErrorMessage">This is an error message</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <form
-                        id="createBenefactorForm"
-                        action="/add"
-                        method="post"
-                        class="row g-3"
-                >
-                    <div class="col-md-12">
-                        <div class="accordion" id="accordionForm">
-                            <!-- Credentials Section -->
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="credentialsHeading">
-                                    <button
-                                            class="accordion-button"
-                                            type="button"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#collapseCredentials"
-                                            aria-expanded="true"
-                                            aria-controls="collapseCredentials"
-                                    >
-                                        Credentials
-                                    </button>
-                                </h2>
-                                <div
-                                        id="collapseCredentials"
-                                        class="accordion-collapse collapse show"
-                                        aria-labelledby="credentialsHeading"
-                                        data-bs-parent="#accordionForm"
-                                >
-                                    <div class="accordion-body">
-                                        <div class="row g-3">
-                                            <div class="col-md-12">
-                                                <label class="form-label" for="createUsername"
-                                                >Username</label
-                                                >
-                                                <input
-                                                        class="form-control"
-                                                        id="createUsername"
-                                                        name="Username"
-                                                        placeholder="Your Username"
-                                                        type="text"
-                                                />
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label" for="createphone"
-                                                >Phone Number</label
-                                                >
-                                                <input
-                                                        class="form-control"
-                                                        id="createphone"
-                                                        name="phoneNumber"
-                                                        placeholder="Your Phone Number"
-                                                        type="text"
-                                                />
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label" for="createEmail"
-                                                >Email</label
-                                                >
-                                                <input
-                                                        class="form-control"
-                                                        id="createEmail"
-                                                        placeholder="Your Email"
-                                                        type="email"
-                                                />
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label" for="createPassword"
-                                                >Password</label
-                                                >
-                                                <input
-                                                        class="form-control"
-                                                        id="createPassword"
-                                                        placeholder="Your Password"
-                                                        type="password"
-                                                />
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label" for="createConfirmPassword"
-                                                >Confirm Password</label
-                                                >
-                                                <input
-                                                        class="form-control"
-                                                        id="createConfirmPassword"
-                                                        placeholder="Confirm Your Password"
-                                                        type="password"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Profile Section -->
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="profileHeading">
-                                    <button
-                                            class="accordion-button collapsed"
-                                            type="button"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#collapseProfile"
-                                            aria-expanded="false"
-                                            aria-controls="collapseProfile"
-                                    >
-                                        Profile
-                                    </button>
-                                </h2>
-                                <div
-                                        id="collapseProfile"
-                                        class="accordion-collapse collapse"
-                                        aria-labelledby="profileHeading"
-                                        data-bs-parent="#accordionForm"
-                                >
-                                    <div class="accordion-body">
-                                        <div class="row g-3">
-                                            <div class="col-md-12">
-                                                <label class="form-label" for="createName"
-                                                >Name</label
-                                                >
-                                                <input
-                                                        class="form-control"
-                                                        id="createName"
-                                                        name="createName"
-                                                        placeholder="Your Name"
-                                                        type="text"
-                                                />
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label" for="createLogo"
-                                                >Logo Image</label
-                                                >
-                                                <input
-                                                        class="form-control"
-                                                        id="createLogo"
-                                                        name="createLogo"
-                                                        type="file"
-                                                />
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label" for="createBanner"
-                                                >Banner Image</label
-                                                >
-                                                <input
-                                                        class="form-control"
-                                                        id="createBanner"
-                                                        name="bannerImage"
-                                                        type="file"
-                                                />
-                                            </div>
-                                            <div class="col-md-12">
-                                                <label class="form-label" for="createDescription"
-                                                >Description</label
-                                                >
-                                                <textarea
-                                                        class="form-control"
-                                                        id="createDescription"
-                                                        placeholder="Write description here..."
-                                                        style="height: 100px"
-                                                ></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Address Section -->
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="addressHeading">
-                                    <button
-                                            class="accordion-button collapsed"
-                                            type="button"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#collapseAddress"
-                                            aria-expanded="false"
-                                            aria-controls="collapseAddress"
-                                    >
-                                        Address
-                                    </button>
-                                </h2>
-                                <div
-                                        id="collapseAddress"
-                                        class="accordion-collapse collapse"
-                                        aria-labelledby="addressHeading"
-                                        data-bs-parent="#accordionForm"
-                                >
-                                    <div class="accordion-body">
-                                        <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <label class="form-label" for="createStreet"
-                                                >Street</label
-                                                >
-                                                <input
-                                                        class="form-control"
-                                                        id="createStreet"
-                                                        placeholder="Your Street"
-                                                        type="text"
-                                                />
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label" for="createPostalCode"
-                                                >Postal Code</label
-                                                >
-                                                <input
-                                                        class="form-control"
-                                                        id="createPostalCode"
-                                                        placeholder="Your Postal Code"
-                                                        type="text"
-                                                />
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label" for="createCity"
-                                                >City</label
-                                                >
-                                                <input
-                                                        class="form-control"
-                                                        id="createCity"
-                                                        placeholder="Your City"
-                                                        type="text"
-                                                />
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="createcountry" class="form-label"
-                                                    >Country</label
-                                                    >
-                                                    <br/>
-                                                    <input
-                                                            type="text"
-                                                            id="createcountry"
-                                                            class="form-control"
-                                                            name="address.country"
-                                                            required
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+            <form id="editBenefactorForm" method="POST">
+              <div class="accordion" id="accordionExample">
+                <!-- Credentials Section -->
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingOne">
+                    <button
+                      class="accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseOne"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Credentials
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseOne"
+                    class="accordion-collapse collapse show"
+                    aria-labelledby="headingOne"
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div class="accordion-body">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <input
+                            type="hidden"
+                            id="editBenefactorId"
+                            name="editBenefactorId"
+                          />
+                          <div class="mb-3">
+                            <label
+                              for="editBenefactorUsername"
+                              class="form-label"
+                              >Username</label
+                            >
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="editBenefactorUsername"
+                              name="username"
+                              required
+                              readonly
+                            />
+                          </div>
                         </div>
-                    </div>
-                    <!-- Modal Footer -->
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-dark">Create</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Pickpoint Modal -->
-<div
-        class="modal fade"
-        id="pickpointModal"
-        tabindex="-1"
-        aria-labelledby="pickpointModalLabel"
-        aria-hidden="true"
->
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="pickpointModalLabel">
-                </h5>
-                <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                ></button>
-            </div>
-            <div class="modal-body">
-                <div class="container md-col-12 mb-3 py-4">
-                    <table
-                            id="pickpointsTable"
-                            class="table table-striped display"
-                            style="width: 100%"
-                    ></table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button
-                        class="btn btn-primary"
-                        data-bs-target="#newPickpointModal"
-                        data-bs-toggle="modal"
-                        data-bs-dismiss="modal"
-                >
-                    Add Pickpoint
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- New Pickpoint Modal -->
-<div
-        class="modal fade"
-        id="newPickpointModal"
-        aria-hidden="true"
-        aria-labelledby="pickpointLabel"
-        tabindex="-1"
->
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="pickpointLabel">
-                    <i class="fa-solid fa-warehouse"></i> Create PickPoint
-                </h5>
-                <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                ></button>
-            </div>
-            <div class="modal-body">
-                <form id="createPickpointForm" action="/add" method="post" class="row g-3">
-                    <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label" for="inputPickpointStreet"
+                          <label class="form-label" for="editBenefactorPhone"
+                            >Phone Number</label
+                          >
+                          <input
+                            class="form-control"
+                            id="editBenefactorPhone"
+                            name="editBenefactorPhone"
+                            type="text"
+                          />
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label" for="editBenefactorEmail"
+                            >Email</label
+                          >
+                          <input
+                            class="form-control"
+                            id="editBenefactorEmail"
+                            type="email"
+                          />
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label" for="editPassword"
+                            >Password</label
+                          >
+                          <input
+                            class="form-control"
+                            id="editPassword"
+                            type="password"
+                            placeholder="Your Password"
+                          />
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label" for="editConfirmPassword"
+                            >Confirm Password</label
+                          >
+                          <input
+                            class="form-control"
+                            id="editConfirmPassword"
+                            type="password"
+                            placeholder="Confirm Your Password"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Profile Section -->
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="profileHeading">
+                    <button
+                      class="accordion-button collapsed"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseProfile"
+                      aria-expanded="false"
+                      aria-controls="collapseProfile"
+                    >
+                      Profile
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseProfile"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="profileHeading"
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div class="accordion-body">
+                      <div class="row g-3">
+                        <div class="col-md-12">
+                          <label class="form-label" for="editBenefactorName"
+                            >Name</label
+                          >
+                          <input
+                            class="form-control"
+                            id="editBenefactorName"
+                            name="editBenefactorName"
+                            placeholder="Your Name"
+                            type="text"
+                          />
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label" for="editLogo">Logo</label>
+                          <input
+                            class="form-control"
+                            id="editLogo"
+                            name="editLogo"
+                            type="file"
+                          />
+                          <div class="form-text" id="logoHint">
+                            Why don't you go ahead and add a logo!?
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label" for="editBanner"
+                            >Banner Image</label
+                          >
+                          <input
+                            class="form-control"
+                            id="editBanner"
+                            name="editBanner"
+                            type="file"
+                          />
+                          <div class="form-text" id="bannerHint">
+                            Why don't you go ahead and add a banner!?
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <label class="form-label" for="editDescription"
+                            >Description</label
+                          >
+                          <textarea
+                            class="form-control"
+                            id="editBenefactorDescription"
+                            placeholder="Write description here..."
+                            style="height: 100px"
+                          ></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Address Section -->
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="addressHeading">
+                    <button
+                      class="accordion-button collapsed"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseAddress"
+                      aria-expanded="false"
+                      aria-controls="collapseAddress"
+                    >
+                      Address
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseAddress"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="addressHeading"
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div class="accordion-body">
+                      <div class="row g-3">
+                        <div class="col-md-6">
+                          <label class="form-label" for="editStreet"
                             >Street</label
-                            >
-                            <input
-                                    class="form-control"
-                                    id="inputPickpointStreet"
-                                    placeholder="Enter Street"
-                                    type="text"
-                                    required
-                            />
+                          >
+                          <input
+                            class="form-control"
+                            id="editStreet"
+                            placeholder="Your Street"
+                            type="text"
+                          />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label" for="inputPickpointPostalCode"
+                          <label class="form-label" for="editPostalCode"
                             >Postal Code</label
-                            >
-                            <input
-                                    class="form-control"
-                                    id="inputPickpointPostalCode"
-                                    placeholder="Enter Postal Code"
-                                    type="text"
-                                    required
-                            />
+                          >
+                          <input
+                            class="form-control"
+                            id="editPostalCode"
+                            placeholder="Your Postal Code"
+                            type="text"
+                          />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label" for="inputPickpointCity">City</label>
-                            <input
-                                    class="form-control"
-                                    id="inputPickpointCity"
-                                    placeholder="Enter City"
-                                    type="text"
-                                    required
-                            />
+                          <label class="form-label" for="editCity">City</label>
+                          <input
+                            class="form-control"
+                            id="editCity"
+                            type="text"
+                          />
                         </div>
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="createpickpointcountry" class="form-label"
-                                >Country</label
-                                >
-                                <br/>
-                                <input
-                                        type="text"
-                                        id="createpickpointcountry"
-                                        class="form-control"
-                                        name="address.country"
-                                        required
-                                />
-                            </div>
+                          <div class="mb-3">
+                            <label for="editCountry" class="form-label"
+                              >Country</label
+                            ><br />
+                            <input
+                              type="text"
+                              id="editCountry"
+                              class="form-control"
+                              name="address.country"
+                              required
+                            />
+                          </div>
                         </div>
+                      </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-dark">Create Pickpoint</button>
+                  </div>
+                </div>
+                <!-- Miscellaneous Section -->
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="miscellaneousHeading">
+                    <button
+                      class="accordion-button collapsed"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseMiscellaneous"
+                      aria-expanded="false"
+                      aria-controls="collapseMiscellaneous"
+                    >
+                      Miscellaneous
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseMiscellaneous"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="miscellaneousHeading"
+                    data-bs-parent="#accordionForm"
+                  >
+                    <div class="accordion-body">
+                      <div class="row g-3">
+                        <div class="col-md-5">
+                          <label class="form-label" for="editPoints"
+                            >Points</label
+                          >
+                          <input
+                            class="form-control"
+                            id="editPoints"
+                            placeholder="Enter Points"
+                            type="number"
+                            required
+                          />
+                        </div>
+                        <div class="col-md-5">
+                          <label class="form-label" for="editValue"
+                            >Value</label
+                          >
+                          <input
+                            class="form-control"
+                            id="editValue"
+                            placeholder="Enter Value"
+                            type="number"
+                            required
+                          />
+                        </div>
+                        <div class="col-md-2 mb-2">
+                          <label for="editWeigthMetric" class="form-label"
+                            >Unit</label
+                          >
+                          <select
+                            class="form-control"
+                            id="editWeigthMetric"
+                            name="weigthMetric"
+                          >
+                            <option value="g">g</option>
+                          </select>
+                        </div>
+                      </div>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Delete Modal Benefactor -->
-<div
-        class="modal fade"
-        id="deleteBenefactorModal"
-        tabindex="-1"
-        aria-labelledby="deleteModalLabel"
-        aria-hidden="true"
->
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Benefactor</h5>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
                 <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                ></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this benefactor?</p>
-            </div>
-            <div class="modal-footer">
-                <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
                 >
-                    No
+                  Close
                 </button>
-                <button type="button" class="btn btn-danger" id="confirmBenefactorDelete">
-                    Yes
+                <button type="submit" class="btn btn-primary">
+                  Save Changes
                 </button>
-            </div>
+              </div>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-<!-- Edit Pickpoint Modal -->
-<div
-        class="modal fade"
-        id="editPickpointModal"
-        aria-hidden="true"
-        aria-labelledby="editPickpointLabel"
-        tabindex="-1"
->
-    <div class="modal-dialog modal-dialog-centered">
+    <!-- Create Modal -->
+    <div
+      class="modal fade"
+      id="createModal"
+      tabindex="-1"
+      aria-labelledby="createModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editPickpointLabel">
-                    <i class="fa-solid fa-warehouse"></i> Edit PickPoint
-                </h5>
-                <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                ></button>
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h5 class="modal-title" id="createModalLabel">
+              <i class="fa-solid fa-building"></i> Create Benefactor
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <!-- Modal Body -->
+          <div class="modal-body">
+            <div
+              class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center"
+              role="alert"
+              id="createErrorAlert"
+              style="display: none"
+            >
+              <i class="fa-solid fa-circle-exclamation fa-shake fa-xl"></i
+              >&nbsp;<span id="createErrorMessage"
+                >This is an error message</span
+              >
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
             </div>
-            <div class="modal-body">
-                <form id="editPickpointForm" action="/edit" method="post" class="row g-3">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label" for="editPickpointStreet"
-                            >Street</label
+            <form
+              id="createBenefactorForm"
+              action="/add"
+              method="post"
+              class="row g-3"
+            >
+              <div class="col-md-12">
+                <div class="accordion" id="accordionForm">
+                  <!-- Credentials Section -->
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="credentialsHeading">
+                      <button
+                        class="accordion-button"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseCredentials"
+                        aria-expanded="true"
+                        aria-controls="collapseCredentials"
+                      >
+                        Credentials
+                      </button>
+                    </h2>
+                    <div
+                      id="collapseCredentials"
+                      class="accordion-collapse collapse show"
+                      aria-labelledby="credentialsHeading"
+                      data-bs-parent="#accordionForm"
+                    >
+                      <div class="accordion-body">
+                        <div class="row g-3">
+                          <div class="col-md-12">
+                            <label class="form-label" for="createUsername"
+                              >Username</label
                             >
                             <input
-                                    class="form-control"
-                                    id="editPickpointStreet"
-                                    placeholder="Enter Street"
-                                    type="text"
-                                    required
+                              class="form-control"
+                              id="createUsername"
+                              name="Username"
+                              placeholder="Your Username"
+                              type="text"
                             />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="editPickpointPostalCode"
-                            >Postal Code</label
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label" for="createphone"
+                              >Phone Number</label
                             >
                             <input
-                                    class="form-control"
-                                    id="editPickpointPostalCode"
-                                    placeholder="Enter Postal Code"
-                                    type="text"
-                                    required
+                              class="form-control"
+                              id="createphone"
+                              name="phoneNumber"
+                              placeholder="Your Phone Number"
+                              type="text"
                             />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="editPickpointCity">City</label>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label" for="createEmail"
+                              >Email</label
+                            >
                             <input
-                                    class="form-control"
-                                    id="editPickpointCity"
-                                    placeholder="Enter City"
-                                    type="text"
-                                    required
+                              class="form-control"
+                              id="createEmail"
+                              placeholder="Your Email"
+                              type="email"
                             />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label" for="createPassword"
+                              >Password</label
+                            >
+                            <input
+                              class="form-control"
+                              id="createPassword"
+                              placeholder="Your Password"
+                              type="password"
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label
+                              class="form-label"
+                              for="createConfirmPassword"
+                              >Confirm Password</label
+                            >
+                            <input
+                              class="form-control"
+                              id="createConfirmPassword"
+                              placeholder="Confirm Your Password"
+                              type="password"
+                            />
+                          </div>
                         </div>
-                        <div class="col-md-6">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Profile Section -->
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="profileHeading">
+                      <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseProfile"
+                        aria-expanded="false"
+                        aria-controls="collapseProfile"
+                      >
+                        Profile
+                      </button>
+                    </h2>
+                    <div
+                      id="collapseProfile"
+                      class="accordion-collapse collapse"
+                      aria-labelledby="profileHeading"
+                      data-bs-parent="#accordionForm"
+                    >
+                      <div class="accordion-body">
+                        <div class="row g-3">
+                          <div class="col-md-12">
+                            <label class="form-label" for="createName"
+                              >Name</label
+                            >
+                            <input
+                              class="form-control"
+                              id="createName"
+                              name="createName"
+                              placeholder="Your Name"
+                              type="text"
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label" for="createLogo"
+                              >Logo Image</label
+                            >
+                            <input
+                              class="form-control"
+                              id="createLogo"
+                              name="createLogo"
+                              type="file"
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label" for="createBanner"
+                              >Banner Image</label
+                            >
+                            <input
+                              class="form-control"
+                              id="createBanner"
+                              name="bannerImage"
+                              type="file"
+                            />
+                          </div>
+                          <div class="col-md-12">
+                            <label class="form-label" for="createDescription"
+                              >Description</label
+                            >
+                            <textarea
+                              class="form-control"
+                              id="createDescription"
+                              placeholder="Write description here..."
+                              style="height: 100px"
+                            ></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Address Section -->
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="addressHeading">
+                      <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseAddress"
+                        aria-expanded="false"
+                        aria-controls="collapseAddress"
+                      >
+                        Address
+                      </button>
+                    </h2>
+                    <div
+                      id="collapseAddress"
+                      class="accordion-collapse collapse"
+                      aria-labelledby="addressHeading"
+                      data-bs-parent="#accordionForm"
+                    >
+                      <div class="accordion-body">
+                        <div class="row g-3">
+                          <div class="col-md-6">
+                            <label class="form-label" for="createStreet"
+                              >Street</label
+                            >
+                            <input
+                              class="form-control"
+                              id="createStreet"
+                              placeholder="Your Street"
+                              type="text"
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label" for="createPostalCode"
+                              >Postal Code</label
+                            >
+                            <input
+                              class="form-control"
+                              id="createPostalCode"
+                              placeholder="Your Postal Code"
+                              type="text"
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label" for="createCity"
+                              >City</label
+                            >
+                            <input
+                              class="form-control"
+                              id="createCity"
+                              placeholder="Your City"
+                              type="text"
+                            />
+                          </div>
+                          <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="editpickpointcountry" class="form-label"
+                              <label for="createcountry" class="form-label"
                                 >Country</label
-                                >
-                                <br/>
-                                <input
-                                        type="text"
-                                        id="editpickpointcountry"
-                                        class="form-control"
-                                        name="address.country"
-                                        required
-                                />
+                              >
+                              <br />
+                              <input
+                                type="text"
+                                id="createcountry"
+                                class="form-control"
+                                name="address.country"
+                                required
+                              />
                             </div>
+                          </div>
                         </div>
+                      </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-dark">Edit Pickpoint</button>
+                  </div>
+                  <!-- Miscellaneous Section -->
+
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="miscellaneousHeading">
+                      <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseMiscellaneous"
+                        aria-expanded="false"
+                        aria-controls="collapseMiscellaneous"
+                      >
+                        Miscellaneous
+                      </button>
+                    </h2>
+                    <div
+                      id="collapseMiscellaneous"
+                      class="accordion-collapse collapse"
+                      aria-labelledby="miscellaneousHeading"
+                      data-bs-parent="#accordionForm"
+                    >
+                      <div class="accordion-body">
+                        <div class="row g-3">
+                          <div class="col-md-5">
+                            <label class="form-label" for="createPoints"
+                              >Points</label
+                            >
+                            <input
+                              class="form-control"
+                              id="createPoints"
+                              placeholder="Enter Points"
+                              type="number"
+                              required
+                            />
+                          </div>
+                          <div class="col-md-5">
+                            <label class="form-label" for="createValue"
+                              >Value</label
+                            >
+                            <input
+                              class="form-control"
+                              id="createValue"
+                              placeholder="Enter Value"
+                              type="number"
+                              required
+                            />
+                          </div>
+                          <div class="col-md-2 mb-2">
+                            <label for="createWeigthMetric" class="form-label"
+                              >Unit</label
+                            >
+                            <select
+                              class="form-control"
+                              id="createWeigthMetric"
+                              name="createWeigthMetric"
+                            >
+                              <option value="g">g</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                </form>
-            </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Modal Footer -->
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-dark">Create</button>
+              </div>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-<!-- Delete Modal Pickpoint -->
-<div
-        class="modal fade"
-        id="deletePickpointModal"
-        tabindex="-1"
-        aria-labelledby="deleteModalLabel"
-        aria-hidden="true"
->
-    <div class="modal-dialog">
+
+    <!-- Pickpoint Modal -->
+    <div
+      class="modal fade"
+      id="pickpointModal"
+      tabindex="-1"
+      aria-labelledby="pickpointModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Pickpoint</h5>
-                <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                ></button>
+          <div class="modal-header">
+            <h5 class="modal-title" id="pickpointModalLabel"></h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="container md-col-12 mb-3 py-4">
+              <table
+                id="pickpointsTable"
+                class="table table-striped display"
+                style="width: 100%"
+              ></table>
             </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this pickpoint?</p>
-            </div>
-            <div class="modal-footer">
-                <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                >
-                    No
-                </button>
-                <button type="button" class="btn btn-danger" id="confirmPickpointDelete">
-                    Yes
-                </button>
-            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-primary"
+              data-bs-target="#newPickpointModal"
+              data-bs-toggle="modal"
+              data-bs-dismiss="modal"
+            >
+              Add Pickpoint
+            </button>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <!-- New Pickpoint Modal -->
+    <div
+      class="modal fade"
+      id="newPickpointModal"
+      aria-hidden="true"
+      aria-labelledby="pickpointLabel"
+      tabindex="-1"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="pickpointLabel">
+              <i class="fa-solid fa-warehouse"></i> Create PickPoint
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form
+              id="createPickpointForm"
+              action="/add"
+              method="post"
+              class="row g-3"
+            >
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="inputPickpointStreet"
+                    >Street</label
+                  >
+                  <input
+                    class="form-control"
+                    id="inputPickpointStreet"
+                    placeholder="Enter Street"
+                    type="text"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="inputPickpointPostalCode"
+                    >Postal Code</label
+                  >
+                  <input
+                    class="form-control"
+                    id="inputPickpointPostalCode"
+                    placeholder="Enter Postal Code"
+                    type="text"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="inputPickpointCity"
+                    >City</label
+                  >
+                  <input
+                    class="form-control"
+                    id="inputPickpointCity"
+                    placeholder="Enter City"
+                    type="text"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="createpickpointcountry" class="form-label"
+                      >Country</label
+                    >
+                    <br />
+                    <input
+                      type="text"
+                      id="createpickpointcountry"
+                      class="form-control"
+                      name="address.country"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-dark">
+                  Create Pickpoint
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<!-- DataTables JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Delete Modal Benefactor -->
+    <div
+      class="modal fade"
+      id="deleteBenefactorModal"
+      tabindex="-1"
+      aria-labelledby="deleteModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Delete Benefactor</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete this benefactor?</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              No
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              id="confirmBenefactorDelete"
+            >
+              Yes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<!-- Bootstrap Bundle (Bootstrap JS and Popper.js) -->
-<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
-<script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
-<!-- DataTables Buttons JavaScript -->
-<script
-        type="text/javascript"
-        src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.dataTables.js"
-></script>
-<script
-        type="text/javascript"
-        src="https://cdn.datatables.net/buttons/3.0.1/js/dataTables.buttons.js"
-></script>
-<script
-        type="text/javascript"
-        src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.html5.min.js"
-></script>
-<script
-        type="text/javascript"
-        src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.print.min.js"
-></script>
-<!-- Initialization script -->
-<!-- Include intl-tel-input JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/intlTelInput.min.js"></script>
-<!-- Include country-select-js JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/js/countrySelect.min.js"></script>
-<!-- Include ajax table Initialization -->
-<script src="/javascripts/benefactors/benefactorTable.js"></script>
-<script src="/javascripts/benefactors/pickpointTable.js"></script>
-<script>
-    // Initialize "create" country selector
-    $("#createcountry").countrySelect();
-    $("#createpickpointcountry").countrySelect();
+    <!-- Edit Pickpoint Modal -->
+    <div
+      class="modal fade"
+      id="editPickpointModal"
+      aria-hidden="true"
+      aria-labelledby="editPickpointLabel"
+      tabindex="-1"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editPickpointLabel">
+              <i class="fa-solid fa-warehouse"></i> Edit PickPoint
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form
+              id="editPickpointForm"
+              action="/edit"
+              method="post"
+              class="row g-3"
+            >
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="editPickpointStreet"
+                    >Street</label
+                  >
+                  <input
+                    class="form-control"
+                    id="editPickpointStreet"
+                    placeholder="Enter Street"
+                    type="text"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="editPickpointPostalCode"
+                    >Postal Code</label
+                  >
+                  <input
+                    class="form-control"
+                    id="editPickpointPostalCode"
+                    placeholder="Enter Postal Code"
+                    type="text"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="editPickpointCity">City</label>
+                  <input
+                    class="form-control"
+                    id="editPickpointCity"
+                    placeholder="Enter City"
+                    type="text"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editpickpointcountry" class="form-label"
+                      >Country</label
+                    >
+                    <br />
+                    <input
+                      type="text"
+                      id="editpickpointcountry"
+                      class="form-control"
+                      name="address.country"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-dark">
+                  Edit Pickpoint
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Delete Modal Pickpoint -->
+    <div
+      class="modal fade"
+      id="deletePickpointModal"
+      tabindex="-1"
+      aria-labelledby="deleteModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Delete Pickpoint</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete this pickpoint?</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              No
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              id="confirmPickpointDelete"
+            >
+              Yes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    // Initialize "edit" country selector
-    $("#editCountry").countrySelect();
-    // Initialize "create" phone input
-    var createPhoneInput = document.querySelector("#createphone");
-    var createIti = window.intlTelInput(createPhoneInput, {
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+    <!-- DataTables JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Bootstrap Bundle (Bootstrap JS and Popper.js) -->
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
+    <!-- DataTables Buttons JavaScript -->
+    <script
+      type="text/javascript"
+      src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.dataTables.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.datatables.net/buttons/3.0.1/js/dataTables.buttons.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.html5.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.print.min.js"
+    ></script>
+    <!-- Initialization script -->
+    <!-- Include intl-tel-input JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/intlTelInput.min.js"></script>
+    <!-- Include country-select-js JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/js/countrySelect.min.js"></script>
+    <!-- Include ajax table Initialization -->
+    <script src="/javascripts/benefactors/benefactorTable.js"></script>
+    <script src="/javascripts/benefactors/pickpointTable.js"></script>
+    <script>
+      // Initialize "create" country selector
+      $("#createcountry").countrySelect();
+      $("#createpickpointcountry").countrySelect();
+
+      // Initialize "edit" country selector
+      $("#editCountry").countrySelect();
+      // Initialize "create" phone input
+      var createPhoneInput = document.querySelector("#createphone");
+      var createIti = window.intlTelInput(createPhoneInput, {
         initialCountry: "pt",
         separateDialCode: true,
         utilsScript:
-            "https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/utils.js",
-    });
-    // Initialize "edit" phone input
-    var editPhoneInput = document.querySelector("#editBenefactorPhone");
-    var editIti = window.intlTelInput(editPhoneInput, {
+          "https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/utils.js",
+      });
+      // Initialize "edit" phone input
+      var editPhoneInput = document.querySelector("#editBenefactorPhone");
+      var editIti = window.intlTelInput(editPhoneInput, {
         separateDialCode: true,
         utilsScript:
-            "https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/utils.js",
-    });
+          "https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/utils.js",
+      });
 
-    const handleChange = () => {
+      const handleChange = () => {
         let text;
         if (createPhoneInput.value) {
-            text = createIti.isValidNumber()
-                ? "Valid number! Full international format: " +
-                createIti.getNumber()
-                : "Invalid number - please try again";
+          text = createIti.isValidNumber()
+            ? "Valid number! Full international format: " +
+              createIti.getNumber()
+            : "Invalid number - please try again";
         } else {
-            text = "Please enter a valid number below";
+          text = "Please enter a valid number below";
         }
         const textNode = document.createTextNode(text);
         output.innerHTML = "";
         output.appendChild(textNode);
-    };
-</script>
-</body>
+      };
+    </script>
+  </body>
 </html>

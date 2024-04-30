@@ -111,6 +111,9 @@ $(document).ready(function () {
                     $("#editCountry").val(response.address.country);
                     $("#editPassword").val(response.password);
                     $("#editConfirmPassword").val(response.password);
+                    $("#editPoints").val(response.convertationRatio.points);
+                    $("#editValue").val(response.convertationRatio.value);
+                    $("#editWeigthMetric").val(response.convertationRatio.weigthMetric);
                     editIti.setNumber(response.phone);
                     $("#editModal").modal("show");
                     if (!response.logo && $("#logoHint").is(":hidden")) {
@@ -166,6 +169,11 @@ $(document).ready(function () {
                 country: $("#editCountry").val(),
             },
             phone: editIti.getNumber(),
+            convertationRatio: {
+                points: $("#editPoints").val(),
+                value: $("#editValue").val(),
+                weigthMetric: $("#editWeigthMetric").val(),
+            },
             notify: $("#editNotify").is(":checked"),
             image: (bannerImage || logoImage) ? 'y' : null
         };
@@ -230,6 +238,11 @@ $(document).ready(function () {
                 country: $("#createcountry").val(),
             },
             phone: createIti.getNumber(),
+            convertationRatio: {
+                points: $("#createPoints").val(),
+                value: $("#createValue").val(),
+                weigthMetric: $("#createWeigthMetric").val(),
+            },
         };
 
 
@@ -311,6 +324,7 @@ $(document).ready(function () {
     window.openDeleteModal = (benefactorId) => {
         currBenefactor = benefactorId;
         $("#deleteBenefactorModal").modal("show");
+        console.log("Benefactor ID:", currBenefactor);
     }
 
 
