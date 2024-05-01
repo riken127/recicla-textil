@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Donations</title>
+    <link rel="stylesheet" href="/stylesheets/sidebar/sidebarStyle.css">
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"
@@ -29,6 +30,9 @@
   </head>
 
   <body>
+
+    <%- include('../partials/sidebar') %>
+
     <!--Donations Table-->
     <div class="container md-col-12 mb-3 py-4">
       <table
@@ -1114,6 +1118,8 @@
         </div>
       </div>
     </div>
+    
+    <%- include('../partials/footer') %>
 
     <!--SCRIPTS-->
     <!-- jQuery -->

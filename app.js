@@ -11,7 +11,7 @@ var donationRouter = require('./routes/donations');
 var benefactorRouter = require('./routes/benefactors');
 var userRouter = require('./routes/user/user');
 var dashboardRouter = require('./routes/dashboard');
-
+var homeRouter = require('./routes/home');
 
 var app = express();
 var mongoose = require('mongoose');
@@ -31,6 +31,8 @@ app.use('/users', usersRouter);
 app.use('/donations', donationRouter);
 app.use('/benefactors', benefactorRouter);
 app.use('/dashboard', dashboardRouter);
+app.use('/home', homeRouter);
+
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

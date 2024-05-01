@@ -4,6 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Benefactors</title>
+    <link rel="stylesheet" href="/stylesheets/sidebar/sidebarStyle.css">
     <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"
@@ -37,6 +38,8 @@
 </head>
 
 <body>
+    <%- include('../partials/sidebar') %>
+
 <div class="container md-col-12 mb-3 py-4">
     <table
             id="benefactorsTable"
@@ -894,6 +897,8 @@
         </div>
     </div>
 </div>
+
+<%- include('../partials/footer') %>
 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
