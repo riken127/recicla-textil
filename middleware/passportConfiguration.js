@@ -36,7 +36,10 @@ const authenticateUser = async (username, password, done) => {
         done(null, user._id);
     });
     passport.deserializeUser((id, done) => {
-        done(null, getUserById(id));
+        getUserById(id)
+            .then(user => {
+                done(null, user);
+            })
     });
 }
 

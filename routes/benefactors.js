@@ -5,7 +5,7 @@ const pickpointController = require('../controllers/PickpointController');
 const upload = require('../middleware/multerMiddleware');
 const auth = require('./auth')
 // Retrieves benefactors table
-router.get('/all', auth.checkAuthenticated,benefactorController.renderBenefactorsTable);
+router.get('/all', auth.checkAuthenticated, auth.checkRoles(['administrator']), benefactorController.renderBenefactorsTable);
 // Adds a new benefactor
 router.post('/add', benefactorController.addBenefactor);
 // Updates an existing benefactor

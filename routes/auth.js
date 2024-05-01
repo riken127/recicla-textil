@@ -29,8 +29,23 @@ function checkAuthenticated(req, res, next) {
     }
     next()
   }
-  
 
+function checkRoles(roles) {
+    return function(req, res, next) {
+        if (!req.user || !req.user.roles || !req.user.roles.length) {
+            return res.status(403).json({ message: "Access Denied! No roles found for the user." });
+        }
+
+        // Check if any of the user's roles match the required roles
+        const authorized = roles.some(role => req.user.roles.includes(role));
+        if (!authorized) {
+            return res.status(403).json({ message: "Access Denied! User does not have the required roles." });
+        }
+
+        next(); // Proceed to the next middleware
+    };
+}
 module.exports = {router,
                   checkAuthenticated,
+                  checkRoles,
 checkNotAuthenticated};

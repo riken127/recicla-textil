@@ -4,8 +4,8 @@ var donationController = require("../controllers/DonationController");
 var itemsController = require("../controllers/ItemController");
 const upload = require("../middleware/multerMiddleware");
 const benefactorController = require("../controllers/BenefactorController");
-
-router.get("/all", donationController.renderDonationsTable);
+const auth = require("./auth");
+router.get("/all", auth.checkAuthenticated,auth.checkRoles(['administrator', 'employee']), donationController.renderDonationsTable);
 router.get("/:id", donationController.getDonation);
 router.post("/all-donations", donationController.getAllDonations);
 router.post("/add", donationController.addDonation);
