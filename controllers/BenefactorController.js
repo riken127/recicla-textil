@@ -5,7 +5,7 @@ const fs = require("fs");
 const objectMapper = require("../utils/objectMapper");
 const {json} = require("express");
 const path = require("path");
-
+const bcrypt = require('bcrypt')
 /**
  * Renders the table of benefactors.
  *
@@ -224,7 +224,7 @@ function addBenefactor(req, res, next) {
                     name: benefactorData.name || "", // Default to empty string if not provided
                     address: benefactorData.address || {}, // Default to empty object if address is not provided
                     username: benefactorData.username || "", // Default to empty string if not provided
-                    password: benefactorData.password || "", // Default to empty string if not provided
+                    password: bcrypt.hash(benefactorData.password, 10) || "", // Default to empty string if not provided
                     email: benefactorData.email || "", // Default to empty string if not provided
                     description: benefactorData.description || "", // Default to empty string if not provided
                     phone: benefactorData.phone || "", // Default to empty string if not provided
@@ -304,7 +304,7 @@ function updateBenefactor(req, res, next) {
             updateData[prop] = req.body[prop];
         }
     }
-
+    updateData.password = bcrypt.hashSync(updateData.password, 10);
     Benefactor.findOne({
         $and: [
             { _id: { $ne: benefactorId } },
@@ -358,7 +358,11 @@ function updateBenefactor(req, res, next) {
                             message: updatedBenefactor.name + " was updated successfully.",
                         };
                         // Redirect to the '/all' route.
-                        res.redirect("/all");
+
+                        res.json({
+                            type: 'success',
+                            message: updateBenefactor.name + " was updated successfully."
+                        })
                     })
                     .catch((err) => {
                         // If an error occurs during the update process, respond with a JSON error message.

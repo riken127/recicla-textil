@@ -5,6 +5,7 @@ const { json } = require("express");
 const Donation = require("../models/user/UserActivity");
 const { updateDonation } = require("./DonationController");
 const mongoose = require('mongoose');
+const path = require('path');
 
 async function getAllItems(req, res, next) {
   const donationId = req.body.donationId;
@@ -80,6 +81,9 @@ function addItem(req, res, next) {
   const itemData = req.body;
   const weight = parseInt(itemData.weight.value);
   itemData._id = new mongoose.Types.ObjectId();
+  if (req.body.photo && !fs.existsSync('./uploads/donations/' + donationId + '/images/')) {
+      fs.mkdirSync('./uploads/donations/' + donationId + '/images/', {recursive:true});
+  }
   Donation.findByIdAndUpdate(
     donationId,
     {
@@ -95,6 +99,7 @@ function addItem(req, res, next) {
       res.json({
         message: "Item added successfully",
         donation: updateDonation,
+          id: itemData._id
       });
     })
     .catch((err) => {
@@ -183,7 +188,9 @@ async function deleteItem(req, res, next) {
   console.log("Updating item with ID:", itemId);
   console.log("Updating donation with ID:", donationId);
   console.log("Received data:", itemData);
-
+     if (req.body.photo && !fs.existsSync('./uploads/donations/' + donationId + '/images/')) {
+         fs.mkdirSync('./uploads/donations/' + donationId + '/images/', {recursive:true});
+     }
   // Find the donation the database its ID
   Donation.findById(donationId)
       .then((donation) => {
@@ -235,6 +242,39 @@ async function deleteItem(req, res, next) {
        });
 }
 
+function uploadImage(req, res, next) {
+        const originalFilename = req.file.originalname;
+        const imageUrl = path.join('./uploads/users/', req.body.entityId + '/', originalFilename);
+
+        Donation.findById(req.body.entityId)
+            .then((donation) => {
+            if (!donation) {
+                return res.status(404).json({message: "Donation not found"});
+            }
+
+            const item = donation.details.items.find(item => item._id.toString() === req.body.subEntityId);
+
+            if (!item) {
+                return res.status(404).json({message: 'Item not found'});
+            }
+
+            item.photo = imageUrl;
+
+            donation.markModified('details.items');
+            return donation.save();
+        })
+        .then((updateDonation) => {
+            res.json(updateDonation);
+        })
+            .catch((err) => {
+                console.error("Error updating item: ", err);
+
+                if (!res.headersSent) {
+                    res.status(500).json({message: 'Internal server error.'});
+                }
+            })
+
+}
 module.exports = {
   getAllItems: getAllItems,
   renderItemsTable: renderItemsTable,
@@ -242,4 +282,5 @@ module.exports = {
   deleteItem: deleteItem,
   getItem: getItem,
   updateItem: updateItem,
+    uploadImage: uploadImage
 };
