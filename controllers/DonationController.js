@@ -38,7 +38,8 @@ function renderDonationsTable(req, res, next) {
             res.render("donations/table", {
                 donations: donations,
                 users: users,
-                benefactors: benefactors
+                benefactors: benefactors,
+                currentRoute: '/donations/all'
             });
         })
         .catch((err) => {

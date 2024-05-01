@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,9 +27,7 @@
             width: 100%;
         }
     </style>
-  </head>
-
-  <body>
+    <%- include('../partials/sidebar') %>
     <!--Donations Table-->
     <div class="container md-col-12 mb-3 py-4">
       <table
@@ -157,7 +156,6 @@
                 </div>
                 </div>
                 <input type="hidden" id="createTimestamp" name="timestamp" />
-              </div>
               <div class="modal-footer">
                 <button type="submit" class="btn btn-primary">
                   Create Donation
@@ -511,7 +509,6 @@
         </div>
       </div>
     </div>
-
     <!-- Delete Modal -->
     <div
       class="modal fade"
@@ -551,6 +548,7 @@
         </div>
       </div>
     </div>
+
 
     <!-- Items Modal -->
     <div
@@ -1114,7 +1112,6 @@
         </div>
       </div>
     </div>
-
     <!--SCRIPTS-->
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -1157,5 +1154,4 @@
     <!-- Include ajax table Initialization -->
     <script src="/javascripts/donations/donationTable.js"></script>
     <script src="/javascripts/donations/itemsTable.js"></script>
-  </body>
-</html>
+<%- include('../partials/footer') %>
