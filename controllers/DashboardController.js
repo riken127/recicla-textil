@@ -16,7 +16,7 @@ async function returnUsersDashboard(req, res, next) {
             countTotalUsers(),
             calculateTotalPoints(),
         ]).then((values) => {
-            res.render("dashboards/users", {data: values});
+            res.render("dashboards/users", {data: values, currentRoute: '/dashboard/users'});
         });
     } catch (error) {
         console.error("Error fetching aggregation data:", error);
@@ -316,7 +316,7 @@ async function returnBenefactorsDashboard(req, res, next) {
             totalPickpoints(),
             pickPointsPerCity()
         ]).then((values) => {
-            res.render("dashboards/benefactors", {data: values});
+            res.render("dashboards/benefactors", {data: values, currentRoute: '/dashboard/benefactors'});
         });
     } catch (error) {
         console.error("Error fetching aggregation data:", error);

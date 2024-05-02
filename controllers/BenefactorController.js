@@ -33,6 +33,7 @@ function renderBenefactorsTable(req, res, next) {
             // Renders the "benefactors/table" view with the retrieved benefactors data
             res.render("benefactors/table", {
                 benefactors: benefactors,
+                currentRoute: '/benefactors/all'
             });
         })
         .catch((err) => {

@@ -5,7 +5,6 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Users</title>
-    <link rel="stylesheet" href="/stylesheets/sidebar/sidebarStyle.css">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"/>
     <script crossorigin="anonymous" src="https://kit.fontawesome.com/3eb5f00bae.js"></script>
@@ -13,16 +12,6 @@
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/css/countrySelect.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/css/intlTelInput.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
     <style>
         .country-select {
             width: 100%;
@@ -32,9 +21,7 @@
             width: 100%;
         }
     </style>
-</head>
-<body>
-
+<%- include('../partials/sidebar') %>
 <div class="container md-col-12 mb-3 py-4">
     <table id="usersTable" class="table table-striped display" style="width: 100%">
     </table>
@@ -48,7 +35,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center show" role="alert"
+                <div class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center" role="alert"
                      id="editErrorAlert" style="display: none;">
                     <i class="fa-solid fa-circle-exclamation fa-shake fa-xl"></i>&nbsp;<span id="editErrorMessage">This is an error message</span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -494,8 +481,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/js/countrySelect.min.js"></script>
 <!-- Include ajax table Initialization -->
 <script src="/javascripts/users/table.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 <script>
     // Initialize "create" country selector
     $('#createcountry').countrySelect();
@@ -530,5 +515,4 @@
         output.appendChild(textNode);
     };
 </script>
-</body>
-</html>
+<%- include('../partials/footer') %>

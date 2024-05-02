@@ -31,7 +31,7 @@ function renderUsersTable(req, res, next) {
         .exec()
         .then((users) => {
             // Renders the "users/table" view with the retrieved users data
-            res.render("users/table", {});
+            res.render("users/table", { currentRoute: '/users/all' });
         })
         .catch((err) => {
             // If an error occurs during the database query or rendering, respond with a JSON error message
