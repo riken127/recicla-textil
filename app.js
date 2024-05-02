@@ -6,10 +6,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var usersRouter = require('./routes/users');
-
 var donationRouter = require('./routes/donations');
 var benefactorRouter = require('./routes/benefactors');
-var userRouter = require('./routes/user/user');
 var dashboardRouter = require('./routes/dashboard');
 var homeRouter = require('./routes/home');
 
@@ -26,7 +24,6 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/donations', donationRouter);
 app.use('/benefactors', benefactorRouter);
@@ -34,7 +31,6 @@ app.use('/dashboard', dashboardRouter);
 app.use('/home', homeRouter);
 
 
-// catch 404 and forward to error handler
 app.use((req, res, next) => {
     next(createError(404));
 });
@@ -49,7 +45,7 @@ mongoose.connect(process.env.MONGODB_URI, {
     .catch((error) => {
         console.error('Error connecting to MongoDB:', error);
     });
-// error handler
+
 app.use((err, req, res, next) => {
     // set locals, only providing error in development
     res.locals.message = err.message;
