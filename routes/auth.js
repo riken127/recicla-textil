@@ -6,7 +6,7 @@ router.get('/login', checkNotAuthenticated, (req, res) => {
     res.render('login.ejs');
 });
 router.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-    successRedirect: '/dashboard/users',
+    successRedirect: '/home',
     failureRedirect: '/auth/login',
     failureFlash: true
 }));
@@ -25,7 +25,7 @@ function checkAuthenticated(req, res, next) {
   
   function checkNotAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
-      return res.redirect('/dashboard/users')
+      return res.redirect('/home')
     }
     next()
   }
