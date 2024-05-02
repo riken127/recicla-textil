@@ -105,8 +105,8 @@ $(document).ready(function () {
                     }
                     $("#editUsername").val(response.username);
                     $("#editEmail").val(response.email);
-                    $("#editPassword").val(response.password);
-                    $("#editConfirmPassword").val(response.password);
+                    $("#editPassword").val("");
+                    $("#editConfirmPassword").val("");
                     $("#editStreet").val(response.address.street);
                     $("#editCity").val(response.address.city);
                     $("#editPostalCode").val(response.address.postalCode);
@@ -133,8 +133,15 @@ $(document).ready(function () {
         let password = $("#editPassword").val();
         let confirmPassword = $("#editConfirmPassword").val();
 
-        if (password !== confirmPassword) {
-            $("#editErrorMessage").text("Error: Passwords do not match");
+
+        if (password && confirmPassword) {
+            if (password !== confirmPassword) {
+                $("#editErrorMessage").text("Error: Passwords do not match.");
+                $("#editErrorAlert").addClass("show").removeClass("fade").css("display", "block");
+                return;
+            }
+        } else if (!password && confirmPassword || password && !confirmPassword) {
+            $("#editErrorMessage").text("Error: Must fill both fields or neither.");
             $("#editErrorAlert").addClass("show").removeClass("fade").css("display", "block");
             return;
         }
@@ -147,7 +154,7 @@ $(document).ready(function () {
             lastName: $("#editLastName").val(),
             username: $("#editUsername").val(),
             email: $("#editEmail").val(),
-            password: $("#editPassword").val(),
+            password: (password && confirmPassword) ? (password) : (undefined),
             roles: $("#editRoles").val(),
             address: {
                 street: $("#editStreet").val(),

@@ -57,6 +57,7 @@ $(document).ready(function () {
   $(document).on("submit", "#addItemForm", function (event) {
     event.preventDefault(); // Prevent default form submission
     // Create a data object with the form data
+    let itemImage = $("#itemPhoto").prop("files")[0];
     const itemData = {
       _id: "",
       brand: $("#brand").val(),
@@ -66,7 +67,7 @@ $(document).ready(function () {
       },
       size: $("#size").val(),
       type: $("#itemType").val(),
-      photo: $("#itemPhoto").val(),
+      photo: itemImage ? 'y' : null,
     };
     // Convert data object to JSON string
     const jsonData = JSON.stringify(itemData);
@@ -79,13 +80,15 @@ $(document).ready(function () {
       data: jsonData,
       contentType: "application/json",
       dataType: "json",
-      success: function (response) {
-        console.log("Item created successfully:", response);
+      success: (response) => {
+          if (itemImage) {
+              uploadItemImage(currentDonationId, response.id, itemImage);
+          }
         $("#addItemModal").modal("hide"); // Close the modal
         $("#addItemForm")[0].reset(); // Reset the form
         $("#itemsModal").modal("show"); // Open the items modal
         $("#itemsTable").DataTable().ajax.reload(); //Reload Items table
-        $("donationsTable").DataTable().ajax.reload(); //Reload Donations table
+        $("#donationsTable").DataTable().ajax.reload(); //Reload Donations table
       },
       error: function (error) {
         console.error("Error creating Item:", error);
@@ -132,6 +135,7 @@ $(document).ready(function () {
   // Confirm Edit action for item.
      $("#updateItem").on("click", function (e) {
      // Create a data object with the form data
+         let itemImage = $("#editItemPhoto").prop("files")[0];
      const itemData = {
           _id: currentItemId,
           brand: $("#editBrand").val(),
@@ -141,14 +145,11 @@ $(document).ready(function () {
           },
           size: $("#editSize").val(),
           type: $("#editItemType").val(),
-          photo: $("#editItemPhoto").val(),
+          photo: itemImage ? 'y' : null
      };
      // Convert data object to JSON string
      const jsonData = JSON.stringify(itemData);
     
-     console.log("Editing donation with ID:", currentDonationId);
-    console.log("Editing item with ID:", currentItemId);  
-    console.log("Sending data: ", itemData);
      // Send AJAX request
      $.ajax({
           url: `/donations/${currentDonationId}/items/${currentItemId}/update`,
@@ -157,10 +158,13 @@ $(document).ready(function () {
           contentType: "application/json",
           dataType: "json",
           success: function (response) {
-          console.log("Item updated successfully:", response);
-          $("#editItemModal").modal("hide"); // Close the modal
-          $("#itemsModal").modal("show"); // Open the items modal
-          $("#itemsTable").DataTable().ajax.reload(); //Reload Items table
+            console.log("Item updated successfully:", response);
+            if (itemImage) {
+                uploadItemImage(currentDonationId, currentItemId, currentItemId, itemImage);
+            }
+            $("#editItemModal").modal("hide"); // Close the modal
+            $("#itemsModal").modal("show"); // Open the items modal
+            $("#itemsTable").DataTable().ajax.reload(); //Reload Items table
           },
           error: function (error) {
           console.error("Error updating Item:", error);
@@ -187,4 +191,25 @@ $(document).ready(function () {
       },
     });
   });
+
+  function uploadItemImage(donationId, itemId, itemImageFile) {
+      const formData = new FormData();
+      formData.append('entityType', 'donation');
+      formData.append('entityId', donationId);
+      formData.append('subEntityId', itemId);
+      formData.append('item', itemImageFile, itemId + '-item.jpg');
+      $.ajax({
+          url: `/donations/${donationId}/upload/`,
+          type: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: (response) => {
+              console.log('Item image uploaded successfully', response);
+          },
+          error: (error) => {
+              console.log('Error updating item', error);
+          }
+      });
+  }
 });

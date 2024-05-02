@@ -109,8 +109,8 @@ $(document).ready(function () {
                     $("#editCity").val(response.address.city);
                     $("#editPostalCode").val(response.address.postalCode);
                     $("#editCountry").val(response.address.country);
-                    $("#editPassword").val(response.password);
-                    $("#editConfirmPassword").val(response.password);
+                    $("#editPassword").val("");
+                    $("#editConfirmPassword").val("");
                     editIti.setNumber(response.phone);
                     $("#editModal").modal("show");
                     if (!response.logo && $("#logoHint").is(":hidden")) {
@@ -142,8 +142,14 @@ $(document).ready(function () {
         let password = $("#editPassword").val();
         let confirmPassword = $("#editConfirmPassword").val();
 
-        if (password !== confirmPassword) {
-            $("#editErrorMessage").text("Error: Passwords do not match");
+        if (password && confirmPassword) {
+            if (password !== confirmPassword) {
+                $("#editErrorMessage").text("Error: Passwords do not match");
+                $("#editErrorAlert").addClass("show").removeClass("fade").css("display", "block");
+                return;
+            }
+        } else if (!password && confirmPassword || password && !confirmPassword) {
+            $("#editErrorMessage").text("Error: Must fill both fields or neither.")
             $("#editErrorAlert").addClass("show").removeClass("fade").css("display", "block");
             return;
         }
@@ -157,7 +163,7 @@ $(document).ready(function () {
             username: $("#editBenefactorUsername").val(),
             description: $("#editBenefactorDescription").val(),
             email: $("#editBenefactorEmail").val(),
-            password: $("#editPassword").val(),
+            password: (password && confirmPassword) ? (password) : (undefined),
             roles: $("#editRoles").val(),
             address: {
                 street: $("#editStreet").val(),
@@ -182,6 +188,8 @@ $(document).ready(function () {
             success: function (response) {
                 if (bannerImage) {
                     uploadBannerImage(benefactorData.benefactorId, bannerImage);
+                }
+                if (logoImage) {
                     uploadLogoImage(benefactorData.benefactorId, logoImage);
                 }
                 $("#editModal").modal("hide");

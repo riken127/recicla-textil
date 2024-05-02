@@ -5,7 +5,7 @@ const fs = require("fs");
 const objectMapper = require("../utils/objectMapper");
 const {json} = require("express");
 const path = require("path");
-
+const bcrypt = require('bcrypt');
 /**
  * Renders the table of users.
  *
@@ -222,7 +222,7 @@ function addUser(req, res, next) {
                     firstName: userData.firstName,
                     username: userData.username || "", // Default to empty string if not provided
                     email: userData.email || "", // Default to empty string if not provided
-                    password: userData.password || "", // Default to empty string if not provided
+                    password: bcrypt.hashSync(userData.password, 10) || "", // Default to empty string if not provided
                     image: "",
                     roles: userData.roles || ["user"], // Default to "user" if roles are not provided
                     address: userData.address || {}, // Default to empty object if address is not provided
@@ -292,7 +292,7 @@ function updateUser(req, res, next) {
         "phone",
         "language",
     ];
-
+    //updateData.password = bcrypt.hash(updateData.password, 10);
     // Loop through editable user properties
     for (const prop of editableProperties) {
         // Check if property exists in the request body and is not undefined.
@@ -301,6 +301,7 @@ function updateUser(req, res, next) {
             updateData[prop] = req.body[prop];
         }
     }
+    updateData.password = bcrypt.hashSync(updateData.password, 10);
 
     // Check for existing user with the same email or phone number excluding the current user.
     User.findOne({
@@ -346,12 +347,11 @@ function updateUser(req, res, next) {
                             return res.json({ message: "User not found", type: "danger" });
                         }
                         // Set a success message in the session.
-                        req.session.message = {
+                        res.json({
                             type: "success",
                             message: updatedUser.firstName + " was updated successfully.",
-                        };
+                        });
                         // Redirect to the '/all' route.
-                        res.redirect("/all");
                     })
                     .catch((err) => {
                         // If an error occurs during the update process, respond with a JSON error message.

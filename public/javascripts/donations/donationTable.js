@@ -358,10 +358,10 @@ $("#createDonationForm").submit(function (event) {
   });
 
   // Retrieve Pickpoint by ID
-  function getPickpoint(PickpoiintId, BenefactorId) {
+  function getPickpoint(PickpointId, BenefactorId) {
     return new Promise((resolve, reject) => {
       $.ajax({
-        url: `/benefactors/${BenefactorId}/pickpoints/${PickpoiintId}`,
+        url: `/benefactors/${BenefactorId}/pickpoints/${PickpointId}`,
         method: "GET",
         success: function (response) {
           resolve(response);
