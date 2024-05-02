@@ -109,6 +109,9 @@ $(document).ready(function () {
                     $("#editCity").val(response.address.city);
                     $("#editPostalCode").val(response.address.postalCode);
                     $("#editCountry").val(response.address.country);
+                    $("#editPoints").val(response.convertationRatio.points);
+                    $("#editValue").val(response.convertationRatio.value);
+                    $("#editWeigthMetric").val(response.convertationRatio.weigthMetric);
                     $("#editPassword").val("");
                     $("#editConfirmPassword").val("");
                     editIti.setNumber(response.phone);
@@ -172,6 +175,11 @@ $(document).ready(function () {
                 country: $("#editCountry").val(),
             },
             phone: editIti.getNumber(),
+            convertationRatio: {
+                points: $("#editPoints").val(),
+                value: $("#editValue").val(),
+                weigthMetric: $("#editWeigthMetric").val(),
+            },
             notify: $("#editNotify").is(":checked"),
             image: (bannerImage || logoImage) ? 'y' : null
         };
@@ -238,6 +246,11 @@ $(document).ready(function () {
                 country: $("#createcountry").val(),
             },
             phone: createIti.getNumber(),
+            convertationRatio: {
+                points: $("#createPoints").val(),
+                value: $("#createValue").val(),
+                weigthMetric: $("#createWeigthMetric").val(),
+            },
         };
 
 

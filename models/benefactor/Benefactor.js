@@ -12,6 +12,11 @@ const PickPointSchema = new mongoose.Schema({
     postalCode: {type: String, required: true},
     country: {type: String, required: true}
 });
+const ConvertationRatioSchema = new mongoose.Schema({
+    points: {type: Number, required: true},
+    value: {type: Number, required: true},
+    weigthMetric: {type: String, required: true},
+});
 
 // Define schema for Benefactor
 const BenefactorSchema = new mongoose.Schema({
@@ -26,7 +31,8 @@ const BenefactorSchema = new mongoose.Schema({
     banner: {type: String},
     createdAt: {type: Date, default: Date.now},
     lastUpdateAt: {type: Date, default: Date.now},
-    pickpoints: [PickPointSchema] // Array of PickPoint documents
+    pickpoints: [PickPointSchema], // Array of PickPoint documents
+    convertationRatio: {type: ConvertationRatioSchema, required: true} // Reference to ConvertationRatio schema
 });
 
 // Export the Benefactor model

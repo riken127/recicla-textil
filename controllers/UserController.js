@@ -291,6 +291,7 @@ function updateUser(req, res, next) {
         "roles",
         "phone",
         "language",
+        "leafs",
     ];
     //updateData.password = bcrypt.hash(updateData.password, 10);
     // Loop through editable user properties
@@ -302,6 +303,25 @@ function updateUser(req, res, next) {
         }
     }
     updateData.password = bcrypt.hashSync(updateData.password, 10);
+
+        // Check if leafs exists in the request body and is not undefined.
+    if (req.body.hasOwnProperty("leafs") && req.body["leafs"] !== undefined) {
+        // Fetch the user
+        User.findById(userId)
+            .then(user => {
+                // Add the new points to the current leafs
+                user.leafs += req.body["leafs"];
+
+                // Add the updated leafs to updateData
+                updateData.leafs = user.leafs;
+
+                // Continue with the rest of the update logic...
+            })
+            .catch(err => {
+                // Handle error
+                res.json({ message: err.message, type: "danger" });
+            });
+    }
 
     // Check for existing user with the same email or phone number excluding the current user.
     User.findOne({
@@ -440,6 +460,8 @@ function uploadImage(req, res, next) {
     }
 }
 
+
+
 module.exports = {
     renderUsersTable: renderUsersTable,
     addUser: addUser,
@@ -447,5 +469,5 @@ module.exports = {
     deleteUser: deleteUser,
     getUser: getUser,
     getAllUsers: getAllUsers,
-    uploadImage: uploadImage
+    uploadImage: uploadImage,
 };

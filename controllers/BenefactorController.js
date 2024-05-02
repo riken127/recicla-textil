@@ -232,6 +232,7 @@ function addBenefactor(req, res, next) {
                     logo: benefactorData.logo || "", // Default to empty string if not provided
                     banner: benefactorData.banner || "", // Default to empty string if not provided
                     pickpoints: benefactorData.pickpoints || [],// Default to empty array if not provided
+                    convertationRatio: benefactorData.convertationRatio || {}, // Default to empty object if not provided
                 });
 
                 // Save the new benefactor to the database
@@ -295,6 +296,8 @@ function updateBenefactor(req, res, next) {
         "description",
         "address",
         "phone",
+        "pickpoints",
+        "convertationRatio",
     ];
 
     // Loop through editable benefactor properties
