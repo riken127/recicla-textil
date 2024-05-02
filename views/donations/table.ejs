@@ -60,6 +60,11 @@
             ></button>
           </div>
           <div class="modal-body">
+            <div class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center" role="alert"
+            id="errorAlert" style="display: none;">
+              <i class="fa-solid fa-circle-exclamation fa-shake fa-xl"></i> <span id="errorMessage">This is an error message</span>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
             <form id="createDonationForm" method="POST">
               <!--Labels for User and Benefactor-->
               <div class="row">

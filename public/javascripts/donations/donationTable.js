@@ -177,6 +177,24 @@ $(document).ready(function () {
 $("#createDonationForm").submit(function (event) {
   event.preventDefault(); // Prevent default form submission
   // Collect all items from the table
+  if (!$("#createUserId").val()) {
+    $("#errorMessage").text("Error: User is required.");
+    $("#errorAlert").addClass("show").removeClass("fade").css("display", "block");
+    return;
+  }
+  if (!$("#createBenefactorId").val()) {
+    $("#errorMessage").text("Error: Benefactor is required.");
+    $("#errorAlert").addClass("show").removeClass("fade").css("display", "block");
+    return;
+  }
+  if (!$("#createDonationPickpointId").val()) {
+    $("#errorMessage").text("Error: PickPoint is required.");
+    $("#errorAlert").addClass("show").removeClass("fade").css("display", "block");
+    return;
+  }
+
+
+
   var items = [];
   // Create the Donation Data object
   const donationData = {
@@ -192,6 +210,9 @@ $("#createDonationForm").submit(function (event) {
     },
     ip: 0,
   };
+  $("#createUserId").val('');
+  $("#createBenefactorId").val('');
+  $("#createDonationPickpointId").val('');
   // Send AJAX request
   $.ajax({
     url: "/donations/add",
@@ -203,7 +224,6 @@ $("#createDonationForm").submit(function (event) {
       console.log("Donation created successfully:", response);
       $("#createModal").modal("hide");
       $("#createDonationForm")[0].reset();
-      console.log("Isto é o id: ", response.result);
       window.itemsModal(response.result);
       table.ajax.reload();
     },
