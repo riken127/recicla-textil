@@ -265,8 +265,8 @@ function updateItem(req, res, next) {
 function uploadImage(req, res, next) {
   const originalFilename = req.file.originalname;
   const imageUrl = path.join(
-    "./uploads/users/",
-    req.body.entityId + "/",
+    "./uploads/donations/",
+    req.body.entityId + "/images/",
     originalFilename
   );
 

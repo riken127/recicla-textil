@@ -6,6 +6,7 @@ const objectMapper = require("../utils/objectMapper");
 const {json} = require("express");
 const path = require("path");
 const bcrypt = require('bcrypt');
+const faker = require('../utils/fakeDataGenerator');
 /**
  * Renders the table of users.
  *
@@ -302,7 +303,6 @@ function updateUser(req, res, next) {
             updateData[prop] = req.body[prop];
         }
     }
-
     if (updateData.password) {
         updateData.password = bcrypt.hashSync(updateData.password, 10);
     }

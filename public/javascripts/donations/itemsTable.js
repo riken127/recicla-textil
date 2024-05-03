@@ -35,8 +35,7 @@ $(document).ready(function () {
             title: "Actions",
             className: "text-center",
             render: function (data, type, row) {
-              //falta trocar aqui os models
-              return `<a href="#" onclick="openEditItemModal('${row._id}')"><i class="fa-solid fa-pen-to-square"></i></a>&nbsp;<a href="#" onclick="openDeleteItemModal('${row._id}', '${donationId}')"><i class="fa-solid fa-trash"></i></a>`;
+              return `<a href="#" onclick="openItemPhotoModal('${row._id}')"><i class="fa-solid fa-images"></i></a>&nbsp;<a href="#" onclick="openEditItemModal('${row._id}')"><i class="fa-solid fa-pen-to-square"></i></a>&nbsp;<a href="#" onclick="openDeleteItemModal('${row._id}', '${donationId}')"><i class="fa-solid fa-trash"></i></a>`;
             },
           },
         ],
@@ -156,6 +155,26 @@ $(document).ready(function () {
     currentItemId = id;
     // Show delete item modal.
     $("#deleteItemModal").modal("show");
+  };
+
+  window.openItemPhotoModal = (id) => {
+    currentItemId = id;
+
+    $.ajax({
+      url: `/donations/${currentDonationId}/items/${currentItemId}`,
+      method: "GET",
+      success: (response) => {
+        if (response.photo && response.photo != "") {
+          $("#showPhotoModalImage").attr('src', "../" + response.photo);
+        } else {
+          $("#showPhotoModalImage").attr('src', `https://api.dicebear.com/8.x/shapes/svg?seed=${id}`);
+        }
+        $("#showPhotoModal").modal("show");
+      },
+      error: (xhr, status, error) => {
+        console.error("Failed to get item", xhr.responseText);
+      },
+    });
   };
 
   //Function to open the edit item modal

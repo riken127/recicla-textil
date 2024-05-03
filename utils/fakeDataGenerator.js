@@ -1,4 +1,6 @@
 const {faker} = require('@faker-js/faker');
+const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 
 async function returnUserData(numUsers) {
     try {
@@ -9,7 +11,8 @@ async function returnUserData(numUsers) {
                 firstName: faker.person.firstName(),
                 username: faker.internet.userName(),
                 email: faker.internet.email(),
-                password: faker.internet.password(),
+                password: bcrypt.hashSync(faker.internet.password(), 10),
+                image: "",
                 roles: [faker.helpers.arrayElement(['administrator', 'employee', 'user', 'moderator'])],
                 address: {
                     street: faker.location.streetAddress(),
@@ -18,10 +21,10 @@ async function returnUserData(numUsers) {
                     country: faker.location.country()
                 },
                 phone: faker.phone.number('+351#########'),
-                leafs: faker.datatype.number({min: 1, max: 100000000}),
-                language: faker.helpers.arrayElement(['English', 'Spanish', 'French', 'German']),
+                leafs: faker.datatype.number({min: 1, max: 9000}),
+                language: "Portuguese", // Assuming you want all users to have the same language
                 title: [faker.helpers.arrayElement(['rookie', 'novice', 'master', 'king', 'caregiver'])],
-                notify: faker.datatype.boolean()
+                notify: true,
             };
             users.push(fakeUserData);
         }
