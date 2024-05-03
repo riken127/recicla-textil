@@ -73,6 +73,8 @@ $(document).ready(function () {
 
   // Function to open edit pickpoint modal.
   window.openEditPickpointModal = (pickpointId) => {
+    //hide pickpoint modal
+    $("#pickpointModal").modal("hide");
     // Store pickpoint ID to global variable.
     window.pickpointToEdit = pickpointId;
     // AJAX request to fetch pickpoint data.
@@ -122,6 +124,8 @@ $(document).ready(function () {
         console.error("Error updating Pickpoint:", error);
       },
     });
+    // Show pickpoint modal.
+    $("#pickpointModal").modal("show");
   });
 
   // Submit create pickpoint form.
