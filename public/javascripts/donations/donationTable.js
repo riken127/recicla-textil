@@ -355,6 +355,7 @@ $(document).ready(function () {
         console.error("Error updating donation:", error);
       },
     });
+    $("#editModal").modal("hide");  
     table.ajax.reload();
   });
 
@@ -449,6 +450,28 @@ $(document).ready(function () {
   $("#userModal").on("show.bs.modal", function () {
     $("body").addClass("test");
     $(".modal-backdrop").last().css("z-index", 1051);
+    $.ajax({
+      url: "/users/all-users",
+      type: "POST",
+      data: { length: 10 },
+      success: function (users) {
+        $("#userContainer").empty();
+        users.data.forEach((user) => {
+          $("#userContainer").append(`
+          <div class="user-container">
+              <div class="d-flex align-items-center justify-content-between mt-2">
+                  <div>
+                      <h5>${user.username}</h5>
+                      <h6>${user.firstName} ${user.lastName}</h6>
+                      <p>${user._id}</p>
+                  </div>
+                  <button class="btn btn-primary select-create-user" data-id="${user._id}" >Select</button>
+              </div>
+          </div>
+      `);
+        });
+      },
+    });
   });
 
   $("#userModal").on("hidden.bs.modal", function () {
@@ -503,6 +526,29 @@ $(document).ready(function () {
   $("#benefactorModal").on("show.bs.modal", function () {
     $("body").addClass("test");
     $(".modal-backdrop").last().css("z-index", 1051);
+    $.ajax({
+      url: "/benefactors/all-benefactors",
+      type: "POST",
+      data: { length: 10 },
+      success: function (benefactors) {
+        $("#benefactorContainer").empty();
+        benefactors.data.forEach((benefactor) => {
+          if (benefactor.pickpoints.length > 0) {
+            $("#benefactorContainer").append(`
+                    <div class="benefactor-container">
+                        <div class="d-flex align-items-center justify-content-between mt-2">
+                            <div>
+                                <h5>${benefactor.name}</h5>
+                                <p>${benefactor._id}</p>
+                            </div>
+                            <button class="btn btn-primary select-create-benefactor" data-id="${benefactor._id}">Select</button>
+                        </div>
+                    </div>
+                `);
+          }
+        });
+      },
+    });
   });
 
   $("#benefactorModal").on("hidden.bs.modal", function () {
@@ -520,7 +566,8 @@ $("#benefactorSearch").on("input", function () {
     success: function (benefactors) {
       $("#benefactorContainer").empty();
       benefactors.data.forEach((benefactor) => {
-        $("#benefactorContainer").append(`
+        if (benefactor.pickpoints.length > 0) {
+          $("#benefactorContainer").append(`
                   <div class="benefactor-container">
                       <div class="d-flex align-items-center justify-content-between mt-2">
                           <div>
@@ -531,6 +578,7 @@ $("#benefactorSearch").on("input", function () {
                       </div>
                   </div>
               `);
+        }
       });
     },
   });
@@ -588,11 +636,42 @@ $(document).ready(function () {
   $("#pickpointModal").on("show.bs.modal", function () {
     $("body").addClass("test");
     $(".modal-backdrop").last().css("z-index", 1051);
+    $("#createModal").modal("hide");
+    var benefactorId = $("#createBenefactorId").val(); // Get the benefactor ID from the input field
+    $.ajax({
+      url: `/benefactors/${benefactorId}/pickpoints/all-pickpoints`,
+      type: "POST",
+      data: {
+        length: 10,
+        benefactorId: benefactorId, // Send the benefactorId in the request body
+      },
+      success: function (pickpoints) {
+        $("#pickpointContainer").empty();
+        pickpoints.data.forEach((pickpoint) => {
+          // Use .data
+          if (pickpoint && typeof pickpoint === "object") {
+            // Check if pickpoint is not null and is an object
+            $("#pickpointContainer").append(`
+              <div class="pickpoint-container">
+                  <div class="d-flex align-items-center justify-content-between mt-2">
+                      <div>
+                          <h5>${pickpoint.street}, ${pickpoint.city}</h5>
+                          <p>${pickpoint.postalCode}, ${pickpoint.country}</p>
+                      </div>
+                      <button class="btn btn-primary select-pickpoint" data-id="${pickpoint._id}">Select</button>
+                  </div>
+              </div>
+          `);
+          }
+        });
+      },
+    });
   });
 
   $("#pickpointModal").on("hidden.bs.modal", function () {
     $("body").removeClass("test");
     $(".modal-backdrop").last().css("z-index", 1040);
+    $("#createModal").modal("show");
   });
 });
 
@@ -664,6 +743,28 @@ $(document).ready(function () {
   $("#editUserModal").on("show.bs.modal", function () {
     $("body").addClass("test");
     $(".modal-backdrop").last().css("z-index", 1051);
+    $.ajax({
+      url: "/users/all-users",
+      type: "POST",
+      data: { length: 10 },
+      success: function (users) {
+        $("#editUserContainer").empty();
+        users.data.forEach((user) => {
+          $("#editUserContainer").append(`
+        <div class="user-container">
+            <div class="d-flex align-items-center justify-content-between mt-2">
+                <div>
+                    <h5>${user.username}</h5>
+                    <h6>${user.firstName} ${user.lastName}</h6>
+                    <p>${user._id}</p>
+                </div>
+                <button class="btn btn-primary select-edit-user" data-id="${user._id}">Select</button>
+            </div>
+        </div>
+    `);
+        });
+      },
+    });
   });
 
   $("#editUserModal").on("hidden.bs.modal", function () {
@@ -673,7 +774,7 @@ $(document).ready(function () {
   });
 });
 
-// Search for users 
+// Search for users
 $("#editUserSearch").on("input", function () {
   var searchValue = $(this).val();
   $.ajax({
@@ -718,6 +819,29 @@ $(document).ready(function () {
   $("#editBenefactorModal").on("show.bs.modal", function () {
     $("body").addClass("test");
     $(".modal-backdrop").last().css("z-index", 1051);
+    $.ajax({
+      url: "/benefactors/all-benefactors",
+      type: "POST",
+      data: {  length: 10 },
+      success: function (benefactors) {
+        $("#editBenefactorContainer").empty();
+        benefactors.data.forEach((benefactor) => {
+          if (benefactor.pickpoints.length > 0) {
+            $("#editBenefactorContainer").append(`
+            <div class="benefactor-container">
+                <div class="d-flex align-items-center justify-content-between mt-2">
+                    <div>
+                        <h5>${benefactor.name}</h5>
+                        <p>${benefactor._id}</p>
+                    </div>
+                    <button class="btn btn-primary select-edit-benefactor" data-id="${benefactor._id}">Select</button>
+                </div>
+            </div>
+        `);
+          }
+        });
+      },
+    });
   });
 
   $("#editBenefactorModal").on("hidden.bs.modal", function () {
@@ -735,7 +859,8 @@ $("#editBenefactorSearch").on("input", function () {
     success: function (benefactors) {
       $("#editBenefactorContainer").empty();
       benefactors.data.forEach((benefactor) => {
-        $("#editBenefactorContainer").append(`
+        if (benefactor.pickpoints.length > 0) {
+          $("#editBenefactorContainer").append(`
           <div class="benefactor-container">
               <div class="d-flex align-items-center justify-content-between mt-2">
                   <div>
@@ -746,6 +871,7 @@ $("#editBenefactorSearch").on("input", function () {
               </div>
           </div>
       `);
+        }
       });
     },
   });
@@ -801,6 +927,35 @@ $(document).ready(function () {
   $("#editPickpointModal").on("show.bs.modal", function () {
     $("body").addClass("test");
     $(".modal-backdrop").last().css("z-index", 1051);
+    var benefactorId = $("#editBenefactorId").val(); // Get the benefactor ID from the input field
+  $.ajax({
+    url: `/benefactors/${benefactorId}/pickpoints/all-pickpoints`,
+    type: "POST",
+    data: {
+      length: 10,
+      benefactorId: benefactorId, // Send the benefactorId in the request body
+    },
+    success: function (pickpoints) {
+      $("#editPickpointContainer").empty();
+      pickpoints.data.forEach((pickpoint) => {
+        // Use .data
+        if (pickpoint && typeof pickpoint === "object") {
+          // Check if pickpoint is not null and is an object
+          $("#editPickpointContainer").append(`
+              <div class="pickpoint-container">
+                  <div class="d-flex align-items-center justify-content-between mt-2">
+                      <div>
+                          <h5>${pickpoint.street}, ${pickpoint.city}</h5>
+                          <p>${pickpoint.postalCode}, ${pickpoint.country}</p>
+                      </div>
+                      <button class="btn btn-primary select-edit-pickpoint" title="${pickpoint._id}" data-id="${pickpoint._id}">Select</button>
+                  </div>
+              </div>
+          `);
+        }
+      });
+    },
+  });
   });
 
   $("#editPickpointModal").on("hidden.bs.modal", function () {
@@ -847,8 +1002,12 @@ $(document).ready(function () {
   $("body").on("click", ".select-edit-pickpoint", function () {
     var pickpointId = $(this).data("id");
     var pickpointStreet = $(this).parent().find("h5").text();
-    var pickpointCountry = $(this).parent().find("p").text()
-    .split(",")[1].trim(); // Get the country
+    var pickpointCountry = $(this)
+      .parent()
+      .find("p")
+      .text()
+      .split(",")[1]
+      .trim(); // Get the country
     var pickpointCity = $(this).parent().find("h5").text().split(",")[1].trim(); // Get the city
     var pickpointPostalCode = $(this)
       .parent()

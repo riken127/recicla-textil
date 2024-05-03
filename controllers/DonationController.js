@@ -284,7 +284,7 @@ function updateDonation(req, res, next) {
         message: updatedDonation._id + " was updated successfully.",
       };
       // Redirect to the '/all' route.
-      res.redirect("/all");
+      //res.redirect("/donations/all");
     })
     .catch((err) => {
       // If an error occurs during the update process, respond with a JSON error message.
