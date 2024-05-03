@@ -11,9 +11,11 @@ router.post('/login', checkNotAuthenticated, passport.authenticate('local', {
     failureFlash: true
 }));
 
-router.delete('/logout', (req, res) => {
-    req.logOut();
-    res.redirect('/auth/login');
+router.post('/logout', (req, res) => {
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        res.redirect('/auth/login');
+    });
 })
 function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
@@ -49,3 +51,5 @@ module.exports = {router,
                   checkAuthenticated,
                   checkRoles,
 checkNotAuthenticated};
+
+

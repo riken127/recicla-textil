@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,13 +18,13 @@
       href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css"
     />
     <style>
-        .country-select {
-            width: 100%;
-        }
+      .country-select {
+        width: 100%;
+      }
 
-        .iti {
-            width: 100%;
-        }
+      .iti {
+        width: 100%;
+      }
     </style>
     <%- include('../partials/sidebar') %>
     <!--Donations Table-->
@@ -59,10 +58,20 @@
             ></button>
           </div>
           <div class="modal-body">
-            <div class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center" role="alert"
-            id="errorAlert" style="display: none;">
-              <i class="fa-solid fa-circle-exclamation fa-shake fa-xl"></i> <span id="errorMessage">This is an error message</span>
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div
+              class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center"
+              role="alert"
+              id="errorAlert"
+              style="display: none"
+            >
+              <i class="fa-solid fa-circle-exclamation fa-shake fa-xl"></i>
+              <span id="errorMessage">This is an error message</span>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
             </div>
             <form id="createDonationForm" method="POST">
               <!--Labels for User and Benefactor-->
@@ -91,10 +100,9 @@
                 </div>
                 <div class="col-md-3">
                   <button
+                    id="openUserModalButton"
                     type="button"
                     class="btn btn-primary"
-                    data-bs-toggle="modal"
-                    data-bs-target="#userModal"
                   >
                     <i class="fa-solid fa-plus"></i>
                   </button>
@@ -116,10 +124,9 @@
                 </div>
                 <div class="col-md-3">
                   <button
+                    id="openBenefactorModalButton"
                     type="button"
                     class="btn btn-primary"
-                    data-bs-toggle="modal"
-                    data-bs-target="#benefactorModal"
                   >
                     <i class="fa-solid fa-plus"></i>
                   </button>
@@ -133,13 +140,13 @@
                       >Pickpoint Address</label
                     >
                     <input
-                    type="hidden"
-                    id="createDonationPickpointId"
-                    name="pickpointId"
-                  />
+                      type="hidden"
+                      id="createDonationPickpointId"
+                      name="pickpointId"
+                    />
                   </div>
                 </div>
-                <div class="row">
+                <div class="row mb-3">
                   <div class="col-md-9">
                     <input
                       type="text"
@@ -152,15 +159,14 @@
                     <button
                       type="button"
                       class="btn btn-primary"
-                      data-bs-toggle="modal"
-                      data-bs-target="#pickpointModal"
+                      id="openPickpointModalButton"
                     >
                       <i class="fa-solid fa-plus"></i>
                     </button>
                   </div>
                 </div>
-                </div>
-                <input type="hidden" id="createTimestamp" name="timestamp" />
+              </div>
+              <input type="hidden" id="createTimestamp" name="timestamp" />
               <div class="modal-footer">
                 <button type="submit" class="btn btn-primary">
                   Create Donation
@@ -330,8 +336,7 @@
                   <button
                     type="button"
                     class="btn btn-primary"
-                    data-bs-toggle="modal"
-                    data-bs-target="#editUserModal"
+                    id="openEditUserModalButton"
                   >
                     <i class="fa-solid fa-plus"></i>
                   </button>
@@ -355,8 +360,7 @@
                   <button
                     type="button"
                     class="btn btn-primary"
-                    data-bs-toggle="modal"
-                    data-bs-target="#editBenefactorModal"
+                    id="openEditBenefactorModalButton"
                   >
                     <i class="fa-solid fa-plus"></i>
                   </button>
@@ -365,7 +369,8 @@
               <!--Pickpoint Information-->
               <div id="editPickpointInfo">
                 <label for="editPickpointAddress" class="form-label"
-                >Pickpoint Address</label>
+                  >Pickpoint Address</label
+                >
                 <input
                   type="hidden"
                   id="editDonationPickpointId"
@@ -385,8 +390,7 @@
                       <button
                         type="button"
                         class="btn btn-primary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#editPickpointModal"
+                        id="openEditPickpointModalButton"
                       >
                         <i class="fa-solid fa-plus"></i>
                       </button>
@@ -394,9 +398,7 @@
                   </div>
                 </div>
 
-
                 <input type="hidden" id="editTimestamp" name="timestamp" />
-
               </div>
               <div class="modal-footer">
                 <button type="submit" class="btn btn-primary">
@@ -554,7 +556,6 @@
       </div>
     </div>
 
-
     <!-- Items Modal -->
     <div
       class="modal fade"
@@ -586,12 +587,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button
-              class="btn btn-primary"
-              data-bs-target="#addItemModal"
-              data-bs-toggle="modal"
-              data-bs-dismiss="modal"
-            >
+            <button class="btn btn-primary" id="openAddItemButton">
               Add Item
             </button>
           </div>
@@ -706,7 +702,6 @@
                 <button
                   type="submit"
                   class="btn btn-primary"
-                  data-bs-target="itemsModal"
                   id="saveItem"
                 >
                   Add Item
@@ -1164,4 +1159,6 @@
     <!-- Include ajax table Initialization -->
     <script src="/javascripts/donations/donationTable.js"></script>
     <script src="/javascripts/donations/itemsTable.js"></script>
-<%- include('../partials/footer') %>
+    <%- include('../partials/footer') %>
+  </head>
+</html>

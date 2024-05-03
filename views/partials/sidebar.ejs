@@ -20,6 +20,7 @@
             }
         }
     </style>
+    <link rel="icon" href="/icon.ico" type="image/x-icon">
     </head>
 <body>
 <main>
@@ -71,15 +72,37 @@
         <hr>
         <div class="dropdown">
             <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://api.dicebear.com/8.x/lorelei-neutral/svg?seed=currentuser&flip=true&rotate=10&backgroundType=gradientLinear&glassesProbability=25"" alt="" width="32" height="32" class="rounded-circle me-2">
-                <strong>currentuser</strong>
+                <% if (!pfp) { %>
+                    <img src="https://api.dicebear.com/8.x/lorelei-neutral/svg?seed=anakin&amp;flip=true&amp;rotate=10&amp;backgroundType=gradientLinear&amp;glassesProbability=25" alt="" width="32" height="32" class="rounded-circle me-2">
+                <% } else { %>
+                    <img src="../<%- pfp %>" alt="" width="32" height="32" class="rounded-circle me-2">
+                <% } %>
+                <strong><%- username %></strong>
             </a>
             <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                <li><a class="dropdown-item" href="#">Sign out</a></li>
+                <li>
+                    <a id="logout-link" class="dropdown-item" href="#">Sign out</a>
+                </li>
             </ul>
+
         </div>
     </div>
-
+    <script>
+        document.getElementById('logout-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            fetch('/auth/logout', {
+                method: 'POST'
+            })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error logging out:', error);
+                });
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <div class="b-example-divider">
     </div>

@@ -26,7 +26,6 @@ initializePassport(
     }
 )
 
-
 var app = express();
 var mongoose = require('mongoose');
 
@@ -39,6 +38,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }))
+app.use('/uploads', express.static('./uploads'))
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(logger('dev'));
@@ -52,9 +52,15 @@ app.use('/donations', donationRouter);
 app.use('/benefactors', benefactorRouter);
 app.use('/dashboard', dashboardRouter);
 app.use('/home', homeRouter);
-
-
 app.use('/auth', authRouter.router);
+app.use((req, res, next) => {
+    if (req.originalUrl === '/') {
+        res.redirect('/auth/login');
+    } else {
+        next();
+    }
+});
+
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
     next(createError(404));

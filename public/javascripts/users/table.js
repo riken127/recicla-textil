@@ -97,7 +97,6 @@ $(document).ready(function () {
                     $("#editUserId").val(response._id);
                     $("#editFirstName").val(response.firstName);
                     $("#editLastName").val(response.lastName);
-                    $("#editRoles").val(response.roles.join(", "));
                     if (!response.image && $("#pfpHint").is(":hidden")) {
                         $("#pfpHint").show();
                     } else {
@@ -190,7 +189,7 @@ $(document).ready(function () {
                         }
                     },
                     error: (error) => {
-                        console.error("Error:", error);
+                        console.log("Error:" + error)
                         $("#editErrorMessage").text("Error: " + error.responseJSON.message);
                         $("#editErrorAlert").addClass("show").removeClass("fade").css("display", "block");
                     },

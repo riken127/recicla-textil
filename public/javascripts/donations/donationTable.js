@@ -42,7 +42,6 @@ $(document).ready(function () {
       {
         data: "userId",
         title: "User ID",
-
       },
       {
         data: "details.benefactorId",
@@ -81,6 +80,42 @@ $(document).ready(function () {
     paging: true,
     pagingType: "full_numbers",
   };
+
+  // Function to open the User Modal
+  $("#openUserModalButton").click(function () {
+    $("#createModal").modal("hide");
+    $("#userModal").modal("show");
+  });
+
+  // Function to open the Pickpoint Modal
+  $("#openPickpointModalButton").click(function () {
+    $("#createModal").modal("hide");
+    $("#pickpointModal").modal("show");
+  });
+
+  // Function to open the Benefactor Modal
+  $("#openBenefactorModalButton").click(function () {
+    $("#createModal").modal("hide");
+    $("#benefactorModal").modal("show");
+  });
+
+  // Function to open the Edit User Modal
+  $("#openEditUserModalButton").click(function () {
+    $("#editModal").modal("hide");
+    $("#editUserModal").modal("show");
+  });
+
+  // Function to open the Edit Pickpoint Modal
+  $("#openEditPickpointModalButton").click(function () {
+    $("#editModal").modal("hide");
+    $("#editPickpointModal").modal("show");
+  });
+
+  // Function to open the Edit Benefactor Modal
+  $("#openEditBenefactorModalButton").click(function () {
+    $("#editModal").modal("hide");
+    $("#editBenefactorModal").modal("show");
+  });
 
   var table = $("#donationsTable").DataTable(dataTableOptions);
 
@@ -130,8 +165,6 @@ $(document).ready(function () {
           //Populate items details
           $("#itemCount").val(response.details.numberOfItems);
           $("#totalWeight").val(response.details.totalWeight);
-         
-
         },
       });
 
@@ -174,64 +207,70 @@ $(document).ready(function () {
   };
 
   // Form submission event handler for create modal
-$("#createDonationForm").submit(function (event) {
-  event.preventDefault(); // Prevent default form submission
-  // Collect all items from the table
-  if (!$("#createUserId").val()) {
-    $("#errorMessage").text("Error: User is required.");
-    $("#errorAlert").addClass("show").removeClass("fade").css("display", "block");
-    return;
-  }
-  if (!$("#createBenefactorId").val()) {
-    $("#errorMessage").text("Error: Benefactor is required.");
-    $("#errorAlert").addClass("show").removeClass("fade").css("display", "block");
-    return;
-  }
-  if (!$("#createDonationPickpointId").val()) {
-    $("#errorMessage").text("Error: PickPoint is required.");
-    $("#errorAlert").addClass("show").removeClass("fade").css("display", "block");
-    return;
-  }
+  $("#createDonationForm").submit(function (event) {
+    event.preventDefault(); // Prevent default form submission
+    // Collect all items from the table
+    if (!$("#createUserId").val()) {
+      $("#errorMessage").text("Error: User is required.");
+      $("#errorAlert")
+        .addClass("show")
+        .removeClass("fade")
+        .css("display", "block");
+      return;
+    }
+    if (!$("#createBenefactorId").val()) {
+      $("#errorMessage").text("Error: Benefactor is required.");
+      $("#errorAlert")
+        .addClass("show")
+        .removeClass("fade")
+        .css("display", "block");
+      return;
+    }
+    if (!$("#createDonationPickpointId").val()) {
+      $("#errorMessage").text("Error: PickPoint is required.");
+      $("#errorAlert")
+        .addClass("show")
+        .removeClass("fade")
+        .css("display", "block");
+      return;
+    }
 
-
-
-  var items = [];
-  // Create the Donation Data object
-  const donationData = {
-    userId: $("#createUserId").val(), // Set the user ID
-    activityType: "donation", //set the activity type to donation
-    timestamp: new Date($("#createTimestamp").val()), // set the timestamp to the current date
-    details: {
-      benefactorId: $("#createBenefactorId").val(), // Set the benefactor ID
-      pickpointId: $("#createDonationPickpointId").val(), // Set the pickpoint ID
-      items: items,
-      totalWeight: 0, // Set the total weight to 0
-      numberOfItems: 0, // Set the number of items to 0
-    },
-    ip: 0,
-  };
-  $("#createUserId").val('');
-  $("#createBenefactorId").val('');
-  $("#createDonationPickpointId").val('');
-  // Send AJAX request
-  $.ajax({
-    url: "/donations/add",
-    type: "POST",
-    data: JSON.stringify(donationData),
-    contentType: "application/json",
-    dataType: "json",
-    success: function (response) {
-      console.log("Donation created successfully:", response);
-      $("#createModal").modal("hide");
-      $("#createDonationForm")[0].reset();
-      window.itemsModal(response.result);
-      table.ajax.reload();
-    },
+    var items = [];
+    // Create the Donation Data object
+    const donationData = {
+      userId: $("#createUserId").val(), // Set the user ID
+      activityType: "donation", //set the activity type to donation
+      timestamp: new Date($("#createTimestamp").val()), // set the timestamp to the current date
+      details: {
+        benefactorId: $("#createBenefactorId").val(), // Set the benefactor ID
+        pickpointId: $("#createDonationPickpointId").val(), // Set the pickpoint ID
+        items: items,
+        totalWeight: 0, // Set the total weight to 0
+        numberOfItems: 0, // Set the number of items to 0
+      },
+      ip: 0,
+    };
+    $("#createUserId").val("");
+    $("#createBenefactorId").val("");
+    $("#createDonationPickpointId").val("");
+    // Send AJAX request
+    $.ajax({
+      url: "/donations/add",
+      type: "POST",
+      data: JSON.stringify(donationData),
+      contentType: "application/json",
+      dataType: "json",
+      success: function (response) {
+        $("#createModal").modal("hide");
+        $("#createDonationForm")[0].reset();
+        window.itemsModal(response.result);
+        table.ajax.reload();
+      },
+    });
+    $("#pickpointInfo").attr("hidden", "");
+    table.ajax.reload();
   });
-  $("#pickpointInfo").attr("hidden", "");
-  table.ajax.reload();
-});
-    
+
   // Function to open the Edit modal and populate the form fields with the existing data
   window.openEditModal = async (donationId) => {
     if (donationId) {
@@ -291,10 +330,6 @@ $("#createDonationForm").submit(function (event) {
   $("#editDonationForm").submit(function (event) {
     event.preventDefault();
     // Collect all items from the table
-    console.log(
-      "Isto é o editDonationPickpointId: ",
-      $("#editDonationPickpointId").val()
-    );
     const donationData = {
       donationId: $("#editDonationId").val(),
       userId: $("#editUserId").val(),
@@ -312,7 +347,6 @@ $("#createDonationForm").submit(function (event) {
       contentType: "application/json",
       dataType: "json",
       success: function (response) {
-        console.log("Donation updated successfully:", response);
         // Handle successful update (e.g., close modal, refresh table)
         $("#editModal").modal("hide");
         table.ajax.reload();
@@ -343,7 +377,6 @@ $("#createDonationForm").submit(function (event) {
         contentType: "application/json",
         dataType: "json",
         success: function (response) {
-          console.log("Donation deleted successfully:", response);
           // Handle successful deletion (e.g., close modal, refresh table)
           $("#deleteModal").modal("hide");
           table.ajax.reload();
@@ -427,7 +460,6 @@ $(document).ready(function () {
 
 $("#userSearch").on("input", function () {
   var searchValue = $(this).val();
-
   $.ajax({
     url: "/users/all-users",
     type: "POST",
@@ -520,7 +552,6 @@ $(document).ready(function () {
 });
 
 // Select Pickpoint to Create a Donation
-
 $(document).ready(function () {
   $(".select-pickPoint").click(function () {
     var street = $(this).data("street");
@@ -609,12 +640,7 @@ $(document).ready(function () {
       .text()
       .split(",")[1]
       .trim(); // Get the country
-    var pickpointCity = $(this)
-      .parent()
-      .find("h5")
-      .text()
-      .split(",")[1]
-      .trim(); // Get the city
+    var pickpointCity = $(this).parent().find("h5").text().split(",")[1].trim(); // Get the city
     var pickpointPostalCode = $(this)
       .parent()
       .find("p")
@@ -634,7 +660,6 @@ $(document).ready(function () {
 });
 
 // Script to select User to Edit a Donation
-
 $(document).ready(function () {
   $("#editUserModal").on("show.bs.modal", function () {
     $("body").addClass("test");
@@ -648,9 +673,9 @@ $(document).ready(function () {
   });
 });
 
+// Search for users 
 $("#editUserSearch").on("input", function () {
   var searchValue = $(this).val();
-
   $.ajax({
     url: "/users/all-users",
     type: "POST",
@@ -689,7 +714,6 @@ $(document).ready(function () {
 });
 
 // Script to select Benefactor to Edit a Donation
-
 $(document).ready(function () {
   $("#editBenefactorModal").on("show.bs.modal", function () {
     $("body").addClass("test");
@@ -710,7 +734,6 @@ $("#editBenefactorSearch").on("input", function () {
     data: { "search[value]": searchValue, length: 10 },
     success: function (benefactors) {
       $("#editBenefactorContainer").empty();
-      console.log(benefactors);
       benefactors.data.forEach((benefactor) => {
         $("#editBenefactorContainer").append(`
           <div class="benefactor-container">
@@ -738,6 +761,7 @@ $(document).ready(function () {
     $("#editBenefactorName").val(benefactorName);
     // Hide the benefactor modal and show the pickpoint modal
     $("#editBenefactorModal").modal("hide");
+    $("#editModal").modal("hide");
     $("#editPickpointModal").modal("show");
   });
 });
@@ -761,11 +785,9 @@ $(document).ready(function () {
     // Hide the pickpoint modal and show the pickpoint information
     $("#editPickpointModal").modal("hide");
   });
-
   $("#editPickpointModal").on("hidden.bs.modal", function (e) {
     $("#editModal").modal("show");
   });
-
   $("#editPickpointSearch").on("keyup", function () {
     var value = $(this).val().toLowerCase();
     $(".pickPoint-container").filter(function () {
@@ -775,7 +797,6 @@ $(document).ready(function () {
 });
 
 // Script to select pickpoint to edit a Donation
-
 $(document).ready(function () {
   $("#editPickpointModal").on("show.bs.modal", function () {
     $("body").addClass("test");
@@ -826,31 +847,19 @@ $(document).ready(function () {
   $("body").on("click", ".select-edit-pickpoint", function () {
     var pickpointId = $(this).data("id");
     var pickpointStreet = $(this).parent().find("h5").text();
-    var pickpointCountry = $(this)
-      .parent()
-      .find("p")
-      .text()
-      .split(",")[1]
-      .trim(); // Get the country
-    var pickpointCity = $(this)
-      .parent()
-      .find("h5")
-      .text()
-      .split(",")[1]
-      .trim(); // Get the city
+    var pickpointCountry = $(this).parent().find("p").text()
+    .split(",")[1].trim(); // Get the country
+    var pickpointCity = $(this).parent().find("h5").text().split(",")[1].trim(); // Get the city
     var pickpointPostalCode = $(this)
       .parent()
       .find("p")
       .text()
       .split(",")[0]
       .trim(); // Get the postal code
-
     $("#editDonationPickpointId").val(pickpointId);
-
     $("#editPickpointAddress").val(
       `${pickpointStreet}, ${pickpointCity}, ${pickpointPostalCode}, ${pickpointCountry}`
-    );  
-
+    );
     $("#editPickpointModal").modal("hide");
     $("editModal").modal("show");
   });

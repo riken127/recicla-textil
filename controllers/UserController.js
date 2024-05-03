@@ -31,7 +31,7 @@ function renderUsersTable(req, res, next) {
         .exec()
         .then((users) => {
             // Renders the "users/table" view with the retrieved users data
-            res.render("users/table", { currentRoute: '/users/all' });
+            res.render("users/table", { currentRoute: '/users/all', username: req.user.username, pfp: req.user.image });
         })
         .catch((err) => {
             // If an error occurs during the database query or rendering, respond with a JSON error message
@@ -302,8 +302,10 @@ function updateUser(req, res, next) {
             updateData[prop] = req.body[prop];
         }
     }
-    updateData.password = bcrypt.hashSync(updateData.password, 10);
 
+    if (updateData.password) {
+        updateData.password = bcrypt.hashSync(updateData.password, 10);
+    }
         // Check if leafs exists in the request body and is not undefined.
     if (req.body.hasOwnProperty("leafs") && req.body["leafs"] !== undefined) {
         // Fetch the user

@@ -43,7 +43,6 @@ function renderPickpointsTable(req, res, next) {
     });
 }
 
-
 async function getAllPickpoints(req, res, next) {
   // Extract the benefactor ID from the route parameters
   const benefactorId = req.params.id;
@@ -62,7 +61,7 @@ async function getAllPickpoints(req, res, next) {
       const search = req.body["search[value]"];
 
       // Determine the something parameters
-      
+
       if (typeof order === "undefined") {
         var attribute_name = "country"; // Default sorting column
         var column_sort_order = "desc"; // Default sorting order
@@ -71,7 +70,7 @@ async function getAllPickpoints(req, res, next) {
         var column_name = columns[column_index]["data"];
         var column_sort_order = order[0]["dir"];
       }
-      
+
       // Construct sorting options
       const sortOptions = {};
       if (column_name) {
@@ -79,7 +78,7 @@ async function getAllPickpoints(req, res, next) {
       } else {
         sortOptions["country"] = column_sort_order === "asc" ? 1 : -1;
       }
-      
+
       var pickpoints;
       // If no search value is provided, return all pickpoints
       if (!search) {
@@ -88,19 +87,13 @@ async function getAllPickpoints(req, res, next) {
       } else {
         pickpoints = benefactor.pickpoints.filter(
           (pickpoint) =>
-            pickpoint.country
-              .toLowerCase()
-              .includes(search.toLowerCase()) ||
+            pickpoint.country.toLowerCase().includes(search.toLowerCase()) ||
             pickpoint.city.toLowerCase().includes(search.toLowerCase()) ||
-            pickpoint.street
-              .toLowerCase()
-              .includes(search.toLowerCase()) ||
-            pickpoint.postalCode
-              .toLowerCase()
-              .includes(search.toLowerCase())
+            pickpoint.street.toLowerCase().includes(search.toLowerCase()) ||
+            pickpoint.postalCode.toLowerCase().includes(search.toLowerCase())
         );
       }
-      // If pickpoints 
+      // If pickpoints
       if (!pickpoints) {
         return res.status(404).json({ message: "Pickpoints not found" });
       }
@@ -149,10 +142,11 @@ function getPickpoint(req, res, next) {
       if (!benefactor) {
         return res.status(404).json({ message: "Benefactor not found" });
       }
+
+      // Find the pickpoint in the benefactor's pickpoints array
       const pickPoint = benefactor.pickpoints.find(
         (pp) => pp._id.toString() === pickPointId
       );
-      console.log("id: " + pickPointId.toString);
 
       if (!pickPoint) {
         return res.status(404).json({ message: "Pickpoint not found" });
@@ -279,13 +273,10 @@ function updatePickpoint(req, res, next) {
  */
 async function deletePickpoint(req, res, next) {
   try {
-    console.log(req.parms);
+    // Extract the benefactor ID and pickpoint ID from the route parameters
     const benefactorId = req.params.id;
     const pickPointId = req.params.idpp;
-
-    console.log(`Benefactor ID: ${benefactorId}`);
-    console.log(`PickPoint ID: ${pickPointId}`);
-
+    // Find the benefactor in the database by their ID
     const benefactor = await Benefactor.findById(benefactorId);
 
     if (!benefactor) {
@@ -304,10 +295,8 @@ async function deletePickpoint(req, res, next) {
 
     // Remove the pickpoint from the benefactor's pickpoints array.
     for (let i = 0; i < benefactor.pickpoints.length; i++) {
-      console.log(benefactor.pickpoints[i]._id.toString());
       if (benefactor.pickpoints[i]._id.toString() === pickpointToRemove) {
         benefactor.pickpoints.splice(i, 1);
-        console.log("Pickpoint found and removed");
         break;
       }
     }
@@ -315,7 +304,6 @@ async function deletePickpoint(req, res, next) {
     // Save the benefactor back to the database.
     await benefactor.save();
 
-    console.log(benefactor.pickpoints);
     res
       .status(200)
       .json({ message: "Pickpoint deleted successfully", type: "success" });

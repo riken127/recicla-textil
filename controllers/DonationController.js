@@ -22,33 +22,35 @@ const { json } = require("express");
  * router.get('/all', userController.renderUsersTable);
  */
 function renderDonationsTable(req, res, next) {
-    // Extracts the page number from the request body or defaults to 1
-    const page = req.body.page || 1;
-    // Query the database for donations, skipping the appropriate number of documents based on the page number,
-    // and limiting the results to 10 donations per page
-    Donation.find({activityType: "donation"})
-        .skip((page - 1) * 10)
-        .limit(10)
-        .exec()
-        .then(async (donations) => {
-            // Fetch all users
-            const users = await User.find();
-            const benefactors = await Benefactor.find();
-            // Renders the "donations/table" view with the retrieved donations data and users
-            res.render("donations/table", {
-                donations: donations,
-                users: users,
-                benefactors: benefactors,
-                currentRoute: '/donations/all'
-            });
-        })
-        .catch((err) => {
-            // If an error occurs during the database query or rendering, respond with a JSON error message
-            res.json({
-                message: err.message,
-                type: "danger",
-            });
-        });
+  // Extracts the page number from the request body or defaults to 1
+  const page = req.body.page || 1;
+  // Query the database for donations, skipping the appropriate number of documents based on the page number,
+  // and limiting the results to 10 donations per page
+  Donation.find({ activityType: "donation" })
+    .skip((page - 1) * 10)
+    .limit(10)
+    .exec()
+    .then(async (donations) => {
+      // Fetch all users
+      const users = await User.find();
+      const benefactors = await Benefactor.find();
+      // Renders the "donations/table" view with the retrieved donations data and users
+      res.render("donations/table", {
+        donations: donations,
+        users: users,
+        benefactors: benefactors,
+        currentRoute: "/donations/all",
+        username: req.user.username,
+        pfp: req.user.image
+      });
+    })
+    .catch((err) => {
+      // If an error occurs during the database query or rendering, respond with a JSON error message
+      res.json({
+        message: err.message,
+        type: "danger",
+      });
+    });
 }
 
 /**
@@ -138,7 +140,6 @@ async function getTotalCount(query) {
   }
 }
 
-
 /**
  * Adds a new user to the database.
  *
@@ -181,7 +182,6 @@ function addDonation(req, res, next) {
     });
 }
 
-
 /**
  * Deletes a donation from the database.
  *
@@ -201,36 +201,36 @@ function addDonation(req, res, next) {
  * router.post('/delete', donationController.deleteDonation);
  */
 async function deleteDonation(req, res, next) {
-    try {
-        // Extract the donation ID from the request body.
-        const id = req.body.id;
+  try {
+    // Extract the donation ID from the request body.
+    const id = req.body.id;
 
-        // Delete the donation from the database using the donation ID.
-        const result = await Donation.findByIdAndDelete(id);
+    // Delete the donation from the database using the donation ID.
+    const result = await Donation.findByIdAndDelete(id);
 
-        // If the deletion is successful and donation document contains an image
-        if (result && result.image) {
-            // Delete the image file from the file system.
-            try {
-                fs.unlinkSync("./uploads/" + result.image);
-            } catch (err) {
-                // Log any errors that occur during file deletion.
-                console.error(err);
-            }
-        }
-
-        // Respond with a JSON success message.
-        res.status(200).json({
-            message: "Donation deleted successfully",
-            type: "success",
-        });
-    } catch (err) {
-        // If an error occurs during the deletion process, respond with a JSON error message.
-        res.status(500).json({
-            message: err.message,
-            type: "danger",
-        });
+    // If the deletion is successful and donation document contains an image
+    if (result && result.image) {
+      // Delete the image file from the file system.
+      try {
+        fs.unlinkSync("./uploads/" + result.image);
+      } catch (err) {
+        // Log any errors that occur during file deletion.
+        console.error(err);
+      }
     }
+
+    // Respond with a JSON success message.
+    res.status(200).json({
+      message: "Donation deleted successfully",
+      type: "success",
+    });
+  } catch (err) {
+    // If an error occurs during the deletion process, respond with a JSON error message.
+    res.status(500).json({
+      message: err.message,
+      type: "danger",
+    });
+  }
 }
 
 function getDonation(req, res, next) {
@@ -251,43 +251,46 @@ function getDonation(req, res, next) {
 }
 
 function updateDonation(req, res, next) {
-     const donationId = req.body.donationId;
-     const updateData = {};
-     const editableProperties = ["userId"];
-     for (const prop of editableProperties) {
-       if (req.body.hasOwnProperty(prop) && req.body[prop] !== undefined) {
-         updateData[prop] = req.body[prop];
-       }
-     }
-     // Handle nested properties like details
-     if (req.body.details) {
-       const detailsUpdates = ["benefactorId", "pickpointId"];
-       // Loop through details properties.
-       for (const detailProp of detailsUpdates) {
-         if (req.body.details.hasOwnProperty(detailProp) && req.body.details[detailProp] !== undefined) {
-           // Use the $set operator to update only the specified fields in details
-           updateData[`details.${detailProp}`] = req.body.details[detailProp];
-         }
-       }
-     }
-     // Update the donation in the database using the donation ID and the update data.
-     Donation.findByIdAndUpdate(donationId, { $set: updateData }, { new: true }) // Return updated document
-       .then((updatedDonation) => {
-         if (!updatedDonation) {
-           return res.json({ message: "Donation not found", type: "danger" });
-         }
-         req.session.message = {
-           type: "success",
-           message: updatedDonation._id + " was updated successfully.",
-         };
-         // Redirect to the '/all' route.
-         res.redirect("/all");
-       })
-       .catch((err) => {
-         // If an error occurs during the update process, respond with a JSON error message.
-         res.json({ message: err.message, type: "danger" });
-       });
-   }
+  const donationId = req.body.donationId;
+  const updateData = {};
+  const editableProperties = ["userId"];
+  for (const prop of editableProperties) {
+    if (req.body.hasOwnProperty(prop) && req.body[prop] !== undefined) {
+      updateData[prop] = req.body[prop];
+    }
+  }
+  // Handle nested properties like details
+  if (req.body.details) {
+    const detailsUpdates = ["benefactorId", "pickpointId"];
+    // Loop through details properties.
+    for (const detailProp of detailsUpdates) {
+      if (
+        req.body.details.hasOwnProperty(detailProp) &&
+        req.body.details[detailProp] !== undefined
+      ) {
+        // Use the $set operator to update only the specified fields in details
+        updateData[`details.${detailProp}`] = req.body.details[detailProp];
+      }
+    }
+  }
+  // Update the donation in the database using the donation ID and the update data.
+  Donation.findByIdAndUpdate(donationId, { $set: updateData }, { new: true }) // Return updated document
+    .then((updatedDonation) => {
+      if (!updatedDonation) {
+        return res.json({ message: "Donation not found", type: "danger" });
+      }
+      req.session.message = {
+        type: "success",
+        message: updatedDonation._id + " was updated successfully.",
+      };
+      // Redirect to the '/all' route.
+      res.redirect("/all");
+    })
+    .catch((err) => {
+      // If an error occurs during the update process, respond with a JSON error message.
+      res.json({ message: err.message, type: "danger" });
+    });
+}
 
 module.exports = {
   renderDonationsTable: renderDonationsTable,
