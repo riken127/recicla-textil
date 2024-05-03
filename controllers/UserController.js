@@ -6,7 +6,6 @@ const objectMapper = require("../utils/objectMapper");
 const {json} = require("express");
 const path = require("path");
 const bcrypt = require('bcrypt');
-const faker = require('../utils/fakeDataGenerator');
 /**
  * Renders the table of users.
  *

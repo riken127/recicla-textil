@@ -6,5 +6,7 @@ var auth = require('./auth')
 router.get('/users', auth.checkAuthenticated, auth.checkRoles(['administrator']), dashboardController.returnUsersDashboard);
 // the benefactors data dashboard, this dashboard will be the pillar of the benefactors information processing
 router.get('/benefactors', auth.checkAuthenticated, auth.checkRoles(['administrator']), dashboardController.returnBenefactorsDashboard);
+// the donations data dashboard, this dashboard will be the pillar of the donation information processing
+router.get('/donations', auth.checkAuthenticated, auth.checkRoles(['administrator']),dashboardController.returnDonationsDashboard);
 
 module.exports = router;

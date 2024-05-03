@@ -3,7 +3,7 @@ const router = express.Router();
 const generator = require("../utils/fakeDataGenerator");
 const User = require("../models/user/User");
 const Benefactor = require("../models/benefactor/Benefactor");
-
+const UserActivity = require("../models/user/UserActivity");
 async function returnUsersDashboard(req, res, next) {
     try {
         Promise.all([
@@ -517,7 +517,218 @@ const benefactorsCreationsVsUpdates = async () => {
     }
 }
 
+const usersWithMostDonations = async () => {
+    try {
+        const result = await UserActivity.aggregate([
+            {
+                $group: {
+                    _id: "$userId",
+                    totalDonations: { $sum: 1 },
+                },
+            },
+            {
+                $sort: { totalDonations: -1 },
+            },
+            { $limit: 10 },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "user"
+                }
+            },
+            {
+                $unwind: "$user"
+            },
+            {
+                $project: {
+                    _id: 1,
+                    totalDonations: 1,
+                    firstName: "$user.firstName",
+                    lastName: "$user.lastName",
+                    username: "$user.username"
+                }
+            }
+        ]);
+
+        return result;
+    } catch (error) {
+        console.error("Error getting users with most donations", error);
+        throw error;
+    }
+}
+
+const getTotalDonations = async () => {
+    try {
+        const result = await UserActivity.aggregate([
+            {
+                $group: {
+                    _id: "$activityType",
+                    totalDonations: { $sum: 1 },
+                },
+            },
+            {
+                $sort: { totalDonations: -1 },
+            },
+            { $limit: 10 },
+        ]);
+
+        return result;
+    } catch (error) {
+        console.error("Error getting total donations", error);
+        throw error;
+    }
+}
+
+const getDonationsPerMonth = async () => {
+    try {
+        const result = await UserActivity.aggregate([
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%m", date: "$timestamp" } },
+                    totalDonations: { $sum: 1 },
+                },
+            },
+            {
+                $sort: { _id: 1 },
+            },
+            { $limit: 12 },
+        ]);
+
+        return result;
+    } catch (error) {
+        console.error("Error getting donations per month", error);
+        throw error;
+    }
+}
+
+const getTotalWeightDonated = async () => {
+    try {
+        const result = await UserActivity.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalWeight: { $sum: "$details.totalWeight" },
+                },
+            },
+        ]);
+
+        return result;
+    } catch (error) {
+        console.error("Error getting total weight donated", error);
+        throw error;
+    }
+}
+
+const getAverageWeightPerDonation = async () => {
+    try {
+        const result = await UserActivity.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    averageWeight: { $avg: "$details.totalWeight" },
+                },
+            },
+        ]);
+
+        return result;
+    } catch (error) {
+        console.error("Error getting average weight per donation", error);
+        throw error;
+    }
+}
+
+const getMostDonatedItems = async () => {
+    try {
+        const result = await UserActivity.aggregate([
+            { $unwind: "$details.items" },
+            {
+                $group: {
+                    _id: "$details.items.type",
+                    totalDonations: { $sum: 1 },
+                },
+            },
+            {
+                $sort: { totalDonations: -1 },
+            },
+            { $limit: 10 },
+        ]);
+
+        return result;
+    } catch (error) {
+        console.error("Error getting most donated items", error);
+        throw error;
+    }
+}
+
+const getDonationsPerBeneficiary = async () => {
+    try {
+        const result = await UserActivity.aggregate([
+            {
+                $group: {
+                    _id: "$details.benefactorId",
+                    totalDonations: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { totalDonations: -1 }
+            },
+            {
+                $limit: 10
+            },
+            {
+                $lookup: {
+                    from: "benefactors",
+                    let: { benefactorId: { $toObjectId: "$_id" } },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: [ "$_id", "$$benefactorId" ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "benefactor"
+                }
+            }
+        ]);
+
+        return result;
+    } catch (error) {
+        console.error("Error getting donations per beneficiary", error);
+        throw error;
+    }
+}
+
+async function returnDonationsDashboard(req, res, next) {
+    try {
+        Promise.all([
+            usersWithMostDonations(),
+            getTotalDonations(),
+            getDonationsPerMonth(),
+            getTotalWeightDonated(),
+            getAverageWeightPerDonation(),
+            getMostDonatedItems(),
+            getDonationsPerBeneficiary()
+        ])
+            .then(values => {
+                res.render("dashboards/donations", {
+                    data: values,
+                    currentRoute: '/dashboard/donations',
+                    username: req.user.username,
+                    pfp: req.user.image
+                });
+            });
+    } catch (error) {
+        console.error("Error fetching aggregation data:", error);
+        res.status(500).send("Error fetching aggregation data");
+    }
+}
+
 module.exports = {
     returnUsersDashboard,
     returnBenefactorsDashboard,
+    returnDonationsDashboard
 };
