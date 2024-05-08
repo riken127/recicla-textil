@@ -1,0 +1,21 @@
+form {
+    border: 2px solid black;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+hr {
+    border-top: 4px solid black;
+}
+
+.col-md-6.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.col-md-12.d-flex.justify-content-center button {
+    padding: 10px 80px;
+}
+
+footer {
+    margin-top: 100px;
+}
