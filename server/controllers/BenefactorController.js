@@ -4,6 +4,20 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const Donation = require("../models/user/UserActivity");
 
+/**
+ * Renders the table of benefactors.
+ *
+ * This function queries the database to retrieve a page of benefactors,
+ * then renders a table view using the retrieved benefactors data.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function in the request-response cycle.
+ * @returns {void}
+ * @example
+ * // Usage:
+ * router.get('/all', benefactorController.renderBenefactorsTable);
+ */
 function renderBenefactorsTable(req, res, next) {
     // Extracts the page number from the request body or defaults to 1
     const page = req.body.page || 1;
@@ -31,6 +45,21 @@ function renderBenefactorsTable(req, res, next) {
         });
 }
 
+/**
+ * Retrieves all benefactors with DataTables parameters.
+ *
+ * This function retrieves all benefactors from the database while considering DataTables parameters
+ * such as pagination and searching. It constructs MongoDB queries based on the parameters
+ * and returns the benefactors data in a format suitable for DataTables.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function in the request-response cycle.
+ * @returns {void}
+ * @example
+ * // Usage:
+ * router.post('/all-benefactors', benefactorController.getAllBenefactors);
+ */
 async function getAllBenefactors(req, res, next) {
     // Only active benefactors
     const query = { active: true };
@@ -70,6 +99,15 @@ async function getAllBenefactors(req, res, next) {
         });
 }
 
+/**
+ * Retrieves the total count of benefactors based on a query.
+ *
+ * This function retrieves the total count of benefactors from the database
+ * based on the provided MongoDB query.
+ *
+ * @param {Object} query - The MongoDB query object.
+ * @returns {Promise<number>} The total count of benefactors.
+ */
 async function getTotalCount(query) {
     try {
         // Count the documents in the 'Benefactor' collection that match the provided query
@@ -81,6 +119,21 @@ async function getTotalCount(query) {
     }
 }
 
+/**
+ * Retrieves a benefactor by ID.
+ *
+ * This function retrieves a benefactor from the database by their ID,
+ * which is typically passed as a route parameter. It then sends
+ * the benefactor data as a JSON response.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function in the request-response cycle.
+ * @returns {void}
+ * @example
+ * // Usage:
+ * router.get('/:id', benefactorController.getBenefactor);
+ */
 function getBenefactor(req, res, next) {
     // Benefactor ID from the request parameters
     const benefactorId = req.params.id;
@@ -104,6 +157,23 @@ function getBenefactor(req, res, next) {
         });
 }
 
+/**
+ * Adds a new benefactor to the database.
+ *
+ * This function adds a new benefactor to the database based on the data
+ * provided in the request body. It creates a new benefactor object with
+ * default values for optional fields if they are not provided, then
+ * saves the benefactor to the database. If successful, it redirects to the
+ * "/all" route. If an error occurs, it responds with a JSON error message.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function in the request-response cycle.
+ * @returns {void}
+ * @example
+ * // Usage:
+ * router.post('/add', benefactorController.addBenefactor);
+ */
 function addBenefactor(req, res, next) {
     // Extract benefactor data from the request body
     const benefactorData = req.body;
@@ -184,6 +254,24 @@ function addBenefactor(req, res, next) {
         });
 }
 
+/**
+ * Updates a benefactor in the database.
+ *
+ * This function updates an existing benefactor in the database based on the data
+ * provided in the request body. It extracts the benefactor ID and the update data
+ * from the request, then constructs an object containing the changes. It then
+ * updates the benefactor in the database using `Benefactor.findByIdAndUpdate()`. If successful,
+ * it sets a success message in the session and redirects to the "/all" route. If
+ * an error occurs, it responds with a JSON error message.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function in the request-response cycle.
+ * @returns {void}
+ * @example
+ * // Usage:
+ * router.post('/update', benefactorController.updateBenefactor);
+ */
 function updateBenefactor(req, res, next) {
     // Extract the benefactor ID from the request body.
     const benefactorId = req.body.benefactorId;
@@ -296,6 +384,24 @@ function updateBenefactor(req, res, next) {
         });
 }
 
+/**
+ * Deletes a benefactor.
+ *
+ * This function handles the deletion of a benefactor. It first extracts the benefactor ID from the request body,
+ * then checks if the benefactor has any associated donations. If no donations are found, it deletes the benefactor
+ * from the database and removes any associated logo and banner files from the file system.
+ * If the benefactor has associated donations, it updates the benefactor's status to inactive instead of deleting it.
+ * If the deletion or update is successful, it sends a JSON response with a success message. If an error occurs during
+ * the process, it logs the error and sends a JSON response with an error message.
+ *
+ * @param {Object} req - The request object, which should include the ID of the benefactor to be deleted.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function in the request-response cycle.
+  * @returns {void}
+ * @example
+ * // Usage:
+ * router.post('/delete/', benefactorController.deleteBenefactor);
+ */
 async function deleteBenefactor(req, res, next) {
     try {
         // Extract the benefactor ID from the request body.
@@ -369,6 +475,20 @@ async function deleteBenefactor(req, res, next) {
     }
 }
 
+/**
+ * Uploads a banner image for a benefactor.
+ *
+ * This function handles the upload of a banner image for a benefactor. It first extracts the original filename
+ * from the uploaded file, then constructs a URL for the image based on a predefined storage strategy.
+ * It then updates the benefactor's document in the database with the new banner URL.
+ *
+ * If the upload is successful, it sends a JSON response with a success message. If an error occurs during the
+ * upload or the database update, it logs the error and sends a JSON response with an error message.
+ *
+ * @param {Object} req - The request object, which should include the file to be uploaded and the ID of the benefactor.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function in the request-response cycle.
+ */
 function uploadBanner(req, res, next) {
     try {
         const originalFilename = req.file.originalname;
@@ -399,6 +519,20 @@ function uploadBanner(req, res, next) {
     }
 }
 
+/**
+ * Uploads a logo image for a benefactor.
+ *
+ * This function handles the upload of a logo image for a benefactor. It first extracts the original filename
+ * from the uploaded file, then constructs a URL for the image based on a predefined storage strategy.
+ * It then updates the benefactor's document in the database with the new logo URL.
+ *
+ * If the upload is successful, it sends a JSON response with a success message. If an error occurs during the
+ * upload or the database update, it logs the error and sends a JSON response with an error message.
+ *
+ * @param {Object} req - The request object, which should include the file to be uploaded and the ID of the benefactor.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function in the request-response cycle.
+ */
 function uploadLogo(req, res, next) {
     try {
         const originalFilename = req.file.originalname;
