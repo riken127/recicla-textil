@@ -5,12 +5,16 @@ function initialize(passport, getUserByUsername, getUserById) {
 const authenticateUser = async (username, password, done) => {
         getUserByUsername(username)
         .then(user => {
-            if (!user) {
+            if (!user ) {
                 return done(null, false, {message: 'No user with specified username.'});
             }
 
             if (!user.password || !password) {
                 return done(null, false, {message: 'Password not provided.'});
+            }
+
+            if (!user.active) {
+                return done(null, false, {message: 'User is not active.'});
             }
 
             try {

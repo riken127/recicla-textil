@@ -10,7 +10,8 @@ const PickPointSchema = new mongoose.Schema({
     street: {type: String, required: true},
     city: {type: String, required: true},
     postalCode: {type: String, required: true},
-    country: {type: String, required: true}
+    country: {type: String, required: true},
+    active: {type: Boolean, required: true} // True if the PickPoint is active
 });
 const ConvertationRatioSchema = new mongoose.Schema({
     points: {type: Number, required: true},
@@ -32,7 +33,8 @@ const BenefactorSchema = new mongoose.Schema({
     createdAt: {type: Date, default: Date.now},
     lastUpdateAt: {type: Date, default: Date.now},
     pickpoints: [PickPointSchema], // Array of PickPoint documents
-    convertationRatio: {type: ConvertationRatioSchema, required: true} // Reference to ConvertationRatio schema
+    convertationRatio: {type: ConvertationRatioSchema, required: true}, // Reference to ConvertationRatio schema
+    active: {type: Boolean, required: true} // True if the Benefactor is active
 });
 
 // Export the Benefactor model

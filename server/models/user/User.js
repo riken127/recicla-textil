@@ -30,7 +30,8 @@ const UserSchema = new mongoose.Schema({
         enum: ['rookie', 'novice', 'master', 'king', 'caregiver'],
         default: 'rookie'
     }],
-    notify: {type: Boolean, required: true}
+    notify: {type: Boolean, required: true},
+    active: {type: Boolean, required: true} // True if the User is active
 });
 
 // Export the User model

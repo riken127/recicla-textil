@@ -186,7 +186,6 @@ $(document).ready(function () {
             },
             { data: "size", title: "Size" },
             { data: "type", title: "Type" },
-            { data: "photo", title: "Photo" },
           ],
         });
       } else {
@@ -533,7 +532,7 @@ $(document).ready(function () {
       success: function (benefactors) {
         $("#benefactorContainer").empty();
         benefactors.data.forEach((benefactor) => {
-          if (benefactor.pickpoints.length > 0) {
+          if (benefactor.pickpoints.filter((pickpoint) => pickpoint.active === true).length > 0) {
             $("#benefactorContainer").append(`
                     <div class="benefactor-container">
                         <div class="d-flex align-items-center justify-content-between mt-2">
@@ -566,7 +565,7 @@ $("#benefactorSearch").on("input", function () {
     success: function (benefactors) {
       $("#benefactorContainer").empty();
       benefactors.data.forEach((benefactor) => {
-        if (benefactor.pickpoints.length > 0) {
+        if (benefactor.pickpoints.filter((pickpoint) => pickpoint.active === true).length > 0) {
           $("#benefactorContainer").append(`
                   <div class="benefactor-container">
                       <div class="d-flex align-items-center justify-content-between mt-2">
@@ -826,7 +825,7 @@ $(document).ready(function () {
       success: function (benefactors) {
         $("#editBenefactorContainer").empty();
         benefactors.data.forEach((benefactor) => {
-          if (benefactor.pickpoints.length > 0) {
+          if (benefactor.pickpoints.filter((pickpoint) => pickpoint.active === true).length > 0) {
             $("#editBenefactorContainer").append(`
             <div class="benefactor-container">
                 <div class="d-flex align-items-center justify-content-between mt-2">
@@ -859,7 +858,7 @@ $("#editBenefactorSearch").on("input", function () {
     success: function (benefactors) {
       $("#editBenefactorContainer").empty();
       benefactors.data.forEach((benefactor) => {
-        if (benefactor.pickpoints.length > 0) {
+        if (benefactor.pickpoints.filter((pickpoint) => pickpoint.active === true).length > 0) {
           $("#editBenefactorContainer").append(`
           <div class="benefactor-container">
               <div class="d-flex align-items-center justify-content-between mt-2">
