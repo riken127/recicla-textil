@@ -6,6 +6,8 @@ const objectMapper = require("../utils/objectMapper");
 const {json} = require("express");
 const path = require("path");
 const bcrypt = require('bcrypt');
+const Donation = require("../models/user/UserActivity");
+
 /**
  * Renders the table of users.
  *
@@ -59,8 +61,9 @@ function renderUsersTable(req, res, next) {
  * router.post('/add', userController.addUser)
  */
 async function getAllUsers(req, res, next) {
+    const query = {active: true};
     // Retrieve the total number of records in the database
-    const totalRecords = await getTotalCount({});
+    const totalRecords = await getTotalCount(query);
     // Retrieve DataTables parameters from the request
     let {draw, start, length, order, columns} = req.body;
     const search = req.body["search[value]"];
@@ -77,7 +80,7 @@ async function getAllUsers(req, res, next) {
     // Determine the search value
     var search_value = search;
     // Construct the MongoDB query based on the search value
-    const query = {};
+    
 
     if (search_value) {
         query["$or"] = [
@@ -86,7 +89,6 @@ async function getAllUsers(req, res, next) {
             {"username": {$regex: search_value, $options: "i"}}
         ];
     }
-    console.log(query);
     // Construct sorting options
     const sortOptions = {};
     if (column_name) {
@@ -229,6 +231,7 @@ function addUser(req, res, next) {
                     phone: userData.phone || "", // Default to empty string if not provided
                     language: userData.language || "", // Default to empty string if not provided
                     notify: userData.notify || false, // Default to false if notify is not provided
+                    active: userData.active || true, // Default to true if active is not provided
                 });
 
                 // Save the new user to the database
@@ -388,29 +391,19 @@ function updateUser(req, res, next) {
 
 
 
-/**
- * Deletes a user from the database.
- *
- * This function deletes a user from the database based on the user ID
- * provided in the request body. It uses `User.findByIdAndDelete()` to
- * delete the user document. If the user document contains an image, it
- * assumes that it's stored in the file system and deletes the image file
- * using the 'fs' module. If successful, it responds with a JSON success
- * message. If an error occurs, it responds with a JSON error message.
- *
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- * @param {Function} next - The next middleware function in the request-response cycle.
- * @returns {void}
- * @example
- * // Usage:
- * router.post('/delete', userController.deleteUser);
- */
+
 async function deleteUser(req, res, next) {
     try {
         // Extract the user ID from the request body.
         const id = req.body.id;
 
+        const donationQuery = {
+            activityType: "donation",
+            userId: id 
+        };
+        const donations = await Donation.find(donationQuery);
+        // If no donations are found for the benefactor
+        if (donations.length == 0) {
         // Delete the user from the database using the user ID.
         const result = await User.findByIdAndDelete(id);
 
@@ -430,6 +423,25 @@ async function deleteUser(req, res, next) {
             message: "User deleted successfully",
             type: "success",
         });
+    }else {
+        inactiveData = {active: false};
+            // update the benefactor to inactive
+            User.findByIdAndUpdate(id, inactiveData).then((user) => {
+                if (!user) {
+                    return res.status(404).json({
+                        message: "User not found",
+                        type: "danger",
+                    });
+                }
+                res.status(200).json({
+                    message: "User deleted successfully",
+                    type: "success",
+                });
+            }
+            ).catch((err) => {
+                res.status(500).json({ message: err.message, type: "danger" });
+            });
+    } 
     } catch (err) {
         // If an error occurs during the deletion process, respond with a JSON error message.
         res.status(500).json({

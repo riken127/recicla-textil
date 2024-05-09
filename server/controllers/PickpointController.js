@@ -4,6 +4,8 @@ const fs = require("fs");
 const objectMapper = require("../utils/objectMapper");
 const { json, query } = require("express");
 const Benefactor = require("../models/benefactor/Benefactor");
+const Donation = require("../models/user/UserActivity");
+
 
 /**
  * Renders the table of pickpoints.
@@ -20,98 +22,117 @@ const Benefactor = require("../models/benefactor/Benefactor");
  * router.get('/all', pickpointController.renderPickpointsTable);
  */
 function renderPickpointsTable(req, res, next) {
-  const benefactorId = req.params.id;
+    const benefactorId = req.params.id;
 
-  Benefactor.findById(benefactorId)
-    .exec()
-    .then((benefactor) => {
-      if (!benefactor) {
-        return res.status(404).json({
-          message: "Benefactor not found",
-          type: "danger",
+    Benefactor.findById(benefactorId)
+        .exec()
+        .then((benefactor) => {
+            if (!benefactor) {
+                return res.status(404).json({
+                    message: "Benefactor not found",
+                    type: "danger",
+                });
+            }
+            // Filter the pickpoints to only include active pickpoints
+            const pickpoints = benefactor.pickpoints.filter(
+                (pickpoint) => pickpoint.active === true
+            );
+
+            // Return the pickpoints of the benefactor as JSON
+            res.json(pickpoints);
+        })
+        .catch((err) => {
+            res.status(500).json({
+                message: err.message,
+                type: "danger",
+            });
         });
-      }
-
-      // Return the pickpoints of the benefactor as JSON
-      res.json(benefactor.pickpoints);
-    })
-    .catch((err) => {
-      res.status(500).json({
-        message: err.message,
-        type: "danger",
-      });
-    });
 }
 
 async function getAllPickpoints(req, res, next) {
-  // Extract the benefactor ID from the route parameters
-  const benefactorId = req.params.id;
+    // Extract the benefactor ID from the route parameters
+    const benefactorId = req.params.id;
 
-  // Find the benefactor in the database by their ID
-  Benefactor.findById(benefactorId)
-    .then((benefactor) => {
-      // If the benefactor is not found, respond with a 404 error
+    // Find the benefactor in the database by their ID
+    Benefactor.findById(benefactorId)
+        .then((benefactor) => {
+            // If the benefactor is not found, respond with a 404 error
 
-      if (!benefactor) {
-        return res.status(404).json({ message: "Benefactor not found" });
-      }
+            if (!benefactor) {
+                return res
+                    .status(404)
+                    .json({ message: "Benefactor not found" });
+            }
 
-      // Retrieve the DataTables parameters from the request body
-      const { draw, start, length, order, columns } = req.body;
-      const search = req.body["search[value]"];
+            // Retrieve the DataTables parameters from the request body
+            const { draw, start, length, order, columns } = req.body;
+            const search = req.body["search[value]"];
 
-      // Determine the something parameters
+            // Determine the something parameters
 
-      if (typeof order === "undefined") {
-        var attribute_name = "country"; // Default sorting column
-        var column_sort_order = "desc"; // Default sorting order
-      } else {
-        var column_index = order[0]["column"];
-        var column_name = columns[column_index]["data"];
-        var column_sort_order = order[0]["dir"];
-      }
+            if (typeof order === "undefined") {
+                var attribute_name = "country"; // Default sorting column
+                var column_sort_order = "desc"; // Default sorting order
+            } else {
+                var column_index = order[0]["column"];
+                var column_name = columns[column_index]["data"];
+                var column_sort_order = order[0]["dir"];
+            }
 
-      // Construct sorting options
-      const sortOptions = {};
-      if (column_name) {
-        sortOptions[column_name] = column_sort_order === "asc" ? 1 : -1;
-      } else {
-        sortOptions["country"] = column_sort_order === "asc" ? 1 : -1;
-      }
+            // Construct sorting options
+            const sortOptions = {};
+            if (column_name) {
+                sortOptions[column_name] = column_sort_order === "asc" ? 1 : -1;
+            } else {
+                sortOptions["country"] = column_sort_order === "asc" ? 1 : -1;
+            }
 
-      var pickpoints;
-      // If no search value is provided, return all pickpoints
-      if (!search) {
-        // If a search value is provided, filter the pickpoints
-        pickpoints = benefactor.pickpoints;
-      } else {
-        pickpoints = benefactor.pickpoints.filter(
-          (pickpoint) =>
-            pickpoint.country.toLowerCase().includes(search.toLowerCase()) ||
-            pickpoint.city.toLowerCase().includes(search.toLowerCase()) ||
-            pickpoint.street.toLowerCase().includes(search.toLowerCase()) ||
-            pickpoint.postalCode.toLowerCase().includes(search.toLowerCase())
-        );
-      }
-      // If pickpoints
-      if (!pickpoints) {
-        return res.status(404).json({ message: "Pickpoints not found" });
-      }
+            var pickpoints;
+            // If no search value is provided, return all active pickpoints 
+            if (!search) {
+              pickpoints = benefactor.pickpoints.filter(
+                (pickpoint) => pickpoint.active == true
+              );
+              // If a search value is provided, filter the active pickpoints 
+            } else {
+                pickpoints = benefactor.pickpoints.filter(
+                    (pickpoint) =>
+                        (pickpoint.country
+                            .toLowerCase()
+                            .includes(search.toLowerCase()) ||
+                            pickpoint.city
+                                .toLowerCase()
+                                .includes(search.toLowerCase()) ||
+                            pickpoint.street
+                                .toLowerCase()
+                                .includes(search.toLowerCase()) ||
+                            pickpoint.postalCode
+                                .toLowerCase()
+                                .includes(search.toLowerCase())) &&
+                        pickpoint.active == true
+                );
+            }
+            // If pickpoints
+            if (!pickpoints) {
+                return res
+                    .status(404)
+                    .json({ message: "Pickpoints not found" });
+            }
 
-      // Send the pickpoint data as JSON response
-      res.json({
-        draw: parseInt(draw),
-        recordsTotal: pickpoints.length,
-        recordsFiltered: pickpoints.length,
-        data: pickpoints,
-      });
-    })
-    .catch((err) => {
-      // If an error occurs during the retrieval process, log the error
-      console.error("Error retrieving benefactor:", err);
-      // Respond with a 500 error
-      res.status(500).json({ message: "Internal Server Error" });
-    });
+            // Send the pickpoint data as JSON response
+            res.json({
+                draw: parseInt(draw),
+                recordsTotal: pickpoints.length,
+                recordsFiltered: pickpoints.length,
+                data: pickpoints,
+            });
+        })
+        .catch((err) => {
+            // If an error occurs during the retrieval process, log the error
+            console.error("Error retrieving benefactor:", err);
+            // Respond with a 500 error
+            res.status(500).json({ message: "Internal Server Error" });
+        });
 }
 
 /**
@@ -130,37 +151,39 @@ async function getAllPickpoints(req, res, next) {
  router.get('/:id/pickpoints/:idpp', benefactorController.getBenefactor);
  */
 function getPickpoint(req, res, next) {
-  // Extract the benefactor ID from the route parameters
-  const benefactorId = req.params.id; // Assuming the benefactor ID is passed as a route parameter
-  const pickPointId = req.params.idpp;
+    // Extract the benefactor ID from the route parameters
+    const benefactorId = req.params.id; // Assuming the benefactor ID is passed as a route parameter
+    const pickPointId = req.params.idpp;
 
-  // Find the benefactor in the database by their ID
-  Benefactor.findById(benefactorId)
-    .then((benefactor) => {
-      // If the benefactor is not found, respond with a 404 error
+    // Find the benefactor in the database by their ID
+    Benefactor.findById(benefactorId)
+        .then((benefactor) => {
+            // If the benefactor is not found, respond with a 404 error
 
-      if (!benefactor) {
-        return res.status(404).json({ message: "Benefactor not found" });
-      }
+            if (!benefactor) {
+                return res
+                    .status(404)
+                    .json({ message: "Benefactor not found" });
+            }
 
-      // Find the pickpoint in the benefactor's pickpoints array
-      const pickPoint = benefactor.pickpoints.find(
-        (pp) => pp._id.toString() === pickPointId
-      );
+            // Find the pickpoint in the benefactor's pickpoints array
+            const pickPoint = benefactor.pickpoints.find(
+                (pp) => pp._id.toString() === pickPointId
+            );
 
-      if (!pickPoint) {
-        return res.status(404).json({ message: "Pickpoint not found" });
-      }
+            if (!pickPoint) {
+                return res.status(404).json({ message: "Pickpoint not found" });
+            }
 
-      // Send the pickpoint data as JSON response
-      res.json(pickPoint);
-    })
-    .catch((err) => {
-      // If an error occurs during the retrieval process, log the error
-      console.error("Error retrieving benefactor:", err);
-      // Respond with a 500 error
-      res.status(500).json({ message: "Internal Server Error" });
-    });
+            // Send the pickpoint data as JSON response
+            res.json(pickPoint);
+        })
+        .catch((err) => {
+            // If an error occurs during the retrieval process, log the error
+            console.error("Error retrieving benefactor:", err);
+            // Respond with a 500 error
+            res.status(500).json({ message: "Internal Server Error" });
+        });
 }
 
 /**
@@ -182,23 +205,25 @@ function getPickpoint(req, res, next) {
  * router.post('/:id/addPickPoint', benefactorController.addPickPoint);
  */
 function addPickpoint(req, res) {
-  const benefactorId = req.params.id;
-  const pickpointData = req.body;
+    const benefactorId = req.params.id;
+    const pickpointData = req.body;
+    // Set the pickpoint as active by default
+    pickpointData.active = true;
 
-  Benefactor.findByIdAndUpdate(
-    benefactorId,
-    { $push: { pickpoints: pickpointData } },
-    { new: true, runValidators: true }
-  )
-    .then((updatedBenefactor) => {
-      res.json({
-        message: "Pickpoint added successfully",
-        benefactor: updatedBenefactor,
-      });
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err.message });
-    });
+    Benefactor.findByIdAndUpdate(
+        benefactorId,
+        { $push: { pickpoints: pickpointData } },
+        { new: true, runValidators: true }
+    )
+        .then((updatedBenefactor) => {
+            res.json({
+                message: "Pickpoint added successfully",
+                benefactor: updatedBenefactor,
+            });
+        })
+        .catch((err) => {
+            res.status(500).json({ message: err.message });
+        });
 }
 
 /**
@@ -220,38 +245,40 @@ function addPickpoint(req, res) {
  * router.put('/:id/benefactor/:idpp/pickpoint', benefactorController.updatePickPoint);
  */
 function updatePickpoint(req, res, next) {
-  const benefactorId = req.params.id;
-  const pickpointId = req.params.idpp; // get the pickpoint id from the route parameters
-  const pickpointData = req.body;
+    const benefactorId = req.params.id;
+    const pickpointId = req.params.idpp; // get the pickpoint id from the route parameters
+    const pickpointData = req.body;
 
-  Benefactor.findById(benefactorId)
-    .then((benefactor) => {
-      if (!benefactor) {
-        return res.status(404).json({ message: "Benefactor not found" });
-      }
+    Benefactor.findById(benefactorId)
+        .then((benefactor) => {
+            if (!benefactor) {
+                return res
+                    .status(404)
+                    .json({ message: "Benefactor not found" });
+            }
 
-      // Find the pickpoint in the benefactor's pickpoints array
-      const pickpoint = benefactor.pickpoints.id(pickpointId);
+            // Find the pickpoint in the benefactor's pickpoints array
+            const pickpoint = benefactor.pickpoints.id(pickpointId);
 
-      if (!pickpoint) {
-        return res.status(404).json({ message: "Pickpoint not found" });
-      }
+            if (!pickpoint) {
+                return res.status(404).json({ message: "Pickpoint not found" });
+            }
 
-      // Update the pickpoint with the new data
-      pickpoint.set(pickpointData);
+            // Update the pickpoint with the new data
+            pickpoint.set(pickpointData);
 
-      // Save the benefactor back to the database
-      return benefactor.save();
-    })
-    .then((savedBenefactor) => {
-      res.json({
-        message: "Pickpoint updated successfully",
-        benefactor: savedBenefactor,
-      });
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err.message });
-    });
+            // Save the benefactor back to the database
+            return benefactor.save();
+        })
+        .then((savedBenefactor) => {
+            res.json({
+                message: "Pickpoint updated successfully",
+                benefactor: savedBenefactor,
+            });
+        })
+        .catch((err) => {
+            res.status(500).json({ message: err.message });
+        });
 }
 
 /**
@@ -272,52 +299,65 @@ function updatePickpoint(req, res, next) {
  * router.delete('/:id/benefactor/:idpp/pickpoint', benefactorController.deletePickPoint);
  */
 async function deletePickpoint(req, res, next) {
-  try {
-    // Extract the benefactor ID and pickpoint ID from the route parameters
-    const benefactorId = req.params.id;
-    const pickPointId = req.params.idpp;
-    // Find the benefactor in the database by their ID
-    const benefactor = await Benefactor.findById(benefactorId);
+    try {
+        // Extract the benefactor ID and pickpoint ID from the route parameters
+        const benefactorId = req.params.id;
+        const pickPointId = req.params.idpp;
+        // Find the benefactor in the database by their ID
+        const benefactor = await Benefactor.findById(benefactorId);
 
-    if (!benefactor) {
-      return res
-        .status(404)
-        .json({ message: "Benefactor not found", type: "danger" });
+        if (!benefactor) {
+            return res
+                .status(404)
+                .json({ message: "Benefactor not found", type: "danger" });
+        }
+
+        const pickpointToRemove = pickPointId;
+
+        if (!pickpointToRemove) {
+            return res
+                .status(404)
+                .json({ message: "Pickpoint not found", type: "danger" });
+        }
+        const donationQuery = {
+            activityType: "donation",
+            "details.pickpointId": pickPointId,
+        };
+        const donations = await Donation.find(donationQuery);
+        // If no donations are found for the benefactor
+
+        // Remove the pickpoint from the benefactor's pickpoints array.
+        for (let i = 0; i < benefactor.pickpoints.length; i++) {
+            if (benefactor.pickpoints[i]._id.toString() === pickpointToRemove) {
+                // If there are no donations for the benefactor's pickpoint, remove the pickpoint
+                if (donations.length == 0) {
+                    benefactor.pickpoints.splice(i, 1);
+                    break;
+                    // If there are donations for the benefactor's pickpoint, deactivate the pickpoint
+                } else {
+                    benefactor.pickpoints[i].active = false;
+                    break;
+                }
+            }
+        }
+        // Save the benefactor back to the database.
+        await benefactor.save();
+
+        res.status(200).json({
+            message: "Pickpoint deleted successfully",
+            type: "success",
+        });
+    } catch (err) {
+        console.error(`Error: ${err}`);
+        res.status(500).json({ message: err.message, type: "danger" });
     }
-
-    const pickpointToRemove = pickPointId;
-
-    if (!pickpointToRemove) {
-      return res
-        .status(404)
-        .json({ message: "Pickpoint not found", type: "danger" });
-    }
-
-    // Remove the pickpoint from the benefactor's pickpoints array.
-    for (let i = 0; i < benefactor.pickpoints.length; i++) {
-      if (benefactor.pickpoints[i]._id.toString() === pickpointToRemove) {
-        benefactor.pickpoints.splice(i, 1);
-        break;
-      }
-    }
-
-    // Save the benefactor back to the database.
-    await benefactor.save();
-
-    res
-      .status(200)
-      .json({ message: "Pickpoint deleted successfully", type: "success" });
-  } catch (err) {
-    console.error(`Error: ${err}`);
-    res.status(500).json({ message: err.message, type: "danger" });
-  }
 }
 
 module.exports = {
-  renderPickpointsTable: renderPickpointsTable,
-  addPickpoint: addPickpoint,
-  updatePickpoint: updatePickpoint,
-  deletePickpoint: deletePickpoint,
-  getPickpoint: getPickpoint,
-  getAllPickpoints: getAllPickpoints,
+    renderPickpointsTable: renderPickpointsTable,
+    addPickpoint: addPickpoint,
+    updatePickpoint: updatePickpoint,
+    deletePickpoint: deletePickpoint,
+    getPickpoint: getPickpoint,
+    getAllPickpoints: getAllPickpoints,
 };
