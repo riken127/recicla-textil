@@ -22,7 +22,7 @@ const ConvertationRatioSchema = new mongoose.Schema({
 // Define schema for Benefactor
 const BenefactorSchema = new mongoose.Schema({
     name: {type: String, required: true},
-    address: {type: Address.schema, required: true}, // Reference to Address schema
+    address: {type: Address.schema, required: true}, 
     username: {type: String, required: true},
     password: {type: String, required: true},
     email: {type: String, required: true},
@@ -32,9 +32,13 @@ const BenefactorSchema = new mongoose.Schema({
     banner: {type: String},
     createdAt: {type: Date, default: Date.now},
     lastUpdateAt: {type: Date, default: Date.now},
-    pickpoints: [PickPointSchema], // Array of PickPoint documents
-    convertationRatio: {type: ConvertationRatioSchema, required: true}, // Reference to ConvertationRatio schema
-    active: {type: Boolean, required: true} // True if the Benefactor is active
+    pickpoints: [PickPointSchema], 
+    convertationRatio: {type: ConvertationRatioSchema, required: true}, 
+    status:{
+        type: String,
+        enum: ['active', 'inactive', 'pending'],
+        default: 'active'
+    },
 });
 
 // Export the Benefactor model
