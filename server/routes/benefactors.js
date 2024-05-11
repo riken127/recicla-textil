@@ -3,9 +3,9 @@ const router = express.Router();
 const benefactorController = require('../controllers/BenefactorController');
 const pickpointController = require('../controllers/PickpointController');
 const upload = require('../middleware/multerMiddleware');
-const auth = require('./auth')
+const auth = require('../controllers/AuthenticationController')
 // Retrieves benefactors table
-router.get('/all', auth.checkAuthenticated, auth.checkRoles(['administrator']), benefactorController.renderBenefactorsTable);
+router.get('/all', auth.isAuthenticated, auth.hasRoles(['administrator']), benefactorController.renderBenefactorsTable);
 // Adds a new benefactor
 router.post('/add', benefactorController.addBenefactor);
 // Updates an existing benefactor
