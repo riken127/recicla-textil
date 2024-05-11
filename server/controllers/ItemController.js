@@ -19,22 +19,29 @@ const path = require("path");
  * router.post('/:id/items/all-items', itemsController.getAllItems);
  */
 async function getAllItems(req, res, next) {
-    // Collect the donation ID from the request body
     const donationId = req.body.donationId;
-    // Collect the DataTables parameters from the request body
     const { draw } = req.body;
-    // Search value from the request body
     const search_value = req.body["search[value]"];
-    // Construct the MongoDB query based on the search value
     const query = { _id: donationId };
+    const orderBy = req.body["order[0][dir]"];
+    const columnIndex = req.body["order[0][column]"];
+    const order = orderBy === "asc" ? 1 : -1;
+    const columnMapping = {
+        0: "details.items.brand",
+        1: "details.items.type",
+        2: "details.items.size",
+        3: "details.items.weight.value",
+    };
+    const column = columnMapping[columnIndex];
+
     if (search_value) {
         query["details.items.$text"] = { $search: search_value };
     }
-    // Query the database for the benefactor
+
     Donation.findOne(query)
         .exec()
+        .sort({ [column]: order })
         .then((donation) => {
-            // Respond with DataTables formatted data
             res.json({
                 draw: parseInt(draw),
                 recordsTotal: donation.details.items.length,
@@ -43,7 +50,6 @@ async function getAllItems(req, res, next) {
             });
         })
         .catch((err) => {
-            // Handle errors
             res.status(500).json({
                 error: err.message,
             });
