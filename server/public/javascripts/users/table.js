@@ -22,7 +22,7 @@ $(document).ready(function () {
         "serverSide": true,
         "ajax": {
             // Endpoint for fetching data.
-            url: "http://localhost:3000/users/all-users",
+            url: "http://localhost:3000/users/all",
             type: "POST",
             data: function (d) {
                 console.log(d);
@@ -174,8 +174,8 @@ $(document).ready(function () {
                 const jsonData = JSON.stringify(userData);
                 // AJAX request to update user.
                 $.ajax({
-                    url: "/users/update",
-                    type: "POST",
+                    url: "/users/" + userData.userId,
+                    type: "PUT",
                     data: jsonData,
                     contentType: "application/json",
                     dataType: "json",
@@ -289,7 +289,7 @@ $(document).ready(function () {
 
                 // AJAX request to add new user.
                 $.ajax({
-                    url: "/users/add",
+                    url: "/users/",
                     type: "POST",
                     data: jsonData,
                     contentType: "application/json",
@@ -345,11 +345,8 @@ $(document).ready(function () {
         if (userId) {
             // AJAX request to delete user.
             $.ajax({
-                url: "/users/delete/",
-                method: "POST",
-                data: JSON.stringify({
-                    id: userId
-                }),
+                url: "/users/" + userId,
+                method: "DELETE",
                 contentType: "application/json",
                 dataType: "json",
                 success: function (response) {
