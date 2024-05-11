@@ -68,6 +68,16 @@ async function getAllBenefactors(req, res, next) {
     const totalRecords = await getTotalCount(query);
     const { draw, start, length } = req.body;
     const search_value = req.body["search[value]"];
+    const orderBy = req.body["order[0][dir]"];
+    const columnIndex = req.body["order[0][column]"];
+    const order = orderBy === "asc" ? 1 : -1;
+    const columnMapping = {
+        0: "name",
+        2: "address.street",
+        3: "phone",
+        4: "createdAt",
+    };
+    const column = columnMapping[columnIndex];
 
     if (search_value) {
         query["$or"] = [
@@ -80,9 +90,9 @@ async function getAllBenefactors(req, res, next) {
     Benefactor.find(query)
         .skip(parseInt(start))
         .limit(parseInt(length))
+        .sort({ [column]: order })
         .exec()
         .then((benefactors) => {
-
             res.json({
                 draw: parseInt(draw),
                 recordsTotal: totalRecords,
@@ -136,7 +146,6 @@ function getBenefactor(req, res, next) {
 
     Benefactor.findById(benefactorId)
         .then((benefactor) => {
-            
             if (!benefactor) {
                 return res
                     .status(404)
@@ -211,7 +220,6 @@ function addBenefactor(req, res, next) {
                 benefactor
                     .save()
                     .then((savedBenefactor) => {
-
                         if (
                             (benefactorData.banner || benefactorData.logo) &&
                             !fs.existsSync(
@@ -329,7 +337,6 @@ function updateBenefactor(req, res, next) {
                     new: true,
                 })
                     .then((updatedBenefactor) => {
-
                         if (
                             req.body.image &&
                             !fs.existsSync(
@@ -427,7 +434,6 @@ async function deleteBenefactor(req, res, next) {
 
             Benefactor.findByIdAndUpdate(id, inactiveData)
                 .then((benefactor) => {
-
                     if (!benefactor) {
                         return res.status(404).json({
                             message: "Benefactor not found",
@@ -483,7 +489,6 @@ function uploadBanner(req, res, next) {
             banner: bannerUrl,
         })
             .then((updatedBenefactor) => {
-
                 res.json({
                     message: "Banner uploaded successfully.",
                     type: "success",
@@ -526,7 +531,6 @@ function uploadLogo(req, res, next) {
             logo: logoUrl,
         })
             .then((updatedBenefactor) => {
-
                 res.json({
                     message: "Logo uploaded successfully.",
                     type: "success",
