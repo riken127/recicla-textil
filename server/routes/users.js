@@ -2,9 +2,9 @@ var express = require('express');
 var upload = require('../middleware/multerMiddleware');
 var router = express.Router();
 var userController = require('../controllers/UserController');
-var auth = require('./auth')
+var auth = require('../controllers/AuthenticationController')
 // the main page, that contains the datatables' plugin, and all the modals'.
-router.get('/all', auth.checkAuthenticated, auth.checkRoles(['administrator']), userController.renderUsersTable);
+router.get('/all', auth.isAuthenticated, auth.hasRoles(['administrator']), userController.renderUsersTable);
 // add user via mongoose middleware, sends mongoose object via POSTs' body via create modals' form
 router.post('/add', userController.addUser)
 // upload user image
