@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const Donation = require("../models/user/UserActivity");
+const { on } = require("events");
 
 /**
  * Renders the table of users.
@@ -26,7 +27,6 @@ function renderUsersTable(req, res, next) {
         .limit(10)
         .exec()
         .then((users) => {
-            
             res.render("users/table", {
                 currentRoute: "/users/all",
                 username: req.user.username,
@@ -62,6 +62,18 @@ async function getAllUsers(req, res, next) {
     let { draw, start, length } = req.body;
     const search = req.body["search[value]"];
     var search_value = search;
+    const orderBy = req.body["order[0][dir]"];
+    const columnIndex = req.body["order[0][column]"];
+    const order = orderBy === "asc" ? 1 : -1;
+    const columnMapping = {
+        0: "firstName",
+        1: "roles",
+        2: "address.street",
+        3: "phone",
+        4: "createdAt",
+        5: "language"
+    };
+    const column = columnMapping[columnIndex];
 
     if (search_value) {
         query["$or"] = [
@@ -76,9 +88,9 @@ async function getAllUsers(req, res, next) {
     User.find(query)
         .skip(parseInt(start))
         .limit(length)
+        .sort({ [column]: order })
         .exec()
         .then((users) => {
-
             res.json({
                 draw: parseInt(draw),
                 recordsTotal: totalRecords,
@@ -132,7 +144,6 @@ function getUser(req, res, next) {
 
     User.findById(userId)
         .then((user) => {
-
             if (!user) {
                 return res.status(404).json({ message: "User not found" });
             }
@@ -173,7 +184,6 @@ function addUser(req, res, next) {
         ],
     })
         .then((existingUser) => {
-
             if (existingUser) {
                 let errorMessage = "";
 
@@ -204,7 +214,6 @@ function addUser(req, res, next) {
 
                 user.save()
                     .then((savedUser) => {
-
                         if (
                             req.body.image &&
                             !fs.existsSync("./uploads/users/" + savedUser._id)
@@ -293,7 +302,6 @@ function updateUser(req, res, next) {
         ],
     })
         .then((existingUser) => {
-
             if (existingUser) {
                 let errorMessage = "";
 
@@ -306,7 +314,7 @@ function updateUser(req, res, next) {
 
                 return res
                     .status(400)
-                    .json({ message: errorMessage, type: "danger" });                    
+                    .json({ message: errorMessage, type: "danger" });
             } else {
                 if (req.body.address) {
                     const addressUpdates = {};
@@ -322,7 +330,6 @@ function updateUser(req, res, next) {
 
                 User.findByIdAndUpdate(userId, updateData, { new: true })
                     .then((updatedUser) => {
-
                         if (
                             req.body.image &&
                             !fs.existsSync("./uploads/users/" + updatedUser._id)
@@ -401,7 +408,6 @@ async function deleteUser(req, res, next) {
 
             User.findByIdAndUpdate(id, inactiveData)
                 .then((user) => {
-
                     if (!user) {
                         return res.status(404).json({
                             message: "User not found",
