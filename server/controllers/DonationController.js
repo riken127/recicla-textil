@@ -65,24 +65,30 @@ function renderDonationsTable(req, res, next) {
  * router.post('/add', userController.addUser)
  */
 async function getAllDonations(req, res, next) {
-    // Retrieve the total number of records in the database
     const totalRecords = await getTotalCount({});
-    // Retrieve DataTables parameters from the request
-    const { draw, start, length, order } = req.body;
-    // Search value from the request
+    const { draw, start, length} = req.body;
     const search_value = req.body["search[value]"];
-    // Construct the MongoDB query based on the search value
     const query = { activityType: "donation" };
+    const orderBy = req.body["order[0][dir]"];
+    const columnIndex = req.body["order[0][column]"];
+    const order = orderBy === "asc" ? 1 : -1;
+    const columnMapping = {
+        0: "timestamp",
+        1: "userId",
+        2: "details.benefactorId",
+    }
+    const column = columnMapping[columnIndex];
+
     if (search_value) {
         query["$text"] = { $search: search_value };
     }
-    // Query the database for users
+
     Donation.find(query)
         .skip(parseInt(start))
         .limit(parseInt(length))
+        .sort({ [column]: order })
         .exec()
         .then((donations) => {
-            // Respond with DataTables formatted data
             res.json({
                 draw: parseInt(draw),
                 recordsTotal: totalRecords,
@@ -91,7 +97,6 @@ async function getAllDonations(req, res, next) {
             });
         })
         .catch((err) => {
-            // Handle errors
             res.status(500).json({
                 error: err.message,
             });
