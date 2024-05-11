@@ -61,8 +61,20 @@ function renderPickpointsTable(req, res, next) {
  */
 async function getAllPickpoints(req, res, next) {
     const benefactorId = req.params.id;
+    const orderBy = req.body["order[0][dir]"];
+    const columnIndex = req.body["order[0][column]"];
+    const order = orderBy === "asc" ? 1 : -1;
+    const columnMapping = {
+        0: "country",
+        1: "city",
+        2: "street",
+        3: "postalCode",
+    };
+    const column = columnMapping[columnIndex];
 
     Benefactor.findById(benefactorId)
+        .exec()
+        .sort({ [column]: order })
         .then((benefactor) => {
 
             if (!benefactor) {
