@@ -54,7 +54,7 @@ function renderUsersTable(req, res, next) {
  * @returns {void}
  * @example
  * // Usage:
- * router.post('/all-users', userController.getAllUsers);
+ * router.get('/', userController.getAllUsers);
  */
 async function getAllUsers(req, res, next) {
     const query = { active: true };
@@ -171,7 +171,7 @@ function getUser(req, res, next) {
  * @returns {void}
  * @example
  * // Usage:
- * router.post('/add', userController.addUser);
+ * router.post('/', userController.addUser);
  */
 function addUser(req, res, next) {
     const userData = req.body;
@@ -257,10 +257,10 @@ function addUser(req, res, next) {
  * @returns {void}
  * @example
  * // Usage:
- * router.post('/update', userController.updateUser);
+ * router.put('/:id', userController.updateUser);
  */
 function updateUser(req, res, next) {
-    const userId = req.body.userId;
+    const userId = req.params.id;
     const updateData = {};
     const editableProperties = [
         "firstName",
@@ -377,11 +377,11 @@ function updateUser(req, res, next) {
  * @returns {void}
  * @example
  * // Usage:
- * router.post('/delete/', userController.deleteUser)
+ * router.delete('/:id', userController.deleteUser)
  */
 async function deleteUser(req, res, next) {
     try {
-        const id = req.body.id;
+        const id = req.params.id;
         const donationQuery = {
             activityType: "donation",
             userId: id,
