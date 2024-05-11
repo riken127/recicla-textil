@@ -32,7 +32,10 @@ $(document).ready(function () {
       $("#pickpointsTable").DataTable({
         ajax: {
           url: `/benefactors/${benefactorId}/pickpoints/all`,
-          dataSrc: "",
+          type: "POST",
+          data: function (d) {
+            return d;
+        },
         },
         columns: [
           { data: "country", title: "Country" },
@@ -76,7 +79,7 @@ $(document).ready(function () {
     //hide pickpoint modal
     $("#pickpointModal").modal("hide");
     // Store pickpoint ID to global variable.
-    window.pickpointToEdit = pickpointId;
+    currentPickpointId = pickpointId;
     // AJAX request to fetch pickpoint data.
     $.ajax({
       url: `/benefactors/${currentBenefactorId}/pickpoints/${pickpointId}`,
@@ -98,8 +101,8 @@ $(document).ready(function () {
 
   // Submit edit pickpoint form.
   $("#editPickpointForm").submit(function (event) {
-    event.preventDefault(); // Prevent default form submission.
-    // Construct pickpoint data object from form fields.
+    event.preventDefault(); 
+
     const pickpointData = {
       street: $("#editPickpointStreet").val(),
       postalCode: $("#editPickpointPostalCode").val(),
@@ -107,25 +110,22 @@ $(document).ready(function () {
       country: $("#editpickpointcountry").val(),
     };
     const jsonData = JSON.stringify(pickpointData);
-    // AJAX request to update pickpoint.
+
     $.ajax({
-      url: `/benefactors/${currentBenefactorId}/pickpoints/${window.pickpointToEdit}/update`,
-      type: "POST",
+      url: `/benefactors/${currentBenefactorId}/pickpoints/` + currentPickpointId,
+      type: "PUT",
       data: jsonData,
       contentType: "application/json",
       dataType: "json",
       success: function (response) {
-        // Close edit pickpoint modal.
         $("#editPickpointModal").modal("hide");
-        // Reload pickpoints table.
         $("#pickpointsTable").DataTable().ajax.reload();
+        $("#pickpointModal").modal("show");
       },
       error: function (error) {
         console.error("Error updating Pickpoint:", error);
       },
     });
-    // Show pickpoint modal.
-    $("#pickpointModal").modal("show");
   });
 
   // Submit create pickpoint form.
@@ -141,7 +141,7 @@ $(document).ready(function () {
     const jsonData = JSON.stringify(pickpointData);
     // AJAX request to add new pickpoint
     $.ajax({
-      url: `/benefactors/${currentBenefactorId}/pickpoints/add`,
+      url: `/benefactors/${currentBenefactorId}/pickpoints/`,
       type: "POST",
       data: jsonData,
       contentType: "application/json",

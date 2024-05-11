@@ -28,7 +28,7 @@ $(document).ready(function () {
         searchable: true,
         serverSide: true,
         ajax: {
-            url: "http://localhost:3000/benefactors/all-benefactors",
+            url: "http://localhost:3000/benefactors/all",
             type: "POST",
             data: function (d) {
                 if ($("#pendingBenefactorsSwitch").is(":checked")) {
@@ -169,6 +169,7 @@ $(document).ready(function () {
      * @param {string} id - The ID of the benefactor to be edited.
      */
     window.openEditModal = (id) => {
+        currBenefactor = id;
         if (id) {
             $.ajax({
                 url: "/benefactors/" + id,
@@ -256,7 +257,6 @@ $(document).ready(function () {
         let bannerImage = $("#editBanner").prop("files")[0];
         let logoImage = $("#editLogo").prop("files")[0];
         const benefactorData = {
-            benefactorId: $("#editBenefactorId").val(),
             name: $("#editBenefactorName").val(),
             username: $("#editBenefactorUsername").val(),
             description: $("#editBenefactorDescription").val(),
@@ -281,8 +281,8 @@ $(document).ready(function () {
         const jsonData = JSON.stringify(benefactorData);
 
         $.ajax({
-            url: "/benefactors/update",
-            type: "POST",
+            url: "/benefactors/" + currBenefactor,
+            type: "PUT",
             data: jsonData,
             contentType: "application/json",
             dataType: "json",
@@ -361,7 +361,7 @@ $(document).ready(function () {
         const jsonData = JSON.stringify(benefactorData);
 
         $.ajax({
-            url: "/benefactors/add",
+            url: "/benefactors/",
             type: "POST",
             data: jsonData,
             contentType: "application/json",
@@ -474,9 +474,8 @@ $(document).ready(function () {
      */
     $("#confirmBenefactorDelete").on("click", function () {
         $.ajax({
-            url: `/benefactors/delete`,
-            method: "POST",
-            data: JSON.stringify({ id: currBenefactor }),
+            url: `/benefactors/` + currBenefactor,
+            method: "DELETE",
             contentType: "application/json",
             success: function (response) {
                 $("#deleteBenefactorModal").modal("hide");

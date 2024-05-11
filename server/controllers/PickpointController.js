@@ -73,7 +73,6 @@ async function getAllPickpoints(req, res, next) {
     const column = columnMapping[columnIndex];
 
     Benefactor.findById(benefactorId)
-        .exec()
         .sort({ [column]: order })
         .then((benefactor) => {
 

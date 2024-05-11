@@ -54,7 +54,7 @@ function renderBenefactorsTable(req, res, next) {
  * @returns {void}
  * @example
  * // Usage:
- * router.post('/all-benefactors', benefactorController.getAllBenefactors);
+ * router.post('/', benefactorController.getAllBenefactors);
  */
 async function getAllBenefactors(req, res, next) {
     const query = {};
@@ -175,7 +175,7 @@ function getBenefactor(req, res, next) {
  * @returns {void}
  * @example
  * // Usage:
- * router.post('/add', benefactorController.addBenefactor);
+ * router.post('/', benefactorController.addBenefactor);
  */
 function addBenefactor(req, res, next) {
     const benefactorData = req.body;
@@ -268,10 +268,10 @@ function addBenefactor(req, res, next) {
  * @returns {void}
  * @example
  * // Usage:
- * router.post('/update', benefactorController.updateBenefactor);
+ * router.put('/:id', benefactorController.updateBenefactor);
  */
 function updateBenefactor(req, res, next) {
-    const benefactorId = req.body.benefactorId;
+    const benefactorId = req.params.id;
     const updateData = {};
     const editableProperties = [
         "name",
@@ -393,11 +393,11 @@ function updateBenefactor(req, res, next) {
  * @returns {void}
  * @example
  * // Usage:
- * router.post('/delete/', benefactorController.deleteBenefactor);
+ * router.delete('/:id', benefactorController.deleteBenefactor);
  */
 async function deleteBenefactor(req, res, next) {
     try {
-        const id = req.body.id;
+        const id = req.params.id;
 
         const donationQuery = {
             activityType: "donation",
