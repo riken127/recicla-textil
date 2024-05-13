@@ -184,31 +184,25 @@ function addDonation(req, res, next) {
  * @returns {void}
  * @example
  * // Usage:
- * router.post('/delete', donationController.deleteDonation);
+ * router.delete('/:id', donationController.deleteDonation);
  */
 async function deleteDonation(req, res, next) {
     try {
-        // Extract the donation ID from the request body.
-        const id = req.body.id;
-        // Delete the donation from the database using the donation ID.
+        const id = req.params.id;
         const result = await Donation.findByIdAndDelete(id);
-        // If the deletion is successful and donation document contains an image
+
         if (result && result.image) {
-            // Delete the image file from the file system.
             try {
                 fs.unlinkSync("./uploads/" + result.image);
             } catch (err) {
-                // Log any errors that occur during file deletion.
                 console.error(err);
             }
         }
-        // Respond with a JSON success message.
         res.status(200).json({
             message: "Donation deleted successfully",
             type: "success",
         });
     } catch (err) {
-        // If an error occurs during the deletion process, respond with a JSON error message.
         res.status(500).json({
             message: err.message,
             type: "danger",
@@ -266,37 +260,34 @@ function getDonation(req, res, next) {
  * @returns {void}
  * @example
  * // Usage:
- * router.post('/update', donationController.updateDonation);
+ * router.put('/:id', donationController.updateDonation);
  */
 function updateDonation(req, res, next) {
-    // Extract the donation ID and update data from the request body.
-    const donationId = req.body.donationId;
-    // Create an object to store the updated data.
+    const donationId = req.params.id;
     const updateData = {};
-    // Define the properties that can be updated.
     const editableProperties = ["userId"];
+
     for (const prop of editableProperties) {
         if (req.body.hasOwnProperty(prop) && req.body[prop] !== undefined) {
             updateData[prop] = req.body[prop];
         }
     }
-    // Check if the request body contains the 'details' property.
+
     if (req.body.details) {
         const detailsUpdates = ["benefactorId", "pickpointId"];
-        // Loop through details properties.
+        
         for (const detailProp of detailsUpdates) {
             if (
                 req.body.details.hasOwnProperty(detailProp) &&
                 req.body.details[detailProp] !== undefined
             ) {
-                // Use the $set operator to update only the specified fields in details
                 updateData[`details.${detailProp}`] =
                     req.body.details[detailProp];
             }
         }
     }
-    // Update the donation in the database using the donation ID and the update data.
-    Donation.findByIdAndUpdate(donationId, { $set: updateData }, { new: true }) // Return updated document
+
+    Donation.findByIdAndUpdate(donationId, { $set: updateData }, { new: true }) 
         .then((updatedDonation) => {
             if (!updatedDonation) {
                 return res.json({
@@ -308,11 +299,9 @@ function updateDonation(req, res, next) {
                 type: "success",
                 message: updatedDonation._id + " was updated successfully.",
             };
-            // Redirect to the '/all' route.
-            //res.redirect("/donations/all");
+            
         })
         .catch((err) => {
-            // If an error occurs during the update process, respond with a JSON error message.
             res.json({ message: err.message, type: "danger" });
         });
 }
