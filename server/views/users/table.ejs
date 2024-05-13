@@ -1,517 +1,1043 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Users</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"
+        />
+        <script
+            crossorigin="anonymous"
+            src="https://kit.fontawesome.com/3eb5f00bae.js"
+        ></script>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/css/countrySelect.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/css/intlTelInput.css"
+        />
+        <style>
+            .country-select {
+                width: 100%;
+            }
 
-<head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Users</title>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"/>
-    <script crossorigin="anonymous" src="https://kit.fontawesome.com/3eb5f00bae.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css"/>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/css/countrySelect.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/css/intlTelInput.css">
-    <style>
-        .country-select {
-            width: 100%;
-        }
+            .iti {
+                width: 100%;
+            }
+        </style>
 
-        .iti {
-            width: 100%;
-        }
-    </style>
-<%- include('../partials/sidebar') %>
-<div class="container md-col-12 mb-3 py-4">
-    <table id="usersTable" class="table table-striped display" style="width: 100%">
-    </table>
-</div>
-<!-- Edit Modal -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Edit User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center" role="alert"
-                     id="editErrorAlert" style="display: none;">
-                    <i class="fa-solid fa-circle-exclamation fa-shake fa-xl"></i>&nbsp;<span id="editErrorMessage">This is an error message</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <form id="editUserForm" method="POST">
-                    <div class="accordion" id="accordionExample">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingOne">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    Personal Information
-                                </button>
-                            </h2>
-                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
-                                 data-bs-parent="#accordionExample">
-                                <div class="accordion-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <input type="hidden" id="editUserId" name="editUserId"/>
-                                            <div class="mb-3">
-                                                <label for="editFirstName" class="form-label">First Name</label>
-                                                <input type="text" class="form-control" id="editFirstName"
-                                                       name="firstName" required/>
+        <%- include('../partials/sidebar') %>
+
+        <div class="container md-col-12 mb-3 py-4">
+            <table
+                id="usersTable"
+                class="table table-striped display"
+                style="width: 100%"
+            ></table>
+        </div>
+        <!-- Edit Modal -->
+        <div
+            class="modal fade"
+            id="editModal"
+            tabindex="-1"
+            aria-labelledby="editModal"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">
+                            Edit User
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <div
+                            class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center"
+                            role="alert"
+                            id="editErrorAlert"
+                            style="display: none"
+                        >
+                            <i
+                                class="fa-solid fa-circle-exclamation fa-shake fa-xl"
+                            ></i
+                            >&nbsp;<span id="editErrorMessage"
+                                >This is an error message</span
+                            >
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert"
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                        <form id="editUserForm" method="POST">
+                            <div class="accordion" id="accordionExample">
+                                <div class="accordion-item">
+                                    <h2
+                                        class="accordion-header"
+                                        id="headingOne"
+                                    >
+                                        <button
+                                            class="accordion-button"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapseOne"
+                                            aria-expanded="true"
+                                            aria-controls="collapseOne"
+                                        >
+                                            Personal Information
+                                        </button>
+                                    </h2>
+                                    <div
+                                        id="collapseOne"
+                                        class="accordion-collapse collapse show"
+                                        aria-labelledby="headingOne"
+                                        data-bs-parent="#accordionExample"
+                                    >
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input
+                                                        type="hidden"
+                                                        id="editUserId"
+                                                        name="editUserId"
+                                                    />
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="editFirstName"
+                                                            class="form-label"
+                                                            >First Name</label
+                                                        >
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="editFirstName"
+                                                            name="firstName"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="editLastName"
+                                                            class="form-label"
+                                                            >Last Name</label
+                                                        >
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="editLastName"
+                                                            name="lastName"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="editLastName" class="form-label">Last Name</label>
-                                                <input type="text" class="form-control" id="editLastName"
-                                                       name="lastName" required/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="editImage" class="form-label">Image</label>
-                                                <input type="file" class="form-control" id="editImage" name="image">
-                                                <div class="form-text" id="pfpHint">
-                                                    Why don't you go ahead and add a profile picture!? <i
-                                                            class="fa-solid fa-wand-magic-sparkles"></i>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="editImage"
+                                                            class="form-label"
+                                                            >Image</label
+                                                        >
+                                                        <input
+                                                            type="file"
+                                                            class="form-control"
+                                                            id="editImage"
+                                                            name="image"
+                                                        />
+                                                        <div
+                                                            class="form-text"
+                                                            id="pfpHint"
+                                                        >
+                                                            Why don't you go
+                                                            ahead and add a
+                                                            profile picture!?
+                                                            <i
+                                                                class="fa-solid fa-wand-magic-sparkles"
+                                                            ></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="editphone"
+                                                            class="form-label"
+                                                            >Phone</label
+                                                        >
+                                                        <br />
+                                                        <input
+                                                            type="tel"
+                                                            class="form-control intl-tel-input"
+                                                            id="editphone"
+                                                            name="phone"
+                                                            required
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="editphone" class="form-label">Phone</label>
-                                                <br>
-                                                <input type="tel" class="form-control intl-tel-input" id="editphone"
-                                                       name="phone" required/>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2
+                                        class="accordion-header"
+                                        id="headingTwo"
+                                    >
+                                        <button
+                                            class="accordion-button collapsed"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapseTwo"
+                                            aria-expanded="false"
+                                            aria-controls="collapseTwo"
+                                        >
+                                            Address Information
+                                        </button>
+                                    </h2>
+                                    <div
+                                        id="collapseTwo"
+                                        class="accordion-collapse collapse"
+                                        aria-labelledby="headingTwo"
+                                        data-bs-parent="#accordionExample"
+                                    >
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="editStreet"
+                                                            class="form-label"
+                                                            >Street</label
+                                                        >
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="editStreet"
+                                                            name="address.street"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="editCity"
+                                                            class="form-label"
+                                                            >City</label
+                                                        >
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="editCity"
+                                                            name="address.city"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="editPostalCode"
+                                                            class="form-label"
+                                                            >Postal Code</label
+                                                        >
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="editPostalCode"
+                                                            name="address.postalCode"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="editcountry"
+                                                            class="form-label"
+                                                            >Country</label
+                                                        >
+                                                        <br />
+                                                        <input
+                                                            type="text"
+                                                            id="editcountry"
+                                                            class="form-control"
+                                                            name="address.country"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2
+                                        class="accordion-header"
+                                        id="headingThree"
+                                    >
+                                        <button
+                                            class="accordion-button collapsed"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapseThree"
+                                            aria-expanded="false"
+                                            aria-controls="collapseThree"
+                                        >
+                                            Authentication Information
+                                        </button>
+                                    </h2>
+                                    <div
+                                        id="collapseThree"
+                                        class="accordion-collapse collapse"
+                                        aria-labelledby="headingThree"
+                                        data-bs-parent="#accordionExample"
+                                    >
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="editUsername"
+                                                            class="form-label"
+                                                            >Username</label
+                                                        >
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="editUsername"
+                                                            name="username"
+                                                            required
+                                                            readonly
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="editPassword"
+                                                            class="form-label"
+                                                            >Password</label
+                                                        >
+                                                        <input
+                                                            type="password"
+                                                            class="form-control"
+                                                            id="editPassword"
+                                                            name="password"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="editEmail"
+                                                            class="form-label"
+                                                            >Email</label
+                                                        >
+                                                        <input
+                                                            type="email"
+                                                            class="form-control"
+                                                            id="editEmail"
+                                                            name="email"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="editConfirmPassword"
+                                                            class="form-label"
+                                                            >Confirm
+                                                            Password</label
+                                                        >
+                                                        <input
+                                                            type="password"
+                                                            class="form-control"
+                                                            id="editConfirmPassword"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2
+                                        class="accordion-header"
+                                        id="headingFour"
+                                    >
+                                        <button
+                                            class="accordion-button collapsed"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapseFour"
+                                            aria-expanded="false"
+                                            aria-controls="collapseFour"
+                                        >
+                                            Miscellaneous
+                                        </button>
+                                    </h2>
+                                    <div
+                                        id="collapseFour"
+                                        class="accordion-collapse collapse"
+                                        aria-labelledby="headingFour"
+                                        data-bs-parent="#accordionExample"
+                                    >
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="editRoles"
+                                                            class="form-label"
+                                                            >Roles</label
+                                                        >
+                                                        <select
+                                                            class="form-select"
+                                                            id="editRoles"
+                                                            name="roles"
+                                                            required
+                                                        >
+                                                            <option
+                                                                value=""
+                                                                disabled
+                                                                hidden
+                                                            >
+                                                                Choose Option
+                                                            </option>
+                                                            <option
+                                                                value="administrator"
+                                                            >
+                                                                Administrator
+                                                            </option>
+                                                            <option
+                                                                value="employee"
+                                                            >
+                                                                Employee
+                                                            </option>
+                                                            <option
+                                                                value="user"
+                                                            >
+                                                                User
+                                                            </option>
+                                                            <option
+                                                                value="moderator"
+                                                            >
+                                                                Moderator
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div
+                                                        class="mb-3 form-check"
+                                                    >
+                                                        <br />
+                                                        <input
+                                                            type="checkbox"
+                                                            class="form-check-input"
+                                                            id="editNotify"
+                                                            name="notify"
+                                                        />
+                                                        <label
+                                                            class="form-check-label"
+                                                            for="editNotify"
+                                                            >Notify</label
+                                                        >
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingTwo">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    Address Information
+                            <div class="modal-footer">
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal"
+                                >
+                                    Close
                                 </button>
-                            </h2>
-                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-                                 data-bs-parent="#accordionExample">
-                                <div class="accordion-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="editStreet" class="form-label">Street</label>
-                                                <input type="text" class="form-control" id="editStreet"
-                                                       name="address.street" required/>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="editCity" class="form-label">City</label>
-                                                <input type="text" class="form-control" id="editCity"
-                                                       name="address.city" required/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="editPostalCode" class="form-label">Postal Code</label>
-                                                <input type="text" class="form-control" id="editPostalCode"
-                                                       name="address.postalCode"
-                                                       required/>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="editcountry" class="form-label">Country</label>
-                                                <br>
-                                                <input type="text" id="editcountry" class="form-control"
-                                                       name="address.country" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingThree">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseThree" aria-expanded="false"
-                                        aria-controls="collapseThree">
-                                    Authentication Information
+                                <button type="submit" class="btn btn-primary">
+                                    Save Changes
                                 </button>
-                            </h2>
-                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
-                                 data-bs-parent="#accordionExample">
-                                <div class="accordion-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="editUsername" class="form-label">Username</label>
-                                                <input type="text" class="form-control" id="editUsername"
-                                                       name="username" required readonly>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="editPassword" class="form-label">Password</label>
-                                                <input type="password" class="form-control" id="editPassword"
-                                                       name="password">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="editEmail" class="form-label">Email</label>
-                                                <input type="email" class="form-control" id="editEmail" name="email"
-                                                       required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="editConfirmPassword" class="form-label">Confirm
-                                                    Password</label>
-                                                <input type="password" class="form-control" id="editConfirmPassword">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingFour">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseFour" aria-expanded="false"
-                                        aria-controls="collapseFour">
-                                    Miscellaneous
-                                </button>
-                            </h2>
-                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
-                                 data-bs-parent="#accordionExample">
-                                <div class="accordion-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="editRoles" class="form-label">Roles</label>
-                                                <select class="form-select" id="editRoles" name="roles" required>
-                                                    <option value="" disabled hidden>Choose Option</option>
-                                                    <option value="administrator">Administrator</option>
-                                                    <option value="employee">Employee</option>
-                                                    <option value="user">User</option>
-                                                    <option value="moderator">Moderator</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3 form-check">
-                                                <br>
-                                                <input type="checkbox" class="form-check-input" id="editNotify"
-                                                       name="notify">
-                                                <label class="form-check-label" for="editNotify">Notify</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        </form>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            Close
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            Save Changes
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="createModalLabel">Create User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center" role="alert"
-                     id="createErrorAlert" style="display: none;">
-                    <i class="fa-solid fa-circle-exclamation fa-shake fa-xl"></i>&nbsp;<span id="createErrorMessage">This is an error message</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <form id="createUserForm" method="POST">
-                    <div class="accordion" id="accordionCreate">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingCreateOne">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseCreateOne" aria-expanded="true"
-                                        aria-controls="collapseCreateOne">
-                                    Personal Information
-                                </button>
-                            </h2>
-                            <div id="collapseCreateOne" class="accordion-collapse collapse show"
-                                 aria-labelledby="headingCreateOne" data-bs-parent="#accordionCreate">
-                                <div class="accordion-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="createFirstName" class="form-label">First Name</label>
-                                                <input type="text" class="form-control" id="createFirstName"
-                                                       name="firstName" required>
+            </div>
+        </div>
+        <!-- Create Modal -->
+        <div
+            class="modal fade"
+            id="createModal"
+            tabindex="-1"
+            aria-labelledby="createModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createModalLabel">
+                            Create User
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <div
+                            class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center"
+                            role="alert"
+                            id="createErrorAlert"
+                            style="display: none"
+                        >
+                            <i
+                                class="fa-solid fa-circle-exclamation fa-shake fa-xl"
+                            ></i
+                            >&nbsp;<span id="createErrorMessage"
+                                >This is an error message</span
+                            >
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert"
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                        <form id="createUserForm" method="POST">
+                            <div class="accordion" id="accordionCreate">
+                                <div class="accordion-item">
+                                    <h2
+                                        class="accordion-header"
+                                        id="headingCreateOne"
+                                    >
+                                        <button
+                                            class="accordion-button"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapseCreateOne"
+                                            aria-expanded="true"
+                                            aria-controls="collapseCreateOne"
+                                        >
+                                            Personal Information
+                                        </button>
+                                    </h2>
+                                    <div
+                                        id="collapseCreateOne"
+                                        class="accordion-collapse collapse show"
+                                        aria-labelledby="headingCreateOne"
+                                        data-bs-parent="#accordionCreate"
+                                    >
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="createFirstName"
+                                                            class="form-label"
+                                                            >First Name</label
+                                                        >
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="createFirstName"
+                                                            name="firstName"
+                                                            placeholder="Your First Name"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="createLastName"
+                                                            class="form-label"
+                                                            >Last Name</label
+                                                        >
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="createLastName"
+                                                            name="lastName"
+                                                            placeholder="Your Last Name"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="createLastName" class="form-label">Last Name</label>
-                                                <input type="text" class="form-control" id="createLastName"
-                                                       name="lastName" required>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="createImage"
+                                                            class="form-label"
+                                                            >Image</label
+                                                        >
+                                                        <input
+                                                            type="file"
+                                                            class="form-control"
+                                                            id="createImage"
+                                                            name="image"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="createphone"
+                                                            class="form-label"
+                                                            >Phone</label
+                                                        >
+                                                        <br />
+                                                        <input
+                                                            type="tel"
+                                                            class="form-control intl-tel-input"
+                                                            id="createphone"
+                                                            name="phone"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="createImage" class="form-label">Image</label>
-                                                <input type="file" class="form-control" id="createImage" name="image">
+                                </div>
+                                <div class="accordion-item">
+                                    <h2
+                                        class="accordion-header"
+                                        id="headingCreateTwo"
+                                    >
+                                        <button
+                                            class="accordion-button collapsed"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapseCreateTwo"
+                                            aria-expanded="false"
+                                            aria-controls="collapseCreateTwo"
+                                        >
+                                            Address Information
+                                        </button>
+                                    </h2>
+                                    <div
+                                        id="collapseCreateTwo"
+                                        class="accordion-collapse collapse"
+                                        aria-labelledby="headingCreateTwo"
+                                        data-bs-parent="#accordionCreate"
+                                    >
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="createStreet"
+                                                            class="form-label"
+                                                            >Street</label
+                                                        >
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="createStreet"
+                                                            name="address.street"
+                                                            placeholder="Your Street"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="createCity"
+                                                            class="form-label"
+                                                            >City</label
+                                                        >
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="createCity"
+                                                            name="address.city"
+                                                            placeholder="Your City"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="createPostalCode"
+                                                            class="form-label"
+                                                            >Postal Code</label
+                                                        >
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="createPostalCode"
+                                                            name="address.postalCode"
+                                                            placeholder="Your Postal Code"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="createcountry"
+                                                            class="form-label"
+                                                            >Country</label
+                                                        >
+                                                        <br />
+                                                        <input
+                                                            type="text"
+                                                            id="createcountry"
+                                                            class="form-control"
+                                                            name="address.country"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="createphone" class="form-label">Phone</label>
-                                                <br>
-                                                <input type="tel" class="form-control intl-tel-input" id="createphone"
-                                                       name="phone" required/>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2
+                                        class="accordion-header"
+                                        id="headingCreateThree"
+                                    >
+                                        <button
+                                            class="accordion-button collapsed"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapseCreateThree"
+                                            aria-expanded="false"
+                                            aria-controls="collapseCreateThree"
+                                        >
+                                            Authentication Information
+                                        </button>
+                                    </h2>
+                                    <div
+                                        id="collapseCreateThree"
+                                        class="accordion-collapse collapse"
+                                        aria-labelledby="headingCreateThree"
+                                        data-bs-parent="#accordionCreate"
+                                    >
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="createUsername"
+                                                            class="form-label"
+                                                            >Username</label
+                                                        >
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="createUsername"
+                                                            name="username"
+                                                            placeholder="Your Username"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="createPassword"
+                                                            class="form-label"
+                                                            >Password</label
+                                                        >
+                                                        <input
+                                                            type="password"
+                                                            class="form-control"
+                                                            id="createPassword"
+                                                            name="password"
+                                                            placeholder="Your Password"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="createEmail"
+                                                            class="form-label"
+                                                            >Email</label
+                                                        >
+                                                        <input
+                                                            type="email"
+                                                            class="form-control"
+                                                            id="createEmail"
+                                                            name="email"
+                                                            placeholder="Your Email"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="createConfirmPassword"
+                                                            class="form-label"
+                                                            >Confirm
+                                                            Password</label
+                                                        >
+                                                        <input
+                                                            type="password"
+                                                            class="form-control"
+                                                            id="createConfirmPassword"
+                                                            name="createConfirmPassword"
+                                                            placeholder="Repeat Password"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2
+                                        class="accordion-header"
+                                        id="headingCreateFour"
+                                    >
+                                        <button
+                                            class="accordion-button collapsed"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapseCreateFour"
+                                            aria-expanded="false"
+                                            aria-controls="collapseCreateFour"
+                                        >
+                                            Miscellaneous
+                                        </button>
+                                    </h2>
+                                    <div
+                                        id="collapseCreateFour"
+                                        class="accordion-collapse collapse"
+                                        aria-labelledby="headingCreateFour"
+                                        data-bs-parent="#accordionCreate"
+                                    >
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="createRoles"
+                                                            class="form-label"
+                                                            >Roles</label
+                                                        >
+                                                        <select
+                                                            class="form-select"
+                                                            id="createRoles"
+                                                            name="roles"
+                                                            required
+                                                        >
+                                                            <option
+                                                                value=""
+                                                                selected
+                                                                disabled
+                                                                hidden
+                                                            >
+                                                                Choose Option
+                                                            </option>
+                                                            <option
+                                                                value="administrator"
+                                                            >
+                                                                Administrator
+                                                            </option>
+                                                            <option
+                                                                value="employee"
+                                                            >
+                                                                Employee
+                                                            </option>
+                                                            <option
+                                                                value="user"
+                                                            >
+                                                                User
+                                                            </option>
+                                                            <option
+                                                                value="moderator"
+                                                            >
+                                                                Moderator
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3 form-check">
+                                                    <br />
+                                                    <input
+                                                        type="checkbox"
+                                                        class="form-check-input"
+                                                        id="createNotify"
+                                                        name="notify"
+                                                    />
+                                                    <label
+                                                        class="form-check-label"
+                                                        for="createNotify"
+                                                        >Notify</label
+                                                    >
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingCreateTwo">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseCreateTwo" aria-expanded="false"
-                                        aria-controls="collapseCreateTwo">
-                                    Address Information
+                            <div class="modal-footer">
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal"
+                                >
+                                    Close
                                 </button>
-                            </h2>
-                            <div id="collapseCreateTwo" class="accordion-collapse collapse"
-                                 aria-labelledby="headingCreateTwo" data-bs-parent="#accordionCreate">
-                                <div class="accordion-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="createStreet" class="form-label">Street</label>
-                                                <input type="text" class="form-control" id="createStreet"
-                                                       name="address.street" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="createCity" class="form-label">City</label>
-                                                <input type="text" class="form-control" id="createCity"
-                                                       name="address.city" required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="createPostalCode" class="form-label">Postal Code</label>
-                                                <input type="text" class="form-control" id="createPostalCode"
-                                                       name="address.postalCode" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="createcountry" class="form-label">Country</label>
-                                                <br>
-                                                <input type="text" id="createcountry" class="form-control"
-                                                       name="address.country" required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingCreateThree">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseCreateThree" aria-expanded="false"
-                                        aria-controls="collapseCreateThree">
-                                    Authentication Information
+                                <button type="submit" class="btn btn-primary">
+                                    Create User
                                 </button>
-                            </h2>
-                            <div id="collapseCreateThree" class="accordion-collapse collapse"
-                                 aria-labelledby="headingCreateThree" data-bs-parent="#accordionCreate">
-                                <div class="accordion-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="createUsername" class="form-label">Username</label>
-                                                <input type="text" class="form-control" id="createUsername"
-                                                       name="username" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="createPassword" class="form-label">Password</label>
-                                                <input type="password" class="form-control" id="createPassword"
-                                                       name="password" required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="createEmail" class="form-label">Email</label>
-                                                <input type="email" class="form-control" id="createEmail" name="email"
-                                                       required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="createConfirmPassword" class="form-label">Confirm
-                                                    Password</label>
-                                                <input type="password" class="form-control" id="createConfirmPassword"
-                                                       name="createConfirmPassword" required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingCreateFour">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseCreateFour" aria-expanded="false"
-                                        aria-controls="collapseCreateFour">
-                                    Miscellaneous
-                                </button>
-                            </h2>
-                            <div id="collapseCreateFour" class="accordion-collapse collapse"
-                                 aria-labelledby="headingCreateFour" data-bs-parent="#accordionCreate">
-                                <div class="accordion-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="createRoles" class="form-label">Roles</label>
-                                                <select class="form-select" id="createRoles" name="roles" required>
-                                                    <option value="" selected disabled hidden>Choose Option</option>
-                                                    <option value="administrator">Administrator</option>
-                                                    <option value="employee">Employee</option>
-                                                    <option value="user">User</option>
-                                                    <option value="moderator">Moderator</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3 form-check">
-                                            <br>
-                                            <input type="checkbox" class="form-check-input" id="createNotify"
-                                                   name="notify">
-                                            <label class="form-check-label" for="createNotify">Notify</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Delete Modal -->
+        <div
+            class="modal fade"
+            id="deleteModal"
+            tabindex="-1"
+            aria-labelledby="deleteModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">
+                            Delete User
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this user?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Create User</button>
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            No
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-danger"
+                            id="confirmDelete"
+                        >
+                            Yes
+                        </button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this user?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                <button type="button" class="btn btn-danger" id="confirmDelete">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+        <script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
+        <script
+            type="text/javascript"
+            src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.dataTables.js"
+        ></script>
+        <script
+            type="text/javascript"
+            src="https://cdn.datatables.net/buttons/3.0.1/js/dataTables.buttons.js"
+        ></script>
+        <script
+            type="text/javascript"
+            src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.html5.min.js"
+        ></script>
+        <script
+            type="text/javascript"
+            src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.print.min.js"
+        ></script>
+        <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/intlTelInput.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/js/countrySelect.min.js"></script>
+        <script src="/javascripts/users/table.js"></script>
+        <script>
+            $("#createcountry").countrySelect();
+            $("#editcountry").countrySelect();
 
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+            var createPhoneInput = document.querySelector("#createphone");
+            var createIti = window.intlTelInput(createPhoneInput, {
+                initialCountry: "pt",
+                separateDialCode: true,
+                utilsScript:
+                    "https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/utils.js",
+            });
+            var editPhoneInput = document.querySelector("#editphone");
+            var editIti = window.intlTelInput(editPhoneInput, {
+                separateDialCode: true,
+                utilsScript:
+                    "https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/utils.js",
+            });
 
-<!-- DataTables JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+            const handleChange = () => {
+                let text;
 
-<!-- Bootstrap Bundle (Bootstrap JS and Popper.js) -->
-<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
-<script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
-<!-- DataTables Buttons JavaScript -->
-<script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.dataTables.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/buttons/3.0.1/js/dataTables.buttons.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.html5.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.print.min.js"></script>
-<!-- Initialization script -->
-<!-- Include intl-tel-input JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/intlTelInput.min.js"></script>
-<!-- Include country-select-js JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/country-select-js/2.0.3/js/countrySelect.min.js"></script>
-<!-- Include ajax table Initialization -->
-<script src="/javascripts/users/table.js"></script>
-<script>
-    // Initialize "create" country selector
-    $('#createcountry').countrySelect();
-    // Initialize "edit" country selector
-    $('#editcountry').countrySelect();
-    // Initialize "create" phone input
-    var createPhoneInput = document.querySelector("#createphone");
-    var createIti = window.intlTelInput(createPhoneInput, {
-        initialCountry: "pt",
-        separateDialCode: true,
-        utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/utils.js",
-    });
-    // Initialize "edit" phone input
-    var editPhoneInput = document.querySelector("#editphone");
-    var editIti = window.intlTelInput(editPhoneInput, {
-        separateDialCode: true,
-        utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@21.1.4/build/js/utils.js",
-    });
+                if (createPhoneInput.value) {
+                    text = createIti.isValidNumber()
+                        ? "Valid number! Full international format: " +
+                          createIti.getNumber()
+                        : "Invalid number - please try again";
+                } else {
+                    text = "Please enter a valid number below";
+                }
 
+                const textNode = document.createTextNode(text);
+                output.innerHTML = "";
+                output.appendChild(textNode);
+            };
+        </script>
 
-    const handleChange = () => {
-        let text;
-        if (createPhoneInput.value) {
-            text = createIti.isValidNumber()
-                ? "Valid number! Full international format: " + createIti.getNumber()
-                : "Invalid number - please try again";
-        } else {
-            text = "Please enter a valid number below";
-        }
-        const textNode = document.createTextNode(text);
-        output.innerHTML = "";
-        output.appendChild(textNode);
-    };
-</script>
-<%- include('../partials/footer') %>
+        <%- include('../partials/footer') %>
+        
+    </head>
+</html>
