@@ -18,19 +18,16 @@ const fs = require("fs");
  * router.get('/all', userController.renderUsersTable);
  */
 function renderDonationsTable(req, res, next) {
-    // Extracts the page number from the request body or defaults to 1
     const page = req.body.page || 1;
-    // Query the database for donations, skipping the appropriate number of documents based on the page number,
-    // and limiting the results to 10 donations per page
+
     Donation.find({ activityType: "donation" })
         .skip((page - 1) * 10)
         .limit(10)
         .exec()
         .then(async (donations) => {
-            // Fetch all users
             const users = await User.find();
             const benefactors = await Benefactor.find();
-            // Renders the "donations/table" view with the retrieved donations data and users
+
             res.render("donations/table", {
                 donations: donations,
                 users: users,
@@ -41,7 +38,6 @@ function renderDonationsTable(req, res, next) {
             });
         })
         .catch((err) => {
-            // If an error occurs during the database query or rendering, respond with a JSON error message
             res.json({
                 message: err.message,
                 type: "danger",
@@ -114,11 +110,10 @@ async function getAllDonations(req, res, next) {
  */
 async function getTotalCount(query) {
     try {
-        // Count the documents in the 'User' collection that match the provided query
         const count = await Donation.countDocuments(query);
+
         return count;
     } catch (err) {
-        // If an error occurs during the counting process, throw the error
         throw err;
     }
 }
@@ -141,9 +136,7 @@ async function getTotalCount(query) {
  * router.post('/add', userController.addUser);
  */
 function addDonation(req, res, next) {
-    // Extract the donation data from the request body.
     const donationData = req.body;
-    // Create a new donation object with the extracted data.
     let donation = new Donation({
         userId: donationData.userId,
         activityType: donationData.activityType,
@@ -151,6 +144,7 @@ function addDonation(req, res, next) {
         details: donationData.details,
         ip: req.headers["x-forwarded-for"] || req.connection.remoteAddress,
     });
+
     donation
         .save()
         .then((savedDonation) => {
@@ -160,7 +154,6 @@ function addDonation(req, res, next) {
             });
         })
         .catch((err) => {
-            // If an error occurs during the save process, respond with a JSON error message.
             res.json({
                 message: err.message,
                 type: "danger",
@@ -228,18 +221,17 @@ async function deleteDonation(req, res, next) {
  * router.get('/:id', donationController.getDonation);
  */
 function getDonation(req, res, next) {
-    // Extract the donation ID from the request parameters.
     const donationId = req.params.id;
-    // Retrieve the donation from the database using the donation ID.
+
     Donation.findById(donationId)
         .then((donation) => {
             if (!donation) {
                 return res.status(404).json({ message: "Donation not found" });
             }
+
             res.json(donation);
         })
         .catch((err) => {
-            // If an error occurs during the retrieval process, respond with a JSON error message.
             console.error("Error retrieving donation:", err);
             res.status(500).json({ message: "Internal Server Error" });
         });
