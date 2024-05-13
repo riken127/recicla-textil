@@ -19,20 +19,18 @@ router.delete("/:id", donationController.deleteDonation);
 // Updates an existing donation
 router.put("/:id", donationController.updateDonation);
 
-// Renders the items table of a specific donation
-router.get('/:id/items/all', itemsController.renderItemsTable);
 // Uploads an image for a specific item of a donation
 router.post('/:id/upload/', upload.single('item'), itemsController.uploadImage);
 
 // Adds a new item to a specific donation
-router.post('/:id/items/add', itemsController.addItem);
+router.post('/:id/items/', itemsController.addItem);
 // Updates an existing item of a specific donation
-router.post('/:id/items/:itemId/update', itemsController.updateItem);
+router.put('/:id/items/:itemId', itemsController.updateItem);
 // Gets a specific item of a donation by ID
 router.get('/:id/items/:itemId', itemsController.getItem);
 // Deletes an item of a specific donation
-router.delete('/:id/items/:idItem/delete', itemsController.deleteItem);
+router.delete('/:id/items/:idItem', itemsController.deleteItem);
 // Gets all items of all donations
-router.post('/:id/items/all-items', itemsController.getAllItems);
+router.post('/:id/items/all', itemsController.getAllItems);
 
 module.exports = router;

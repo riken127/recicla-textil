@@ -116,7 +116,7 @@ $(document).ready(function () {
 
     // Function to open the Details modal
     window.openDetailsModal = (donationId) => {
-        currentDonationId = donationId; // Set the global variable to the current donation ID
+        currentDonationId = donationId; 
 
         if (donationId) {
             $.ajax({
@@ -338,7 +338,7 @@ $(document).ready(function () {
 
         $.ajax({
             url: "/donations/" + currentDonationId,
-            method: "POST",
+            method: "PUT",
             data: jsonData,
             contentType: "application/json",
             dataType: "json",
@@ -357,6 +357,7 @@ $(document).ready(function () {
         currentDonationId = donationId;
         $("#deleteModal").modal("show");
     };
+    
     // Click event listener for delete confirmation button
     $(document).on("click", "#confirmDelete", function () {
         var donationId = currentDonationId;
