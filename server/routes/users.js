@@ -9,13 +9,13 @@ router.get('/all', auth.isAuthenticated, auth.hasRoles(['administrator']), userC
 router.post('/upload/',upload.single('image'),userController.uploadImage);
 
 // add user via mongoose middleware, sends mongoose object via POSTs' body via create modals' form
-router.post('/', userController.addUser)
+router.post('/', auth.isAuthenticated, userController.addUser)
 // edit user via mongoose middleware, sends mongoose object via POSTs' body via update modals' form.
-router.put('/:id',userController.updateUser)
+router.put('/:id', auth.isAuthenticated, userController.updateUser)
 // get user information via get, sends a request to which is than rendered in frontend via ajax.
 router.get('/:id', userController.getUser)
 // delete user via mongoose middleware, sends mongoose object via post's body.
-router.delete('/:id', userController.deleteUser)
+router.delete('/:id', auth.isAuthenticated, userController.deleteUser)
 // get all users by json (server-side processing route, connects with ajax's create table in frontend)
 router.post('/all', userController.getAllUsers);
 
