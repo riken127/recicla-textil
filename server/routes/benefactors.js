@@ -12,13 +12,13 @@ router.post('/upload/banner/', upload.single('banner'), benefactorController.upl
 router.post('/upload/logo', upload.single('logo'), benefactorController.uploadLogo);
 
 // Adds a new benefactor
-router.post('/', benefactorController.addBenefactor);
+router.post('/', auth.isAuthenticated, benefactorController.addBenefactor);
 // Updates an existing benefactor
-router.put('/:id', benefactorController.updateBenefactor);
+router.put('/:id', auth.isAuthenticated, benefactorController.updateBenefactor);
 // Retrieves a benefactor by its ID.
 router.get('/:id', benefactorController.getBenefactor);
 // Deletes a benefactor.
-router.delete('/:id', benefactorController.deleteBenefactor);
+router.delete('/:id', auth.isAuthenticated, benefactorController.deleteBenefactor);
 // Retrieves all benefactors
 router.post('/all', benefactorController.getAllBenefactors);
 
