@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const Donation = require("../models/user/UserActivity");
+const mailController = require("../controllers/MailController");
 
 /**
  * Renders the table of benefactors.
@@ -19,26 +20,26 @@ const Donation = require("../models/user/UserActivity");
  * router.get('/all', benefactorController.renderBenefactorsTable);
  */
 function renderBenefactorsTable(req, res, next) {
-    const page = req.body.page || 1;
+  const page = req.body.page || 1;
 
-    Benefactor.find()
-        .skip((page - 1) * 10)
-        .limit(10)
-        .exec()
-        .then((benefactors) => {
-            res.render("benefactors/table", {
-                benefactors: benefactors,
-                currentRoute: "/benefactors/all",
-                username: req.user.username,
-                pfp: req.user.image,
-            });
-        })
-        .catch((err) => {
-            res.json({
-                message: err.message,
-                type: "danger",
-            });
-        });
+  Benefactor.find()
+    .skip((page - 1) * 10)
+    .limit(10)
+    .exec()
+    .then((benefactors) => {
+      res.render("benefactors/table", {
+        benefactors: benefactors,
+        currentRoute: "/benefactors/all",
+        username: req.user.username,
+        pfp: req.user.image,
+      });
+    })
+    .catch((err) => {
+      res.json({
+        message: err.message,
+        type: "danger",
+      });
+    });
 }
 
 /**
@@ -57,54 +58,54 @@ function renderBenefactorsTable(req, res, next) {
  * router.post('/', benefactorController.getAllBenefactors);
  */
 async function getAllBenefactors(req, res, next) {
-    const query = {};
+  const query = {};
 
-    if (req.body.status) {
-        query["status"] = req.body.status;
-    } else {
-        query["status"] = "active";
-    }
+  if (req.body.status) {
+    query["status"] = req.body.status;
+  } else {
+    query["status"] = "active";
+  }
 
-    const totalRecords = await getTotalCount(query);
-    const { draw, start, length } = req.body;
-    const search_value = req.body["search[value]"];
-    const orderBy = req.body["order[0][dir]"];
-    const columnIndex = req.body["order[0][column]"];
-    const order = orderBy === "asc" ? 1 : -1;
-    const columnMapping = {
-        0: "name",
-        2: "address.street",
-        3: "phone",
-        4: "createdAt",
-    };
-    const column = columnMapping[columnIndex];
+  const totalRecords = await getTotalCount(query);
+  const { draw, start, length } = req.body;
+  const search_value = req.body["search[value]"];
+  const orderBy = req.body["order[0][dir]"];
+  const columnIndex = req.body["order[0][column]"];
+  const order = orderBy === "asc" ? 1 : -1;
+  const columnMapping = {
+    0: "name",
+    2: "address.street",
+    3: "phone",
+    4: "createdAt",
+  };
+  const column = columnMapping[columnIndex];
 
-    if (search_value) {
-        query["$or"] = [
-            { name: { $regex: search_value, $options: "i" } },
-            { username: { $regex: search_value, $options: "i" } },
-            { email: { $regex: search_value, $options: "i" } },
-        ];
-    }
+  if (search_value) {
+    query["$or"] = [
+      { name: { $regex: search_value, $options: "i" } },
+      { username: { $regex: search_value, $options: "i" } },
+      { email: { $regex: search_value, $options: "i" } },
+    ];
+  }
 
-    Benefactor.find(query)
-        .skip(parseInt(start))
-        .limit(parseInt(length))
-        .sort({ [column]: order })
-        .exec()
-        .then((benefactors) => {
-            res.json({
-                draw: parseInt(draw),
-                recordsTotal: totalRecords,
-                recordsFiltered: totalRecords,
-                data: benefactors,
-            });
-        })
-        .catch((err) => {
-            res.status(500).json({
-                error: err.message,
-            });
-        });
+  Benefactor.find(query)
+    .skip(parseInt(start))
+    .limit(parseInt(length))
+    .sort({ [column]: order })
+    .exec()
+    .then((benefactors) => {
+      res.json({
+        draw: parseInt(draw),
+        recordsTotal: totalRecords,
+        recordsFiltered: totalRecords,
+        data: benefactors,
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        error: err.message,
+      });
+    });
 }
 
 /**
@@ -117,13 +118,13 @@ async function getAllBenefactors(req, res, next) {
  * @returns {Promise<number>} The total count of benefactors.
  */
 async function getTotalCount(query) {
-    try {
-        const count = await Benefactor.countDocuments(query);
+  try {
+    const count = await Benefactor.countDocuments(query);
 
-        return count;
-    } catch (err) {
-        throw err;
-    }
+    return count;
+  } catch (err) {
+    throw err;
+  }
 }
 
 /**
@@ -142,22 +143,20 @@ async function getTotalCount(query) {
  * router.get('/:id', benefactorController.getBenefactor);
  */
 function getBenefactor(req, res, next) {
-    const benefactorId = req.params.id;
+  const benefactorId = req.params.id;
 
-    Benefactor.findById(benefactorId)
-        .then((benefactor) => {
-            if (!benefactor) {
-                return res
-                    .status(404)
-                    .json({ message: "Benefactor not found" });
-            }
+  Benefactor.findById(benefactorId)
+    .then((benefactor) => {
+      if (!benefactor) {
+        return res.status(404).json({ message: "Benefactor not found" });
+      }
 
-            res.json(benefactor);
-        })
-        .catch((err) => {
-            console.error("Error retrieving benefactor:", err);
-            res.status(500).json({ message: "Internal Server Error" });
-        });
+      res.json(benefactor);
+    })
+    .catch((err) => {
+      console.error("Error retrieving benefactor:", err);
+      res.status(500).json({ message: "Internal Server Error" });
+    });
 }
 
 /**
@@ -175,81 +174,142 @@ function getBenefactor(req, res, next) {
  * @returns {void}
  * @example
  * // Usage:
- * router.post('/', benefactorController.addBenefactor);
+ * router.post('/', auth.isAuthenticated, benefactorController.addBenefactor);
  */
-function addBenefactor(req, res, next) {
-    const benefactorData = req.body;
+async function addBenefactor(req, res, next) {
+  const benefactorData = req.body;
 
-    Benefactor.findOne({
-        $or: [
-            { username: benefactorData.username },
-            { email: benefactorData.email },
-            { phone: benefactorData.phone },
-        ],
-    })
-        .then((existingBenefactor) => {
-            if (existingBenefactor) {
-                let errorMessage = "";
+  Benefactor.findOne({
+    $or: [
+      { username: benefactorData.username },
+      { email: benefactorData.email },
+      { phone: benefactorData.phone },
+    ],
+  })
+    .then((existingBenefactor) => {
+      if (existingBenefactor) {
+        let errorMessage = "";
 
-                if (existingBenefactor.username === benefactorData.username) {
-                    errorMessage = "Username already exists";
-                } else if (existingBenefactor.email === benefactorData.email) {
-                    errorMessage = "Email already exists.";
-                } else if (existingBenefactor.phone === benefactorData.phone) {
-                    errorMessage = "Phone number already exists.";
-                }
+        if (existingBenefactor.username === benefactorData.username) {
+          errorMessage = "Username already exists";
+        } else if (existingBenefactor.email === benefactorData.email) {
+          errorMessage = "Email already exists.";
+        } else if (existingBenefactor.phone === benefactorData.phone) {
+          errorMessage = "Phone number already exists.";
+        }
 
-                res.status(400).json({ message: errorMessage, type: "danger" });
-            } else {
-                let benefactor = new Benefactor({
-                    name: benefactorData.name || "",
-                    address: benefactorData.address || {},
-                    username: benefactorData.username || "",
-                    password:
-                        bcrypt.hashSync(benefactorData.password, 10) || "",
-                    email: benefactorData.email || "",
-                    description: benefactorData.description || "",
-                    phone: benefactorData.phone || "",
-                    logo: benefactorData.logo || "",
-                    banner: benefactorData.banner || "",
-                    pickpoints: benefactorData.pickpoints || [],
-                    convertationRatio: benefactorData.convertationRatio || {},
-                    active: benefactorData.status || "active",
-                });
-
-                benefactor
-                    .save()
-                    .then((savedBenefactor) => {
-                        if (
-                            (benefactorData.banner || benefactorData.logo) &&
-                            !fs.existsSync(
-                                "./uploads/benefactors/" + savedBenefactor._id
-                            )
-                        ) {
-                            fs.mkdirSync(
-                                "./uploads/benefactors/" +
-                                    savedBenefactor._id +
-                                    "/profile/",
-                                { recursive: true }
-                            );
-                        }
-
-                        res.status(200).json({
-                            type: "success",
-                            result: savedBenefactor._id,
-                        });
-                    })
-                    .catch((err) => {
-                        res.status(500).json({
-                            message: err.message,
-                            type: "danger",
-                        });
-                    });
-            }
-        })
-        .catch((err) => {
-            res.status(500).json({ message: err.message, type: "danger" });
+        res.status(400).json({ message: errorMessage, type: "danger" });
+      } else {
+        let benefactor = new Benefactor({
+          name: benefactorData.name || "",
+          address: benefactorData.address || {},
+          username: benefactorData.username || "",
+          password: bcrypt.hashSync(benefactorData.password, 10) || "",
+          email: benefactorData.email || "",
+          description: benefactorData.description || "",
+          phone: benefactorData.phone || "",
+          logo: benefactorData.logo || "",
+          banner: benefactorData.banner || "",
+          pickpoints: benefactorData.pickpoints || [],
+          convertationRatio: benefactorData.convertationRatio || {},
+          active: benefactorData.status || "active",
         });
+
+        benefactor
+          .save()
+          .then(async (savedBenefactor) => {
+            if (
+              (benefactorData.banner || benefactorData.logo) &&
+              !fs.existsSync("./uploads/benefactors/" + savedBenefactor._id)
+            ) {
+              fs.mkdirSync(
+                "./uploads/benefactors/" + savedBenefactor._id + "/profile/",
+                { recursive: true }
+              );
+            }
+
+            const email = mailController.createEmail("successEmail", {
+              to: req.user.email,
+              subject: "Benefactor Registration",
+              text:
+                "Dear " +
+                req.user.firstName +
+                ",\n\n" +
+                "We'd like to inform you that the account for the benefactor has been successfully created. Here are the details for the new account:\n\n" +
+                "- Username: " +
+                savedBenefactor.username +
+                "\n" +
+                "- Email: " +
+                savedBenefactor.email +
+                "\n\n" +
+                "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
+                "If you need any further information, we are at your disposal.\n\n" +
+                "Best regards,\n\n" +
+                "Recicla-Textil Team",
+            });
+
+            await email.send();
+
+            res.status(200).json({
+              type: "success",
+              result: savedBenefactor._id,
+            });
+          })
+          .catch(async (err) => {
+            const email = mailController.createEmail("errorEmail", {
+              to: req.user.email,
+              subject: "Benefactor Registration Error",
+              text:
+                "Dear " +
+                req.user.firstName +
+                ",\n\n" +
+                "An error occurred while creating the benefactor account. Please review and take necessary actions.\n\n" +
+                "Error Details:\n" +
+                "- Error Code: " +
+                err.code +
+                "\n" +
+                "- Error Message: " +
+                err.message +
+                "\n\n" +
+                "If you need any further assistance, please don't hesitate to contact us.\n\n" +
+                "Best regards,\n\n" +
+                "Recicla-Textil Team",
+            });
+
+            await email.send();
+
+            res.status(500).json({
+              message: err.message,
+              type: "danger",
+            });
+          });
+      }
+    })
+    .catch(async (err) => {
+      const email = mailController.createEmail("errorEmail", {
+        to: req.user.email,
+        subject: "Benefactor Registration Error",
+        text:
+          "Dear " +
+          req.user.firstName +
+          ",\n\n" +
+          "An error occurred while creating the benefactor account. Please review and take necessary actions.\n\n" +
+          "Error Details:\n" +
+          "- Error Code: " +
+          err.code +
+          "\n" +
+          "- Error Message: " +
+          err.message +
+          "\n\n" +
+          "If you need any further assistance, please don't hesitate to contact us.\n\n" +
+          "Best regards,\n\n" +
+          "Recicla-Textil Team",
+      });
+
+      await email.send();
+
+      res.status(500).json({ message: err.message, type: "danger" });
+    });
 }
 
 /**
@@ -268,113 +328,172 @@ function addBenefactor(req, res, next) {
  * @returns {void}
  * @example
  * // Usage:
- * router.put('/:id', benefactorController.updateBenefactor);
+ * router.put('/:id', auth.isAuthenticated, benefactorController.updateBenefactor);
  */
-function updateBenefactor(req, res, next) {
-    const benefactorId = req.params.id;
-    const updateData = {};
-    const editableProperties = [
-        "name",
-        "username",
-        "email",
-        "password",
-        "logo",
-        "banner",
-        "description",
-        "address",
-        "phone",
-        "pickpoints",
-        "convertationRatio",
-        "status",
-    ];
+async function updateBenefactor(req, res, next) {
+  const benefactorId = req.params.id;
+  const updateData = {};
+  const editableProperties = [
+    "name",
+    "username",
+    "email",
+    "password",
+    "logo",
+    "banner",
+    "description",
+    "address",
+    "phone",
+    "pickpoints",
+    "convertationRatio",
+    "status",
+  ];
 
-    for (const prop of editableProperties) {
-        if (req.body.hasOwnProperty(prop) && req.body[prop] !== undefined) {
-            updateData[prop] = req.body[prop];
+  for (const prop of editableProperties) {
+    if (req.body.hasOwnProperty(prop) && req.body[prop] !== undefined) {
+      updateData[prop] = req.body[prop];
+    }
+  }
+
+  if (updateData.password !== undefined) {
+    updateData.password = bcrypt.hashSync(updateData.password, 10);
+  } else {
+    delete updateData.password;
+  }
+
+  Benefactor.findOne({
+    $and: [
+      { _id: { $ne: benefactorId } },
+      { $or: [{ email: updateData.email }, { phone: updateData.phone }] },
+    ],
+  })
+    .then((existingBenefactor) => {
+      if (existingBenefactor) {
+        let errorMessage = "";
+
+        if (existingBenefactor.username === updateData.username) {
+          errorMessage = "Username already exists.";
+        } else if (existingBenefactor.email === updateData.email) {
+          errorMessage = "E-mail already exists.";
+        } else if (existingBenefactor.phone === updateData.phone) {
+          errorMessage = "Phone number already exists.";
         }
-    }
 
-    if (updateData.password !== undefined) {
-        updateData.password = bcrypt.hashSync(updateData.password, 10);
-    } else {
-        delete updateData.password;
-    }
+        res.status(400).json({ message: errorMessage, type: "danger" });
+      } else {
+        if (req.body.address) {
+          const addressUpdates = {};
 
-    Benefactor.findOne({
-        $and: [
-            { _id: { $ne: benefactorId } },
-            { $or: [{ email: updateData.email }, { phone: updateData.phone }] },
-        ],
-    })
-        .then((existingBenefactor) => {
-            if (existingBenefactor) {
-                let errorMessage = "";
-
-                if (existingBenefactor.username === updateData.username) {
-                    errorMessage = "Username already exists.";
-                } else if (existingBenefactor.email === updateData.email) {
-                    errorMessage = "E-mail already exists.";
-                } else if (existingBenefactor.phone === updateData.phone) {
-                    errorMessage = "Phone number already exists.";
-                }
-
-                res.status(400).json({ message: errorMessage, type: "danger" });
-            } else {
-                if (req.body.address) {
-                    const addressUpdates = {};
-
-                    for (const addressProp in req.body.address) {
-                        if (req.body.address.hasOwnProperty(addressProp)) {
-                            addressUpdates[addressProp] =
-                                req.body.address[addressProp];
-                        }
-                    }
-
-                    updateData.address = addressUpdates;
-                }
-
-                Benefactor.findByIdAndUpdate(benefactorId, updateData, {
-                    new: true,
-                })
-                    .then((updatedBenefactor) => {
-                        if (
-                            req.body.image &&
-                            !fs.existsSync(
-                                "./uploads/benefactors/" +
-                                    benefactorId +
-                                    "/profile"
-                            )
-                        ) {
-                            fs.mkdirSync(
-                                "./uploads/benefactors/" +
-                                    benefactorId +
-                                    "/profile/",
-                                { recursive: true }
-                            );
-                        }
-
-                        if (!updatedBenefactor) {
-                            return res.json({
-                                message: "Benefactor not found",
-                                type: "danger",
-                            });
-                        }
-
-                        res.json({
-                            type: "success",
-                            message:
-                                updateBenefactor.name +
-                                " was updated successfully.",
-                        });
-                    })
-                    .catch((err) => {
-                        res.json({ message: err.message, type: "danger" });
-                    });
+          for (const addressProp in req.body.address) {
+            if (req.body.address.hasOwnProperty(addressProp)) {
+              addressUpdates[addressProp] = req.body.address[addressProp];
             }
+          }
+
+          updateData.address = addressUpdates;
+        }
+
+        Benefactor.findByIdAndUpdate(benefactorId, updateData, {
+          new: true,
         })
-        .catch((err) => {
+          .then(async (updatedBenefactor) => {
+            if (
+              req.body.image &&
+              !fs.existsSync(
+                "./uploads/benefactors/" + benefactorId + "/profile"
+              )
+            ) {
+              fs.mkdirSync(
+                "./uploads/benefactors/" + benefactorId + "/profile/",
+                { recursive: true }
+              );
+            }
+
+            if (!updatedBenefactor) {
+              return res.json({
+                message: "Benefactor not found",
+                type: "danger",
+              });
+            }
+
+            const email = mailController.createEmail("updateEmail", {
+              to: req.user.email,
+              subject: "Benefactor Update",
+              text:
+                "Dear " +
+                req.user.firstName +
+                ",\n\n" +
+                "We'd like to inform you that the account for the benefactor has been successfully updated. Here are the details for the updated account:\n\n" +
+                "- Username: " +
+                updatedBenefactor.username +
+                "\n" +
+                "- Email: " +
+                updatedBenefactor.email +
+                "\n\n" +
+                "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
+                "If you need any further information, we are at your disposal.\n\n" +
+                "Best regards,\n\n" +
+                "Recicla-Textil Team",
+            });
+
+            await email.send();
+
+            res.json({
+              type: "success",
+              message: updateBenefactor.name + " was updated successfully.",
+            });
+          })
+          .catch(async (err) => {
+            const email = mailController.createEmail("errorEmail", {
+              to: req.user.email,
+              subject: "Benefactor Update Error",
+              text:
+                "Dear " +
+                req.user.firstName +
+                ",\n\n" +
+                "An error occurred while updating the benefactor account. Please review and take necessary actions.\n\n" +
+                "Error Details:\n" +
+                "- Error Code: " +
+                err.code +
+                "\n" +
+                "- Error Message: " +
+                err.message +
+                "\n\n" +
+                "If you need any further assistance, please don't hesitate to contact us.\n\n" +
+                "Best regards,\n\n" +
+                "Recicla-Textil Team",
+            });
+
+            await email.send();
+
             res.json({ message: err.message, type: "danger" });
-        });
+          });
+      }
+    })
+    .catch(async (err) => {
+      const email = mailController.createEmail("errorEmail", {
+        to: req.user.email,
+        subject: "Benefactor Update Error",
+        text:
+          "Dear " +
+          req.user.firstName +
+          ",\n\n" +
+          "An error occurred while updating the benefactor account. Please review and take necessary actions.\n\n" +
+          "Error Details:\n" +
+          "- Error Code: " +
+          err.code +
+          "\n" +
+          "- Error Message: " +
+          err.message +
+          "\n\n" +
+          "If you need any further assistance, please don't hesitate to contact us.\n\n" +
+          "Best regards,\n\n" +
+          "Recicla-Textil Team",
+      });
+
+      await email.send();
+
+      res.json({ message: err.message, type: "danger" });
+    });
 }
 
 /**
@@ -393,72 +512,160 @@ function updateBenefactor(req, res, next) {
  * @returns {void}
  * @example
  * // Usage:
- * router.delete('/:id', benefactorController.deleteBenefactor);
+ * router.delete('/:id', auth.isAuthenticated, benefactorController.deleteBenefactor);
  */
 async function deleteBenefactor(req, res, next) {
-    try {
-        const id = req.params.id;
+  try {
+    const id = req.params.id;
 
-        const donationQuery = {
-            activityType: "donation",
-            "details.benefactorId": id,
-        };
-        const donations = await Donation.find(donationQuery);
+    const donationQuery = {
+      activityType: "donation",
+      "details.benefactorId": id,
+    };
+    const donations = await Donation.find(donationQuery);
 
-        if (donations.length == 0) {
-            const result = await Benefactor.findByIdAndDelete(id);
-            const { logo, banner } = result;
+    if (donations.length == 0) {
+      const result = await Benefactor.findByIdAndDelete(id);
+      const { logo, banner } = result;
 
-            if (logo) {
-                try {
-                    fs.unlinkSync("./uploads/" + logo);
-                } catch (err) {
-                    console.error(err);
-                }
-            }
-
-            if (banner) {
-                try {
-                    fs.unlinkSync("./uploads/" + banner);
-                } catch (err) {
-                    console.error(err);
-                }
-            }
-
-            res.status(200).json({
-                message: "Benefactor deleted successfully",
-                type: "success",
-            });
-        } else {
-            const inactiveData = { status: "inactive" };
-
-            Benefactor.findByIdAndUpdate(id, inactiveData)
-                .then((benefactor) => {
-                    if (!benefactor) {
-                        return res.status(404).json({
-                            message: "Benefactor not found",
-                            type: "danger",
-                        });
-                    }
-
-                    res.status(200).json({
-                        message: "Benefactor status updated to inactive",
-                        type: "success",
-                    });
-                })
-                .catch((err) => {
-                    res.status(500).json({
-                        message: err.message,
-                        type: "danger",
-                    });
-                });
+      if (logo) {
+        try {
+          fs.unlinkSync("./uploads/" + logo);
+        } catch (err) {
+          console.error(err);
         }
-    } catch (err) {
-        res.status(500).json({
+      }
+
+      if (banner) {
+        try {
+          fs.unlinkSync("./uploads/" + banner);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      const email = mailController.createEmail("sucessEmail", {
+        to: req.user.email,
+        subject: "Benefactor deletion",
+        text:
+          "Dear " +
+          req.user.firstName +
+          ",\n\n" +
+          "We'd like to inform you that the account for the benefactor has been successfully deleted. Here are the details for the deleted account:\n\n" +
+          "- Username: " +
+          result.username +
+          "\n" +
+          "- Email: " +
+          result.email +
+          "\n\n" +
+          "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
+          "If you need any further information, we are at your disposal.\n\n" +
+          "Best regards,\n\n" +
+          "Recicla-Textil Team",
+      });
+
+      await email.send();
+
+      res.status(200).json({
+        message: "Benefactor deleted successfully",
+        type: "success",
+      });
+    } else {
+      const inactiveData = { status: "inactive" };
+
+      Benefactor.findByIdAndUpdate(id, inactiveData)
+        .then(async (benefactor) => {
+          if (!benefactor) {
+            return res.status(404).json({
+              message: "Benefactor not found",
+              type: "danger",
+            });
+          }
+
+          const email = mailController.createEmail("sucessEmail", {
+            to: req.user.email,
+            subject: "Benefactor deletion",
+            text:
+              "Dear " +
+              req.user.firstName +
+              ",\n\n" +
+              "We'd like to inform you that the account for the benefactor has been successfully deleted. Here are the details for the deleted account:\n\n" +
+              "- Username: " +
+              result.username +
+              "\n" +
+              "- Email: " +
+              result.email +
+              "\n\n" +
+              "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
+              "If you need any further information, we are at your disposal.\n\n" +
+              "Best regards,\n\n" +
+              "Recicla-Textil Team",
+          });
+
+          await email.send();
+
+          res.status(200).json({
+            message: "Benefactor status updated to inactive",
+            type: "success",
+          });
+        })
+        .catch(async (err) => {
+          const email = mailController.createEmail("errorEmail", {
+            to: req.user.email,
+            subject: "Benefactor deletion",
+            text:
+              "Dear " +
+              req.user.firstName +
+              ",\n\n" +
+              "An error occurred while deleting the benefactor account. Please review and take necessary actions.\n\n" +
+              "Error Details:\n" +
+              "- Error Code: " +
+              err.code +
+              "\n" +
+              "- Error Message: " +
+              err.message +
+              "\n\n" +
+              "If you need any further assistance, please don't hesitate to contact us.\n\n" +
+              "Best regards,\n\n" +
+              "Recicla-Textil Team",
+          });
+
+          await email.send();
+
+          res.status(500).json({
             message: err.message,
             type: "danger",
+          });
         });
     }
+  } catch (err) {
+    const email = mailController.createEmail("errorEmail", {
+      to: req.user.email,
+      subject: "Benefactor deletion",
+      text:
+        "Dear " +
+        req.user.firstName +
+        ",\n\n" +
+        "An error occurred while deleting the benefactor account. Please review and take necessary actions.\n\n" +
+        "Error Details:\n" +
+        "- Error Code: " +
+        err.code +
+        "\n" +
+        "- Error Message: " +
+        err.message +
+        "\n\n" +
+        "If you need any further assistance, please don't hesitate to contact us.\n\n" +
+        "Best regards,\n\n" +
+        "Recicla-Textil Team",
+    });
+
+    await email.send();
+
+    res.status(500).json({
+      message: err.message,
+      type: "danger",
+    });
+  }
 }
 
 /**
@@ -476,31 +683,31 @@ async function deleteBenefactor(req, res, next) {
  * @param {Function} next - The next middleware function in the request-response cycle.
  */
 function uploadBanner(req, res, next) {
-    try {
-        const originalFilename = req.file.originalname;
-        const bannerUrl = path.join(
-            "./uploads/benefactors",
-            "/" + req.body.entityId,
-            "/profile/",
-            originalFilename
-        );
+  try {
+    const originalFilename = req.file.originalname;
+    const bannerUrl = path.join(
+      "./uploads/benefactors",
+      "/" + req.body.entityId,
+      "/profile/",
+      originalFilename
+    );
 
-        Benefactor.findByIdAndUpdate(req.body.entityId, {
-            banner: bannerUrl,
-        })
-            .then((updatedBenefactor) => {
-                res.json({
-                    message: "Banner uploaded successfully.",
-                    type: "success",
-                });
-            })
-            .catch((error) => {
-                res.status(500).json({ error: "Failed to upload banner." });
-            });
-    } catch (error) {
-        console.error("Error uploading image", error);
+    Benefactor.findByIdAndUpdate(req.body.entityId, {
+      banner: bannerUrl,
+    })
+      .then((updatedBenefactor) => {
+        res.json({
+          message: "Banner uploaded successfully.",
+          type: "success",
+        });
+      })
+      .catch((error) => {
         res.status(500).json({ error: "Failed to upload banner." });
-    }
+      });
+  } catch (error) {
+    console.error("Error uploading image", error);
+    res.status(500).json({ error: "Failed to upload banner." });
+  }
 }
 
 /**
@@ -518,40 +725,40 @@ function uploadBanner(req, res, next) {
  * @param {Function} next - The next middleware function in the request-response cycle.
  */
 function uploadLogo(req, res, next) {
-    try {
-        const originalFilename = req.file.originalname;
-        const logoUrl = path.join(
-            "./uploads/benefactors",
-            "/" + req.body.entityId,
-            "/profile/",
-            originalFilename
-        );
+  try {
+    const originalFilename = req.file.originalname;
+    const logoUrl = path.join(
+      "./uploads/benefactors",
+      "/" + req.body.entityId,
+      "/profile/",
+      originalFilename
+    );
 
-        Benefactor.findByIdAndUpdate(req.body.entityId, {
-            logo: logoUrl,
-        })
-            .then((updatedBenefactor) => {
-                res.json({
-                    message: "Logo uploaded successfully.",
-                    type: "success",
-                });
-            })
-            .catch((error) => {
-                res.status(500).json({ error: "Failed to upload logo." });
-            });
-    } catch (error) {
-        console.error("Error uploading image", error);
+    Benefactor.findByIdAndUpdate(req.body.entityId, {
+      logo: logoUrl,
+    })
+      .then((updatedBenefactor) => {
+        res.json({
+          message: "Logo uploaded successfully.",
+          type: "success",
+        });
+      })
+      .catch((error) => {
         res.status(500).json({ error: "Failed to upload logo." });
-    }
+      });
+  } catch (error) {
+    console.error("Error uploading image", error);
+    res.status(500).json({ error: "Failed to upload logo." });
+  }
 }
 
 module.exports = {
-    renderBenefactorsTable: renderBenefactorsTable,
-    addBenefactor: addBenefactor,
-    updateBenefactor: updateBenefactor,
-    deleteBenefactor: deleteBenefactor,
-    getBenefactor: getBenefactor,
-    getAllBenefactors: getAllBenefactors,
-    uploadBanner: uploadBanner,
-    uploadLogo: uploadLogo,
+  renderBenefactorsTable: renderBenefactorsTable,
+  addBenefactor: addBenefactor,
+  updateBenefactor: updateBenefactor,
+  deleteBenefactor: deleteBenefactor,
+  getBenefactor: getBenefactor,
+  getAllBenefactors: getAllBenefactors,
+  uploadBanner: uploadBanner,
+  uploadLogo: uploadLogo,
 };
