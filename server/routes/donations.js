@@ -13,11 +13,11 @@ router.get("/:id", donationController.getDonation);
 // Gets all donations
 router.post("/all", donationController.getAllDonations);
 // Adds a new donation
-router.post("/", donationController.addDonation);
+router.post("/", auth.isAuthenticated, donationController.addDonation);
 // Deletes a donation
-router.delete("/:id", donationController.deleteDonation);
+router.delete("/:id", auth.isAuthenticated, donationController.deleteDonation);
 // Updates an existing donation
-router.put("/:id", donationController.updateDonation);
+router.put("/:id", auth.isAuthenticated, donationController.updateDonation);
 
 // Uploads an image for a specific item of a donation
 router.post('/:id/upload/', upload.single('item'), itemsController.uploadImage);
