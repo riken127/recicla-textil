@@ -19,7 +19,7 @@ const options = {
     },
     servers: [{ url: `http://localhost:3000` }],
   },
-  apis: ['./routes/*.js', './models/*.js'],
+  apis: ['./routes/*.js', './models/**/*.js'],
 };
 
 module.exports = swaggerJsDoc(options);

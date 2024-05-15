@@ -5,7 +5,35 @@
 
 const mongoose = require('mongoose');
 
-// Define schema for Address
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Address:
+ *       type: object
+ *       required:
+ *         - street
+ *         - city
+ *         - postalCode
+ *         - country
+ *       properties:
+ *         street:
+ *           type: string
+ *           description: The street of the address
+ *           example: 123 Main St
+ *         city:
+ *           type: string
+ *           description: The city of the address
+ *           example: Springfield
+ *         postalCode:
+ *           type: string
+ *           description: The postal code of the address
+ *           example: 12345
+ *         country:
+ *           type: string
+ *           description: The country of the address
+ *           example: USA
+ */
 const AddressSchema = new mongoose.Schema({
     street: {type: String, required: true},
     city: {type: String, required: true},
