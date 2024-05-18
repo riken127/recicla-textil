@@ -12,7 +12,13 @@ var homeRouter = require("./routes/home");
 var authRouter = require("./routes/auth");
 var mongoose = require("mongoose");
 var app = express();
-const swaggerUI = require("swagger-ui-express");
+var swaggerUI = require("swagger-ui-express");
+var cors = require('cors')
+
+app.use(cors({
+    origin: 'http://localhost:4200', 
+    credentials: true 
+}));
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -31,6 +37,7 @@ app.use("/benefactors", benefactorRouter);
 app.use("/dashboard", dashboardRouter);
 app.use("/home", homeRouter);
 app.use("/auth", authRouter);
+
 app.use((req, res, next) => {
     if (req.originalUrl === "/") {
         res.redirect("/auth/login");
@@ -55,6 +62,7 @@ mongoose
     .catch((error) => {
         console.error("Error connecting to MongoDB:", error);
     });
+
 app.use((err, req, res, next) => {
     // set locals, only providing error in development
     res.locals.message = err.message;
