@@ -14,13 +14,17 @@ function renderLoginForm(req, res) {
 
 async function validateLogin(req, res, next) {
     const {username, password} = req.body;
+    const fromRest = req.body.rest ? req.body.rest : undefined
+
     try {
         const user = await User.findOne({ username })
     
-        if (!user) {
+        if (!user && !fromRest) {
             res.status(401).render('login', {
                 messages: { error: 'Invalid username or password.' }
             });
+        } else if (!user && fromRest) {
+            res.status(401).json({ error: 'Invalid username or password.' });
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
@@ -28,24 +32,45 @@ async function validateLogin(req, res, next) {
         if (passwordMatch) {
             const token = jwt.sign( { user }, secretKey, { expiresIn: '1h' });
             
-            encryptedToken = encrypt(token);
+            let encryptedToken = encrypt(token);
 
-            res.cookie('token', encryptedToken, {
-                 httpOnly: true ,
-                 sameSite: 'strict',
-                 secure: true
-            });
 
-            res.redirect('/home');
+                if (!fromRest) {
+                    res.cookie('token', encryptedToken, {
+                        httpOnly: true,
+                        sameSite: 'strict',
+                    });
+                    res.redirect('/home');
+                } else {
+                    res.cookie('token', encryptedToken, {
+                        httpOnly: true,
+                        sameSite: 'strict',
+                    });
+                    res.status(200).json({
+                        message: 'User authenticated successfully.'
+                    })
+                }
         } else {
-            res.status(401).render('login', {
-                messages: { error: 'Invalid username or password.' }
-            });
+            if (!fromRest) {
+                res.status(401).render('login', {
+                    messages: {error: 'Invalid username or password.'}
+                });
+            } else {
+                res.status(401).json('login', {
+                    messages: {error: 'Invalid username or password.'}
+                });
+            }
         }
     } catch (error) {
-        res.status(500).render('login', {
-            messages: { error: 'An error occured while processing your request, please try again!' }
-        });
+        if (!fromRest) {
+            res.status(500).render('login', {
+                messages: {error: 'An error occured while processing your request, please try again!'}
+            });
+        } else {
+            res.status(500).json('login', {
+                messages: {error: 'An error occured while processing your request, please try again!'}
+            });
+        }
     }
 }
 
@@ -68,17 +93,28 @@ function encrypt(token) {
 }
 
 function isAuthenticated(req, res, next) {
+    var fromRest = req.body.rest ? req.body.rest : undefined
+
+    
     const encryptedToken = req.cookies.token;
 
-    if (!encryptedToken) {
+    if (!encryptedToken && !fromRest) {
         res.redirect('/auth/login');
+    } else if (!encryptedToken && fromRest) {
+        return res.status(401).json({
+            message: 'Unauthorized'
+        })
     }
 
     const decryptedToken = decrypt(encryptedToken);
 
     jwt.verify(decryptedToken, secretKey, (err, decoded) => {
-        if (err) {
+        if (err && !fromRest) {
             res.redirect('/auth/login');
+        } else if (err && fromRest) {
+            return res.status(401).json({
+                message: 'Unauthorized'
+            })
         }
             req.user = decoded.user;
             next();
@@ -86,6 +122,8 @@ function isAuthenticated(req, res, next) {
 }
 
 function isNotAuthenticated(req, res, next) {
+    var fromRest = req.body.rest ? req.body.rest : undefined
+
     const encryptedToken = req.cookies.token;
 
     if (!encryptedToken) {
@@ -99,7 +137,14 @@ function isNotAuthenticated(req, res, next) {
             return next();
         }
 
-        res.redirect('/home');
+
+        if (!fromRest) {
+            res.redirect('/home');
+        } else {
+            res.status(500).json({
+                message: 'User already authenticated'
+            })
+        }
     });
 }
 
