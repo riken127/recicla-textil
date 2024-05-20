@@ -428,7 +428,7 @@ router.delete(
  *                   description: Error message
  *                   example: Internal Server Error
  */
-router.post("/all", benefactorController.getAllBenefactors);
+router.post("/all", auth.isAuthenticated,benefactorController.getAllBenefactors);
 
 /**
  * @swagger

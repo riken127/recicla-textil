@@ -1,0 +1,22 @@
+import {Item} from "./item";
+
+export class Donation {
+  constructor(public id: string,
+              public userId: string,
+              public activityType: string,
+              public timeStamp: string,
+              public details: ItemContainer,
+              public ip: string,
+              public __v: number
+              ) { }
+}
+
+export class ItemContainer {
+  constructor(public benefactorId: string,
+              public pickpointId: string,
+              public items: Item[],
+              public totalWeight: number,
+              public numberOfItems: number
+              ) {
+  }
+}
