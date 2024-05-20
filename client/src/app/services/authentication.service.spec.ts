@@ -15,7 +15,7 @@ describe('AuthenticationService', () => {
     });
 
     TestBed.configureTestingModule({
-      imports: [HttpClientModule], 
+      imports: [HttpClientModule],
       providers: [AuthenticationService]
     });
     service = TestBed.inject(AuthenticationService);
@@ -24,19 +24,19 @@ describe('AuthenticationService', () => {
 
   it('user exists, and credentials are correct.', () => {
     service.authenticateUser({username: 'anakin', password: '123'})
-      .subscribe(authentication => {
+        .subscribe(authentication => {
         expect(authentication.statusCode).toBe(200);
       })
   });
   it('user does not exist.', () => {
     service.authenticateUser({username: 'imnotevenrealxd', password: '123'})
-      .subscribe(authentication => {
+        .subscribe(authentication => {
         expect(authentication.statusCode).toBe(401);
       })
   });
   it('user exists, with wrong password.', () => {
     service.authenticateUser({username: 'anakin', password: 'incorrectpassword'})
-      .subscribe(authentication => {
+        .subscribe(authentication => {
         expect(authentication.statusCode).toBe(401);
       })
   });

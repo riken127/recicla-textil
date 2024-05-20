@@ -24,7 +24,7 @@ async function validateLogin(req, res, next) {
                 messages: { error: 'Invalid username or password.' }
             });
         } else if (!user && fromRest) {
-            res.status(401).json({ error: 'Invalid username or password.' });
+            return res.status(401).json({ message: 'Invalid username or password.' });
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
@@ -40,35 +40,35 @@ async function validateLogin(req, res, next) {
                         httpOnly: true,
                         sameSite: 'strict',
                     });
-                    res.redirect('/home');
+                    return res.redirect('/home');
                 } else {
                     res.cookie('token', encryptedToken, {
                         httpOnly: true,
                         sameSite: 'strict',
                     });
-                    res.status(200).json({
+                    return res.status(200).json({
                         message: 'User authenticated successfully.'
                     })
                 }
         } else {
             if (!fromRest) {
-                res.status(401).render('login', {
-                    messages: {error: 'Invalid username or password.'}
+                return res.status(401).render('login', {
+                    messages: 'Invalid username or password.'
                 });
             } else {
-                res.status(401).json('login', {
+                return res.status(401).json({
                     messages: {error: 'Invalid username or password.'}
                 });
             }
         }
     } catch (error) {
         if (!fromRest) {
-            res.status(500).render('login', {
+            return res.status(500).render('login', {
                 messages: {error: 'An error occured while processing your request, please try again!'}
             });
         } else {
-            res.status(500).json('login', {
-                messages: {error: 'An error occured while processing your request, please try again!'}
+            return res.status(500).json({
+                messages: 'An error occured while processing your request, please try again!'
             });
         }
     }
