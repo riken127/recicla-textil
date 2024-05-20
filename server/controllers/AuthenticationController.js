@@ -205,7 +205,7 @@ function getDecodedToken(req, res) {
     if (fName !== undefined) {
       result.fName = decodedToken.user.firstName;
     }
-    
+
     if (lName !== undefined) {
       result.lName = decodedToken.user.lastName;
     }
@@ -220,7 +220,7 @@ function getDecodedToken(req, res) {
         message: "no parameters could be fulfilled.",
       });
     }
-    
+
     return res.status(200).json(result);
   } catch (error) {
     return res.status(500).json({

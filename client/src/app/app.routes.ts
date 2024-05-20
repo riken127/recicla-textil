@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { UserLoginComponent } from './users/user-login/user-login.component';
+import {UserRegisterComponent} from "./users/user-register/user-register.component";
 import { ListDonationsComponent } from './donations/list/list.component';
 import { ListComponent } from './benefactors/list/list.component';
 import { ListItemsComponent } from './donations/list-items/list-items.component';
@@ -25,5 +27,13 @@ export const routes: Routes = [
   {
     path: ':id/list-items',
     component: ListItemsComponent,
+  },
+    {
+        path: 'users/login',
+        component: UserLoginComponent,
+    },
+  {
+    path: 'users/register',
+    component: UserRegisterComponent,
   }
 ];
