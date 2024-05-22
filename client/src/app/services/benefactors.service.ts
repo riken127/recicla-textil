@@ -100,19 +100,19 @@ export class BenefactorsService {
   }
 
   public getPickpoint(benefactorId: string, pickpointId: string): Observable<Pickpoint> | null {
-    return this.http.get<any | Pickpoint>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/${pickpointId}`, {})
-      .pipe(
-        map((response) => {
-          if (response instanceof Pickpoint) {
-            return response;
-          } else {
-            throw new Error('Error getting pickpoint');
-          }
-        }),
-        catchError(error => {
-          return throwError(error);
-        })
-      )
+    return this.http.get<Pickpoint>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/${pickpointId}`, {observe: 'response', withCredentials: true})
+    .pipe(
+      map((response: HttpResponse<any>) => {
+        if (response.status === 200) {
+          return response.body;
+        } else {
+          throw new Error('Error getting benefactor');
+        }
+      }),
+      catchError(error => {
+        return throwError(error);
+      })
+    );
   }
 
   public addPickpoint(benefactorId: string, pickpoint: Pickpoint): Observable<boolean> | null {

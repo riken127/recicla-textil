@@ -146,7 +146,6 @@ async function getAllPickpoints(req, res, next) {
 function getPickpoint(req, res, next) {
     const benefactorId = req.params.id;
     const pickPointId = req.params.idpp;
-
     Benefactor.findById(benefactorId)
         .then((benefactor) => {
 
@@ -164,11 +163,11 @@ function getPickpoint(req, res, next) {
                 return res.status(404).json({ message: "Pickpoint not found" });
             }
 
-            res.json(pickPoint);
+            return res.json(pickPoint);
         })
         .catch((err) => {
             console.error("Error retrieving benefactor:", err);
-            res.status(500).json({ message: "Internal Server Error" });
+            return res.status(500).json({ message: "Internal Server Error" });
         });
 }
 

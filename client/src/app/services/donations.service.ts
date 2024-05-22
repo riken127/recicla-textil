@@ -9,7 +9,7 @@ import {Item} from "../models/item";
   providedIn: 'root'
 })
 export class DonationsService {
-  private static apiUrl = 'https://localhost:3000/donations';
+  private static apiUrl = 'http://localhost:3000/donations';
 
 
 

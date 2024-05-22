@@ -512,7 +512,7 @@ router.post("/all", auth.isAuthenticated,benefactorController.getAllBenefactors)
  *                   type: string
  *                   example: Internal Server Error
  */
-router.post("/:id/pickpoints/", pickpointController.addPickpoint);
+router.post("/:id/pickpoints/", auth.isAuthenticated, pickpointController.addPickpoint);
 
 /**
  * @swagger
@@ -644,7 +644,7 @@ router.put("/:id/pickpoints/:idpp", pickpointController.updatePickpoint);
  *                   type: string
  *                   example: Internal Server Error
  */
-router.get("/:id/pickpoints/:idpp", pickpointController.getPickpoint);
+router.get("/:id/pickpoints/:idpp", auth.isAuthenticated, pickpointController.getPickpoint);
 
 /**
  * @swagger

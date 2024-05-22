@@ -7,7 +7,8 @@ export class Donation {
               public timeStamp: string,
               public details: ItemContainer,
               public ip: string,
-              public __v: number
+              public __v: number,
+              public status: string,
               ) { }
 }
 
