@@ -20,7 +20,7 @@ export class BenefactorsService {
       .pipe(
         map((response: HttpResponse<any>)  => {
           if (response.status === 200) {
-            return response.body;
+            return response.body.data; 
           } else {
             throw new Error('Error fetching benefactors');
           }
@@ -29,7 +29,6 @@ export class BenefactorsService {
           return throwError(error);
         })
       )
-
   }
 
   public getBenefactor(id: string): Observable<Benefactor> | null {
