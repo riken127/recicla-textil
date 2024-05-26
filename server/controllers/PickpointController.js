@@ -211,21 +211,21 @@ function addPickpoint(req, res) {
 }
 
 /**
- * Atualiza um pickpoint de um benefactor no banco de dados.
+ * Updates a pickpoint of a benefactor in the database.
  *
- * Esta função atualiza um único pickpoint de um benefactor existente no banco de dados
- * com base nos dados fornecidos no corpo da solicitação. Ela extrai o ID do benefactor
- * e o ID do pickpoint dos parâmetros da rota e do corpo da solicitação, respectivamente.
- * Em seguida, encontra o benefactor pelo ID, localiza e atualiza o pickpoint desejado e,
- * finalmente, salva o benefactor de volta ao banco de dados. Se bem-sucedido, responde com
- * uma mensagem JSON de sucesso. Se ocorrer um erro, responde com uma mensagem de erro JSON.
+ * This function updates a single pickpoint of an existing benefactor in the database
+ * based on the data provided in the request body. It extracts the benefactor ID
+ * and the pickpoint ID from the route parameters and the request body, respectively.
+ * Then, it finds the benefactor by ID, locates and updates the desired pickpoint, and
+ * finally saves the benefactor back to the database. If successful, it responds with
+ * a JSON success message. If an error occurs, it responds with a JSON error message.
  *
- * @param {Object} req - O objeto de solicitação.
- * @param {Object} res - O objeto de resposta.
- * @param {Function} next - A próxima função middleware no ciclo de solicitação-resposta.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function in the request-response cycle.
  * @returns {void}
  * @example
- * // Uso:
+ * // Usage:
  * router.put('/:id/benefactor/:idpp/pickpoint', benefactorController.updatePickPoint);
  */
 function updatePickpoint(req, res, next) {

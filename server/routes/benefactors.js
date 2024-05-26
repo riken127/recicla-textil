@@ -3,6 +3,7 @@ const router = express.Router();
 const benefactorController = require("../controllers/BenefactorController");
 const pickpointController = require("../controllers/PickpointController");
 const postController = require("../controllers/PostsController");
+const linkController = require("../controllers/LinkController");
 const upload = require("../middleware/multerMiddleware");
 const auth = require("../controllers/AuthenticationController");
 
@@ -1122,5 +1123,189 @@ router.get(
  *                   example: error
  */
 router.get("/posts/all", auth.isAuthenticated, postController.getLastPosts);
+
+/**
+ * @swagger
+ * tags:
+ *   name: Links
+ *   description: Links management APIs
+ */
+
+/**
+ * @swagger
+ * '/benefactors/posts/{postId}/links':
+ *   post:
+ *     tags: [Links]
+ *     summary: Add a new link to a post
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the post
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Link'
+ *     responses:
+ *       200:
+ *         description: New link added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Link added successfully
+ *                 post:
+ *                   $ref: '#/components/schemas/Post'
+ *       400:
+ *         description: Invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Invalid input
+ *       500:
+ *         description: Error adding link
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error adding link
+ */
+router.post("/posts/:postId/links", auth.isAuthenticated, linkController.addLink);
+
+/**
+ * @swagger
+ * '/benefactors/posts/{postId}/links/{linkId}':
+ *   put:
+ *     tags: [Links]
+ *     summary: Update a link in a post
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the post
+ *       - in: path
+ *         name: linkId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the link
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Link'
+ *     responses:
+ *       200:
+ *         description: Link updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Link updated successfully
+ *                 post:
+ *                   $ref: '#/components/schemas/Post'
+ *       404:
+ *         description: Post or link not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Post not found or Link not found
+ *       500:
+ *         description: Error updating link
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error updating link
+ */
+router.put("/posts/:postId/links/:linkId", auth.isAuthenticated, linkController.updateLink);
+
+/**
+ * @swagger
+ * '/benefactors/posts/{postId}/links/{linkId}':
+ *   delete:
+ *     tags: [Links]
+ *     summary: Delete a link from a post
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the post
+ *       - in: path
+ *         name: linkId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the link
+ *     responses:
+ *       200:
+ *         description: Link deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Link deleted successfully
+ *                 post:
+ *                   $ref: '#/components/schemas/Post'
+ *       404:
+ *         description: Post or link not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Post not found or Link not found
+ *       500:
+ *         description: Error deleting link
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error deleting link
+ */
+router.delete("/posts/:postId/links/:linkId", auth.isAuthenticated, linkController.deleteLink);
 
 module.exports = router;
