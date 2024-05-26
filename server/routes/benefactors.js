@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const benefactorController = require("../controllers/BenefactorController");
 const pickpointController = require("../controllers/PickpointController");
+const postController = require("../controllers/PostsController");
+const linkController = require("../controllers/LinkController");
 const upload = require("../middleware/multerMiddleware");
 const auth = require("../controllers/AuthenticationController");
 
@@ -16,6 +18,13 @@ router.post(
     "/upload/logo",
     upload.single("logo"),
     benefactorController.uploadLogo
+);
+
+// Upload benefactor post image
+router.post(
+    "/upload/image",
+    upload.single("image"),
+    postController.uploadImage
 );
 
 /**
@@ -428,7 +437,11 @@ router.delete(
  *                   description: Error message
  *                   example: Internal Server Error
  */
-router.post("/all", auth.isAuthenticated,benefactorController.getAllBenefactors);
+router.post(
+    "/all",
+    auth.isAuthenticated,
+    benefactorController.getAllBenefactors
+);
 
 /**
  * @swagger
@@ -512,7 +525,7 @@ router.post("/all", auth.isAuthenticated,benefactorController.getAllBenefactors)
  *                   type: string
  *                   example: Internal Server Error
  */
-router.post("/:id/pickpoints/", pickpointController.addPickpoint);
+router.post("/:id/pickpoints/", auth.isAuthenticated, pickpointController.addPickpoint);
 
 /**
  * @swagger
@@ -644,7 +657,7 @@ router.put("/:id/pickpoints/:idpp", pickpointController.updatePickpoint);
  *                   type: string
  *                   example: Internal Server Error
  */
-router.get("/:id/pickpoints/:idpp", pickpointController.getPickpoint);
+router.get("/:id/pickpoints/:idpp", auth.isAuthenticated, pickpointController.getPickpoint);
 
 /**
  * @swagger
@@ -809,5 +822,490 @@ router.delete("/:id/pickpoints/:idpp", pickpointController.deletePickpoint);
  *                   example: Internal Server Error
  */
 router.post("/:id/pickpoints/all", pickpointController.getAllPickpoints);
+
+/**
+ * @swagger
+ * tags:
+ *   name: Posts
+ *   description: Posts management APIs
+ */
+
+/**
+ * @swagger
+ * /benefactors/{benfactorId}/posts:
+ *   post:
+ *     tags: [Posts]
+ *     summary: Add a new post to a benefactor
+ *     parameters:
+ *       - in: path
+ *         name: benfactorId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The benefactor ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/BenefactorPost'
+ *     responses:
+ *       200:
+ *         description: Post added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Post added successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/BenefactorPost'
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
+router.post(
+    "/:benefactorId/posts/",
+    auth.isAuthenticated,
+    postController.addPost
+);
+
+/**
+ * @swagger
+ * /benefactors/{benefactorId}/posts/{postId}:
+ *   put:
+ *     tags: [Posts]
+ *     summary: Update an existing post
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: benefactorId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the benefactor
+ *       - in: path
+ *         name: postId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the post
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/BenefactorPost'
+ *     responses:
+ *       200:
+ *         description: Post updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Post Title was updated successfully."
+ *                 type:
+ *                   type: string
+ *                   example: success
+ *       404:
+ *         description: Post not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Post not found"
+ *                 type:
+ *                   type: string
+ *                   example: danger
+ *       500:
+ *         description: Failed to update post
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "An error occurred during the update process."
+ *                 type:
+ *                   type: string
+ *                   example: error
+ */
+router.put(
+    "/:benefactorId/posts/:postId",
+    auth.isAuthenticated,
+    postController.updatePost
+);
+
+/**
+ * @swagger
+ *  /benefactors/{benefactorId}/posts/{postId}:
+ *   delete:
+ *     tags: [Posts]
+ *     summary: Delete an existing post
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: benefactorId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the benefactor
+ *       - in: path
+ *         name: postId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the post
+ *     responses:
+ *       200:
+ *         description: Post deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Post Title was deleted successfully."
+ *                 type:
+ *                   type: string
+ *                   example: success
+ *       404:
+ *         description: Post not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Post not found"
+ *                 type:
+ *                   type: string
+ *                   example: danger
+ *       500:
+ *         description: Failed to delete post
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "An error occurred during the deletion process."
+ *                 type:
+ *                   type: string
+ *                   example: error
+ */
+router.delete(
+    "/:benefactorId/posts/:postId",
+    auth.isAuthenticated,
+    postController.deletePost
+);
+
+/**
+ * @swagger
+ *  /benefactors/{benefactorId}/posts/:
+ *   get:
+ *     tags: [Posts]
+ *     summary: Retrieve all posts for a specific benefactor
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: benefactorId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the benefactor
+ *     responses:
+ *       200:
+ *         description: A list of posts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/BenefactorPost'
+ *       404:
+ *         description: No posts found for the specified benefactor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No posts found for the specified benefactor"
+ *                 type:
+ *                   type: string
+ *                   example: danger
+ *       500:
+ *         description: An error occurred while retrieving the posts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "An error occurred while retrieving the posts."
+ *                 type:
+ *                   type: string
+ *                   example: error
+ */
+router.get(
+    "/:benefactorId/posts/",
+    auth.isAuthenticated,
+    postController.getAllPosts
+);
+
+/**
+ * @swagger
+ *  /benefactors/posts/all:
+ *   post:
+ *     tags: [Posts]
+ *     summary: Retrieve the latest posts with pagination
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: The page number for pagination (default is 1)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: The limit of posts per page for pagination (default is 10)
+ *     responses:
+ *       200:
+ *         description: A list of posts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Post'
+ *       500:
+ *         description: An error occurred while retrieving the posts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "An error occurred while retrieving the posts."
+ *                 type:
+ *                   type: string
+ *                   example: error
+ */
+router.post("/posts/all", auth.isAuthenticated, postController.getLastPosts);
+
+/**
+ * @swagger
+ * tags:
+ *   name: Links
+ *   description: Links management APIs
+ */
+
+/**
+ * @swagger
+ * '/benefactors/posts/{postId}/links':
+ *   post:
+ *     tags: [Links]
+ *     summary: Add a new link to a post
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the post
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Link'
+ *     responses:
+ *       200:
+ *         description: New link added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Link added successfully
+ *                 post:
+ *                   $ref: '#/components/schemas/Post'
+ *       400:
+ *         description: Invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Invalid input
+ *       500:
+ *         description: Error adding link
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error adding link
+ */
+router.post("/posts/:postId/links", auth.isAuthenticated, linkController.addLink);
+
+/**
+ * @swagger
+ * '/benefactors/posts/{postId}/links/{linkId}':
+ *   put:
+ *     tags: [Links]
+ *     summary: Update a link in a post
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the post
+ *       - in: path
+ *         name: linkId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the link
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Link'
+ *     responses:
+ *       200:
+ *         description: Link updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Link updated successfully
+ *                 post:
+ *                   $ref: '#/components/schemas/Post'
+ *       404:
+ *         description: Post or link not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Post not found or Link not found
+ *       500:
+ *         description: Error updating link
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error updating link
+ */
+router.put("/posts/:postId/links/:linkId", auth.isAuthenticated, linkController.updateLink);
+
+/**
+ * @swagger
+ * '/benefactors/posts/{postId}/links/{linkId}':
+ *   delete:
+ *     tags: [Links]
+ *     summary: Delete a link from a post
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the post
+ *       - in: path
+ *         name: linkId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the link
+ *     responses:
+ *       200:
+ *         description: Link deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Link deleted successfully
+ *                 post:
+ *                   $ref: '#/components/schemas/Post'
+ *       404:
+ *         description: Post or link not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Post not found or Link not found
+ *       500:
+ *         description: Error deleting link
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error deleting link
+ */
+router.delete("/posts/:postId/links/:linkId", auth.isAuthenticated, linkController.deleteLink);
 
 module.exports = router;

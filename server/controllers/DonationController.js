@@ -144,6 +144,7 @@ async function addDonation(req, res, next) {
     timestamp: donationData.timestamp,
     details: donationData.details,
     ip: req.headers["x-forwarded-for"] || req.connection.remoteAddress,
+    status: donationData.status,
   });
 
   donation

@@ -1,9 +1,11 @@
 import {Pickpoint} from "./pickpoint";
 import {ConversionRatio} from "./conversion-ratio";
+import { Address } from "./address";
 
 export class Benefactor {
-  constructor(public id: string,
+  constructor(public _id: string,
               public name: string,
+              public address: Address,
               public username: string,
               public password: string,
               public email: string,

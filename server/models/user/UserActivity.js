@@ -49,6 +49,11 @@ const UserActivitySchema = new mongoose.Schema({
     timestamp: {type: Date, default: Date.now, required: true},
     details: {type: mongoose.Schema.Types.Mixed},
     ip: {type: String, required: true},
+    status: {
+        type: String,
+        enum: ['Canceled', 'Waiting Approval', 'On Going', 'Delivered'],
+        default: 'Delivered'
+    }
 });
 
 UserActivitySchema.index({userId: 1});
