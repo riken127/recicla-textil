@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpResponse} from "@angular/common/http";
-import {catchError, Observable, pipe, throwError} from "rxjs";
-import {Benefactor} from "../models/benefactor";
-import {map} from "rxjs/operators";
-import {Pickpoint} from "../models/pickpoint";
+import { HttpClient, HttpResponse } from "@angular/common/http";
+import { catchError, Observable, pipe, throwError } from "rxjs";
+import { Benefactor } from "../models/benefactor";
+import { map } from "rxjs/operators";
+import { Pickpoint } from "../models/pickpoint";
+import { Post } from '../models/post';
+import { Link } from '../models/link';
 
 @Injectable({
   providedIn: 'root'
@@ -16,11 +18,11 @@ export class BenefactorsService {
   constructor(private http: HttpClient) { }
 
   public getAllBenefactors(): Observable<Benefactor[]> | null {
-    return this.http.post<Benefactor[]>(`${BenefactorsService.apiUrl}` + '/all', {rest: true}, {observe: 'response', withCredentials: true})
+    return this.http.post<Benefactor[]>(`${BenefactorsService.apiUrl}` + '/all', { rest: true }, { observe: 'response', withCredentials: true })
       .pipe(
-        map((response: HttpResponse<any>)  => {
+        map((response: HttpResponse<any>) => {
           if (response.status === 200) {
-            return response.body.data; 
+            return response.body.data;
           } else {
             throw new Error('Error fetching benefactors');
           }
@@ -32,7 +34,7 @@ export class BenefactorsService {
   }
 
   public getBenefactor(id: string): Observable<Benefactor> | null {
-    return this.http.get<Benefactor>(`${BenefactorsService.apiUrl}/${id}`,{observe: 'response', withCredentials: true})
+    return this.http.get<Benefactor>(`${BenefactorsService.apiUrl}/${id}`, { observe: 'response', withCredentials: true })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -54,7 +56,7 @@ export class BenefactorsService {
           if (response.statusCode === 200) {
             return true;
           }
-            return false;
+          return false;
         })
       )
   }
@@ -66,7 +68,7 @@ export class BenefactorsService {
           if (response.statusCode === 200) {
             return true;
           }
-            return false;
+          return false;
         })
       )
   }
@@ -74,17 +76,17 @@ export class BenefactorsService {
   public deleteBenefactor(id: string): Observable<boolean> | null {
     return this.http.delete<any>(`${BenefactorsService.apiUrl}/${id}`, {})
       .pipe(
-      map(response => {
-        if (response.statusCode === 200) {
-          return true;
-        }
+        map(response => {
+          if (response.statusCode === 200) {
+            return true;
+          }
           return false;
-      })
-    )
+        })
+      )
   }
 
   public getAllPickpoints(benefactorId: string): Observable<Pickpoint[]> | null {
-    return this.http.post<Pickpoint[]>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints`, {}, {observe: 'response', withCredentials: true})
+    return this.http.post<Pickpoint[]>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints`, {}, { observe: 'response', withCredentials: true })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -100,19 +102,19 @@ export class BenefactorsService {
   }
 
   public getPickpoint(benefactorId: string, pickpointId: string): Observable<Pickpoint> | null {
-    return this.http.get<Pickpoint>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/${pickpointId}`, {observe: 'response', withCredentials: true})
-    .pipe(
-      map((response: HttpResponse<any>) => {
-        if (response.status === 200) {
-          return response.body;
-        } else {
-          throw new Error('Error getting benefactor');
-        }
-      }),
-      catchError(error => {
-        return throwError(error);
-      })
-    );
+    return this.http.get<Pickpoint>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/${pickpointId}`, { observe: 'response', withCredentials: true })
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body;
+          } else {
+            throw new Error('Error getting benefactor');
+          }
+        }),
+        catchError(error => {
+          return throwError(error);
+        })
+      );
   }
 
   public addPickpoint(benefactorId: string, pickpoint: Pickpoint): Observable<boolean> | null {
@@ -122,7 +124,7 @@ export class BenefactorsService {
           if (response.statusCode === 200) {
             return true;
           }
-            return false;
+          return false;
         })
       )
   }
@@ -134,7 +136,7 @@ export class BenefactorsService {
           if (response.statusCode === 200) {
             return true;
           }
-            return false;
+          return false;
         })
       )
   }
@@ -146,7 +148,111 @@ export class BenefactorsService {
           if (response.statusCode === 200) {
             return true;
           }
-            return false;
+          return false;
+        })
+      )
+  }
+
+  public addPost(benefactorId: string, post: Post): Observable<boolean> | null {
+    return this.http.post<any>(`${BenefactorsService.apiUrl}/${benefactorId}/posts`, post, {})
+      .pipe(
+        map((response) => {
+          if (response.statusCode === 200) {
+            return true;
+          }
+          return false;
+        })
+      )
+  }
+
+  public updatePost(benefactorId: string, postId: string, post: Post): Observable<boolean> | null {
+    return this.http.put<any>(`${BenefactorsService.apiUrl}/${benefactorId}/posts/${postId}`, post, {})
+      .pipe(
+        map(response => {
+          if (response.statusCode === 200) {
+            return true;
+          }
+          return false;
+        })
+      )
+  }
+
+  public deletePost(benefactorId: string, postId: string): Observable<boolean> | null {
+    return this.http.delete<any>(`${BenefactorsService.apiUrl}/${benefactorId}/posts/${postId}`, {})
+      .pipe(
+        map(response => {
+          if (response.statusCode === 200) {
+            return true;
+          }
+          return false;
+        })
+      )
+  }
+
+  public getPosts(benefactorId: string): Observable<Post[]> | null {
+    return this.http.get<Post[]>(`${BenefactorsService.apiUrl}/${benefactorId}/posts/`, { observe: 'response', withCredentials: true })
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body;
+          } else {
+            throw new Error('Error getting benefactor');
+          }
+        }),
+        catchError(error => {
+          return throwError(error);
+        })
+      );
+  }
+
+  public getLastPosts(limit: number, page: number): Observable<Post[]> | null {
+    return this.http.post<Post[]>(`${BenefactorsService.apiUrl}/posts/all`, { limit: limit, page: page }, { observe: 'response', withCredentials: true })
+    .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body;
+          } else {
+            throw new Error('Error getting benefactor');
+          }
+        }),
+        catchError(error => {
+          return throwError(error);
+        })
+      );
+  }
+
+  public addLink(postId: string, link: Link): Observable<boolean> | null {
+    return this.http.post<any>(`${BenefactorsService.apiUrl}/posts/${postId}/links`, link, {})
+      .pipe(
+        map((response) => {
+          if (response.statusCode === 200) {
+            return true;
+          }
+          return false;
+        })
+      )
+  }
+
+  public updateLink(postId: string, linkId: string, link: Link): Observable<boolean> | null {
+    return this.http.put<any>(`${BenefactorsService.apiUrl}/posts/${postId}/links/${linkId}`, link, {})
+      .pipe(
+        map(response => {
+          if (response.statusCode === 200) {
+            return true;
+          }
+          return false;
+        })
+      )
+  }
+
+  public deleteLink(postId: string, linkId: string): Observable<boolean> | null {
+    return this.http.delete<any>(`${BenefactorsService.apiUrl}/posts/${postId}/links/${linkId}`, {})
+      .pipe(
+        map(response => {
+          if (response.statusCode === 200) {
+            return true;
+          }
+          return false;
         })
       )
   }

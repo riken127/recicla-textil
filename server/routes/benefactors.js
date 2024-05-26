@@ -1081,7 +1081,7 @@ router.get(
 /**
  * @swagger
  *  /benefactors/posts/all:
- *   get:
+ *   post:
  *     tags: [Posts]
  *     summary: Retrieve the latest posts with pagination
  *     security:
@@ -1122,7 +1122,7 @@ router.get(
  *                   type: string
  *                   example: error
  */
-router.get("/posts/all", auth.isAuthenticated, postController.getLastPosts);
+router.post("/posts/all", auth.isAuthenticated, postController.getLastPosts);
 
 /**
  * @swagger
