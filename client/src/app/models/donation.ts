@@ -1,23 +1,24 @@
-import {Item} from "./item";
+import { Item } from "./item";
 
 export class Donation {
-  constructor(public id: string,
-              public userId: string,
-              public activityType: string,
-              public timeStamp: string,
-              public details: ItemContainer,
-              public ip: string,
-              public __v: number,
-              public status: string,
-              ) { }
+  constructor(
+    public id: string,
+    public userId: string,
+    public activityType: string,
+    public timeStamp: string,
+    public details: ItemContainer,
+    public ip: string,
+    public __v: number,
+    public status: string
+  ) { }
 }
 
 export class ItemContainer {
-  constructor(public benefactorId: string,
-              public pickpointId: string,
-              public items: Item[],
-              public totalWeight: number,
-              public numberOfItems: number
-              ) {
-  }
+  constructor(
+    public benefactorId: string,
+    public pickpointId: string,
+    public items: Item[],
+    public totalWeight: number,
+    public numberOfItems: number
+  ) { }
 }

@@ -24,7 +24,7 @@ var authController = require("../controllers/AuthenticationController");
  *         description: Internal server error
  */
 router.get("/login", authController.isNotAuthenticated, (req, res) => {
-    res.render("login.ejs");
+  res.render("login.ejs");
 });
 
 /**
@@ -69,9 +69,9 @@ router.get("/login", authController.isNotAuthenticated, (req, res) => {
  *                   type: string
  */
 router.post(
-    "/login",
-    authController.isNotAuthenticated,
-    authController.validateLogin
+  "/login",
+  authController.isNotAuthenticated,
+  authController.validateLogin
 );
 
 /**
@@ -89,5 +89,21 @@ router.post(
  *         description: Internal server error
  */
 router.post("/logout", authController.logout);
+
+/**
+ * @swagger
+ * '/auth/getToken':
+ *   post:
+ *     tags: [Auth]
+ *     summary: Get decoded token
+ *     security:
+ *       - JwtCookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Sucessfully decoded token
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/getToken", authController.getDecodedToken);
 
 module.exports = router;

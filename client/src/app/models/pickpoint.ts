@@ -1,5 +1,6 @@
 export class Pickpoint {
-  constructor(public street: string,
+  constructor(public _id: string,
+              public street: string,
               public city: string,
               public postalCode: string,
               public country: string,

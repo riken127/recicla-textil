@@ -24,11 +24,11 @@
   content: "❌ ";
 }
 
-[data-status="waiting"] {
+[data-status="waitingapproval"] {
   color: #FFD700;
 }
 
-[data-status="waiting"]::before {
+[data-status="waitingapproval"]::before {
   content: "⏳ ";
 }
 

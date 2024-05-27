@@ -1,0 +1,19 @@
+<form [formGroup]="donationForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+        <label for="userId">User ID</label>
+        <input id="userId" type="text" [value]="userId" readonly>
+    </div>
+    <div class="form-group">
+        <label for="benefactorId">Benefactor ID</label>
+        <input id="benefactorId" type="text" [value]="benefactor?._id" readonly>
+    </div>
+    <div class="form-group">
+        <label for="pickpoint">Pickpoint</label>
+        <select id="pickpoint" formControlName="pickpoint">
+            <option *ngFor="let pickpoint of pickpoints" [value]="pickpoint._id">
+                {{ pickpoint.street }}, {{ pickpoint.city }}, {{ pickpoint.postalCode }}, {{ pickpoint.country }}
+            </option>
+        </select>   
+    </div>
+    <button type="submit">Submit</button>
+</form>

@@ -1,14 +1,29 @@
 import { Routes } from '@angular/router';
 import { ListDonationsComponent } from './donations/list/list.component';
 import { ListComponent } from './benefactors/list/list.component';
+import { ListItemsComponent } from './donations/list-items/list-items.component';
+import { CreateDonationComponent } from './donations/create-donation/create-donation.component';
+import { CreateItemComponent } from './donations/create-item/create-item.component';
 
 export const routes: Routes = [
-    {
-        path: 'benefactors',
-        component: ListComponent
-    },
+  {
+    path: 'benefactors',
+    component: ListComponent,
+  },
   {
     path: 'list-donations',
-    component: ListDonationsComponent
+    component: ListDonationsComponent,
+  },
+  {
+    path: 'create-donation',
+    component: CreateDonationComponent,
+  },
+  {
+    path: ':id/create-item',
+    component: CreateItemComponent,
+  },
+  {
+    path: ':id/list-items',
+    component: ListItemsComponent,
   }
 ];

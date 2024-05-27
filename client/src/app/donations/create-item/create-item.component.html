@@ -1,0 +1,23 @@
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()">
+    <label>
+      Brand:
+      <input type="text" formControlName="brand"><br>
+    </label>
+    <label>
+        Weight Value:
+        <input type="text" formControlName="weightValue"><br>
+    </label>
+    <label>
+        Weight Unit:
+        <input type="text" formControlName="weightUnit"><br>
+    </label>
+    <label>
+        Size:
+        <input type="text" formControlName="size"><br>
+    </label>
+    <label>
+        Type:
+        <input type="text" formControlName="type"><br>
+    </label>
+    <input type="submit" value="Create Item">
+  </form>

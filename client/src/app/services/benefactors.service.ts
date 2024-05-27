@@ -86,7 +86,7 @@ export class BenefactorsService {
   }
 
   public getAllPickpoints(benefactorId: string): Observable<Pickpoint[]> | null {
-    return this.http.post<Pickpoint[]>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints`, {}, { observe: 'response', withCredentials: true })
+    return this.http.post<Pickpoint[]>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/all`, {}, {observe: 'response', withCredentials: true})
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
