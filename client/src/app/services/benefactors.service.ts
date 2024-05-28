@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from "@angular/common/http";
-import { catchError, Observable, pipe, throwError } from "rxjs";
-import { Benefactor } from "../models/benefactor";
-import { map } from "rxjs/operators";
-import { Pickpoint } from "../models/pickpoint";
-import { Post } from '../models/post';
-import { Link } from '../models/link';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpResponse} from "@angular/common/http";
+import {catchError, Observable, throwError, of} from "rxjs";
+import {Benefactor} from "../models/benefactor";
+import {map} from "rxjs/operators";
+import {Pickpoint} from "../models/pickpoint";
+import {Post} from '../models/post';
+import {Link} from '../models/link';
+import {Offer} from '../models/offer';
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +16,10 @@ export class BenefactorsService {
 
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   public getAllBenefactors(): Observable<Benefactor[]> | null {
-    return this.http.post<Benefactor[]>(`${BenefactorsService.apiUrl}` + '/all', { rest: true }, { observe: 'response', withCredentials: true })
+    return this.http.post<Benefactor[]>(`${BenefactorsService.apiUrl}` + '/all', {rest: true}, {observe: 'response', withCredentials: true})
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -34,7 +35,7 @@ export class BenefactorsService {
   }
 
   public getBenefactor(id: string): Observable<Benefactor> | null {
-    return this.http.get<Benefactor>(`${BenefactorsService.apiUrl}/${id}`, { observe: 'response', withCredentials: true })
+    return this.http.get<Benefactor>(`${BenefactorsService.apiUrl}/${id}`, {observe: 'response', withCredentials: true})
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -102,7 +103,7 @@ export class BenefactorsService {
   }
 
   public getPickpoint(benefactorId: string, pickpointId: string): Observable<Pickpoint> | null {
-    return this.http.get<Pickpoint>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/${pickpointId}`, { observe: 'response', withCredentials: true })
+    return this.http.get<Pickpoint>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/${pickpointId}`, {observe: 'response', withCredentials: true})
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -190,7 +191,7 @@ export class BenefactorsService {
   }
 
   public getPosts(benefactorId: string): Observable<Post[]> | null {
-    return this.http.get<Post[]>(`${BenefactorsService.apiUrl}/${benefactorId}/posts/`, { observe: 'response', withCredentials: true })
+    return this.http.get<Post[]>(`${BenefactorsService.apiUrl}/${benefactorId}/posts/`, {observe: 'response', withCredentials: true})
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -206,8 +207,8 @@ export class BenefactorsService {
   }
 
   public getLastPosts(limit: number, page: number): Observable<Post[]> | null {
-    return this.http.post<Post[]>(`${BenefactorsService.apiUrl}/posts/all`, { limit: limit, page: page }, { observe: 'response', withCredentials: true })
-    .pipe(
+    return this.http.post<Post[]>(`${BenefactorsService.apiUrl}/posts/all`, {limit: limit, page: page}, {observe: 'response', withCredentials: true})
+      .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
             return response.body;
@@ -255,5 +256,78 @@ export class BenefactorsService {
           return false;
         })
       )
+  }
+
+  public getLastOffers(limit: number, page: number): Observable<Offer[]> | null {
+    return this.http.get<Offer[]>(`${BenefactorsService.apiUrl}/offers/all/${limit}/${page}}`, {observe: 'response', withCredentials: true})
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body;
+          } else {
+            throw new Error('Error getting offers');
+          }
+        }),
+        catchError(error => {
+          return throwError(error);
+        })
+      );
+  }
+
+
+  public addOffer(benefactor: string, offer: Offer | null): Observable<boolean> {
+    if (offer === null) {
+      return of(false);
+    }
+
+    return this.http.post<any>(`${BenefactorsService.apiUrl}/offers/` + benefactor, offer, {})
+      .pipe(
+        map(response => {
+          if (response.type === 'success') {
+            return true;
+          }
+          return false;
+        })
+      );
+  }
+
+
+
+  public updateOffer(benefactor: string, offer: Offer): Observable<boolean> {
+    return this.http.put<any>(`${BenefactorsService.apiUrl}/offers/${benefactor}`, offer, {})
+      .pipe(
+        map(response => {
+          return response.status === 200;
+        }),
+        catchError(error => {
+          console.error('Error updating offer:', error);
+          return of(false);
+        })
+      );
+  }
+
+  public disableOffer(benefactor: string, offer: string): Observable<boolean> | null {
+    return this.http.delete<any>(`${BenefactorsService.apiUrl}/offers/` + offer)
+      .pipe(
+        map(response => {
+          if (response.statusCode === 200) {
+            return true;
+          }
+
+          return false;
+        })
+      );
+  }
+
+  public getOffers(benefactor: string): Observable<Offer[]> | null {
+    return this.http.get<Offer[]>(`${BenefactorsService.apiUrl}/offers/` + benefactor)
+      .pipe(
+        map(response => {
+          return response;
+        }),
+        catchError(error => {
+          return throwError(error);
+        })
+      );
   }
 }

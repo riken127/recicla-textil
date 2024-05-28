@@ -176,7 +176,7 @@ function getUser(req, res, next) {
  */
 async function addUser(req, res, next) {
   const userData = req.body;
-  console.log(userData)
+
   User.findOne({
     $or: [
       { username: userData.username },

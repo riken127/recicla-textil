@@ -1,13 +1,14 @@
 .form-paired-field {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-column-gap: 20px; /* Adjust the gap between columns */
+  grid-column-gap: 20px;
 }
 
 .form-single-field {
   display: grid;
   grid-column-gap: 20px;
 }
+
 .mat-form-field {
   width: auto;
 }
@@ -19,13 +20,13 @@
 }
 
 .title-text {
-  font-size: 30px; /* Adjust the font size as needed */
+  font-size: 30px;
   font-weight: bold;
-  color: #ffffff; /* Adjust the color as needed */
+  color: #ffffff;
 }
 
 .register-button {
-  width: 100%; /* Make the button expand to full width */
-  font-size: 16px; /* Increase the font size */
-  padding: 12px 24px; /* Increase the padding to make the button larger */
+  width: 100%;
+  font-size: 16px;
+  padding: 12px 24px;
 }
