@@ -45,7 +45,7 @@ export class CreateDonationComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
-      const benefactorId = '663529cddd4384822027a707';
+      const benefactorId = '' + params.get('id') || '';
       
       if (benefactorId) {
         this.loadBenefactorAndPickpoints(benefactorId);

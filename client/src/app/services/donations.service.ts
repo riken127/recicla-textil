@@ -36,7 +36,10 @@ export class DonationsService {
 
   public getDonation(id: string): Observable<Donation> | null {
     return this.http
-      .get<any | Donation>(`${DonationsService.apiUrl}/${id}`, {})
+      .get<any | Donation>(`${DonationsService.apiUrl}/${id}`, {
+        observe: 'response',
+        withCredentials: true,
+      })
       .pipe(
         map((response) => {
           if (response instanceof Donation) {
@@ -72,14 +75,19 @@ export class DonationsService {
   }
 
   public updateDonation(donation: Donation): Observable<boolean> | null {
-    return this.http.put<any>(`${DonationsService.apiUrl}/`, donation, {}).pipe(
-      map((response) => {
-        if (response.statusCode === 200) {
-          return true;
-        }
-        return false;
+    return this.http
+      .put<any>(`${DonationsService.apiUrl}/${donation._id}`, donation, {
+        observe: 'response',
+        withCredentials: true,
       })
-    );
+      .pipe(
+        map((response) => {
+          if (response.status === 200) {
+            return true;
+          }
+          return false;
+        })
+      );
   }
 
   public deleteDonation(id: string): Observable<boolean> | null {

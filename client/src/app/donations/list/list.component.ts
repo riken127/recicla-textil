@@ -12,7 +12,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { Donation } from '../../models/donation';
 import { Benefactor } from '../../models/benefactor';
 import { Pickpoint } from '../../models/pickpoint';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { format } from 'date-fns';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -32,12 +32,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./list.component.css'],
 })
 export class ListDonationsComponent implements OnInit {
+  userId: string | null = null;
+
   constructor(
     private authenticationService: AuthenticationService,
     private donationsService: DonationsService,
     private benefactorsService: BenefactorsService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private route: ActivatedRoute
   ) {}
 
   donations: Donation[] = [];
@@ -54,13 +57,27 @@ export class ListDonationsComponent implements OnInit {
   expandedElement: Donation | null = null;
 
   ngOnInit() {
-    this.getDonations();
+    this.authenticationService
+      .getDecodedToken(true, false, false)
+      .subscribe((result) => {
+        this.userId = result.id;
+
+        if (this.userId) {
+          this.getDonations(this.userId);
+        } else {
+          this.snackBar.open('User ID is missing', 'Close', {
+            duration: 5000,
+          });
+        }
+      });
   }
 
-  getDonations() {
+  getDonations(userId: string) {
     this.donationsService.getAllDonations()?.subscribe(
       (response: any) => {
-        this.donations = response.data;
+        this.donations = response.data.filter(
+          (donation: Donation) => donation.userId === userId
+        );
 
         let donationsTableContent = [];
 

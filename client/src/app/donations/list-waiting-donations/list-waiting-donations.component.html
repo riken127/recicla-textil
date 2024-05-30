@@ -6,7 +6,9 @@
     class="mat-elevation-z8"
   >
     <ng-container matColumnDef="expand">
-      <th mat-header-cell *matHeaderCellDef></th>
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-slide-toggle [disabled]="isDisabled"  [(ngModel)]="onlyWaiting" (change)="onToggleChange($event)">Waiting</mat-slide-toggle>
+      </th>
       <td mat-cell *matCellDef="let donation">
         <button
           mat-icon-button
@@ -22,12 +24,10 @@
         </button>
       </td>
     </ng-container>
-    <ng-container matColumnDef="benefactorName">
-      <th mat-header-cell *matHeaderCellDef class="center-cell">
-        Benefactor Name
-      </th>
+    <ng-container matColumnDef="username">
+      <th mat-header-cell *matHeaderCellDef class="center-cell">Donator</th>
       <td mat-cell *matCellDef="let donation" class="center-cell">
-        {{ donation.benefactorName }}
+        {{ donation.username }}
       </td>
     </ng-container>
     <ng-container matColumnDef="pickpointAddress">
@@ -63,9 +63,35 @@
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef class="center-cell">Status</th>
       <td mat-cell *matCellDef="let donation" class="center-cell">
-        <span [attr.data-status]="donation.status.toLowerCase().replace(' ', '')">
+        <span
+          [attr.data-status]="donation.status.toLowerCase().replace(' ', '')"
+        >
           {{ donation.status }}
         </span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef class="center-cell">Actions</th>
+      <td mat-cell *matCellDef="let donation" class="center-cell">
+        <button
+            mat-icon-button
+            aria-label="accept"
+            (click)="acceptDonation(donation)"
+            [disabled]="donation.status === 'Canceled' || donation.status === 'Delivered'"
+            [ngClass]="{'icon-green': !(donation.status === 'Canceled' || donation.status === 'Delivered')}"
+        >
+            <mat-icon *ngIf="donation.status === 'Waiting Approval'">done</mat-icon>
+            <mat-icon *ngIf="donation.status === 'On Going'">done_all</mat-icon>
+        </button>
+        <button
+            mat-icon-button
+            aria-label="close"
+            (click)="cancelDonation(donation)"
+            [disabled]="donation.status === 'Canceled' || donation.status === 'Delivered'"
+            [ngClass]="{'icon-red': !(donation.status === 'Canceled' || donation.status === 'Delivered')}"
+        >
+            <mat-icon>close</mat-icon>
+        </button>
       </td>
     </ng-container>
     <ng-container matColumnDef="expandedDetail">
@@ -113,7 +139,6 @@
                 {{ item.type }}
               </td>
             </ng-container>
-
             <tr
               mat-header-row
               *matHeaderRowDef="['brand', 'weight', 'size', 'type']"
@@ -126,7 +151,6 @@
         </div>
       </td>
     </ng-container>
-
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr
       mat-row

@@ -1,0 +1,56 @@
+.expanded-row {
+    height: auto !important;
+  }
+  
+  .element-detail {
+    padding: 16px;
+  }
+  
+  .inner-table {
+    width: 100%;
+  }
+  .hidden-row {
+    display: none;
+  }
+  .center-cell {
+    text-align: center;
+  }
+    
+  [data-status="canceled"] {
+    color: red;
+  }
+  
+  [data-status="canceled"]::before {
+    content: "❌ ";
+  }
+  
+  [data-status="waitingapproval"] {
+    color: #FFD700;
+  }
+  
+  [data-status="waitingapproval"]::before {
+    content: "⏳ ";
+  }
+  
+  [data-status="ongoing"] {
+    color: #136ac7;
+  }
+  
+  [data-status="ongoing"]::before {
+    content: "🔄 ";
+  }
+  
+  [data-status="delivered"] {
+    color: #09a509;
+  }
+  
+  [data-status="delivered"]::before {
+    content: "✅ ";
+  }
+
+  .icon-green {
+    color: rgb(13, 190, 13);
+  }
+  .icon-red {
+    color: red;
+  }

@@ -378,7 +378,10 @@ function getDonation(req, res, next) {
  */
 async function updateDonation(req, res, next) {
   const donationId = req.params.id;
-  const updateData = {};
+  const updateData = {
+    ...req.body,
+    status: req.body.status,
+  };
   const editableProperties = ["userId"];
 
   for (const prop of editableProperties) {
@@ -390,19 +393,22 @@ async function updateDonation(req, res, next) {
   if (req.body.details) {
     const detailsUpdates = ["benefactorId", "pickpointId"];
 
+    if (!updateData.details) {
+      updateData.details = {};
+    }
+
     for (const detailProp of detailsUpdates) {
       if (
         req.body.details.hasOwnProperty(detailProp) &&
         req.body.details[detailProp] !== undefined
       ) {
-        updateData[`details.${detailProp}`] = req.body.details[detailProp];
+        updateData.details[detailProp] = req.body.details[detailProp];
       }
     }
   }
-
   try {
     const updatedDonation = await Donation.findByIdAndUpdate(
-      donationId,
+      req.params.id,
       { $set: updateData },
       { new: true }
     );

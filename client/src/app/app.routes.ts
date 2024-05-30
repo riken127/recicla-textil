@@ -9,6 +9,7 @@ import { ListComponent } from './benefactors/list/list.component';
 import { ListItemsComponent } from './donations/list-items/list-items.component';
 import { CreateDonationComponent } from './donations/create-donation/create-donation.component';
 import { CreateItemComponent } from './donations/create-item/create-item.component';
+import { ListWaitingDonationsComponent } from './donations/list-waiting-donations/list-waiting-donations.component';
 import {CreatePrizeComponent} from "./benefactors/create-prize/create-prize.component";
 import {EditPrizeComponent} from "./benefactors/edit-prize/edit-prize.component";
 import {DisablePrizeComponent} from "./benefactors/disable-prize/disable-prize.component";
@@ -22,7 +23,7 @@ export const routes: Routes = [
     component: ListComponent,
   },
   {
-    path: 'list-donations',
+    path: 'list-user-donations',
     component: ListDonationsComponent
   },
     {
@@ -46,7 +47,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'create-donation',
+    path: ':id/list-benefactor-donations',
+    component: ListWaitingDonationsComponent,
+  },
+  {
+    path: ':id/create-donation',
     component: CreateDonationComponent,
   },
   {
