@@ -18,14 +18,14 @@ async function validateLogin(req, res, next) {
   const fromRest = req.body.rest ? req.body.rest : undefined;
 
     try {
-        const user = await User.findOne({ username });
+        const user = await User.findOne({ username })
 
         if (!user && !fromRest) {
-            res.status(401).render("login", {
-                messages: { error: "Invalid username or password." },
+            res.status(401).render('login', {
+                messages: { error: 'Invalid username or password.' }
             });
         } else if (!user && fromRest) {
-            res.status(401).json({ error: "Invalid username or password." });
+            return res.status(401).json({ message: 'Invalid username or password.' });
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);

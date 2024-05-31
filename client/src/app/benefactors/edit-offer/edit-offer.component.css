@@ -25,13 +25,8 @@
   color: #ffffff;
 }
 
-.login-button {
+.create-offer-button {
   width: 100%;
   font-size: 16px;
   padding: 12px 24px;
-}
-
-.error-snackbar {
-  background-color: #f44336;
-  color: #fff;
 }

@@ -4,27 +4,28 @@ const benefactorController = require("../controllers/BenefactorController");
 const pickpointController = require("../controllers/PickpointController");
 const postController = require("../controllers/PostsController");
 const linkController = require("../controllers/LinkController");
+const offerController = require("../controllers/OfferController");
 const upload = require("../middleware/multerMiddleware");
 const auth = require("../controllers/AuthenticationController");
 
 // Upload benefactor banner
 router.post(
-    "/upload/banner/",
-    upload.single("banner"),
-    benefactorController.uploadBanner
+	"/upload/banner/",
+	upload.single("banner"),
+	benefactorController.uploadBanner
 );
 // Upload benefactor logo
 router.post(
-    "/upload/logo",
-    upload.single("logo"),
-    benefactorController.uploadLogo
+	"/upload/logo",
+	upload.single("logo"),
+	benefactorController.uploadLogo
 );
 
 // Upload benefactor post image
 router.post(
-    "/upload/image",
-    upload.single("image"),
-    postController.uploadImage
+	"/upload/image",
+	upload.single("image"),
+	postController.uploadImage
 );
 
 /**
@@ -58,10 +59,10 @@ router.post(
  *         description: Internal server error
  */
 router.get(
-    "/all",
-    auth.isAuthenticated,
-    auth.hasRoles(["administrator"]),
-    benefactorController.renderBenefactorsTable
+	"/all",
+	auth.isAuthenticated,
+	auth.hasRoles(["administrator"]),
+	benefactorController.renderBenefactorsTable
 );
 
 /**
@@ -379,9 +380,9 @@ router.get("/:id", auth.isAuthenticated, benefactorController.getBenefactor);
  *                   example: danger
  */
 router.delete(
-    "/:id",
-    auth.isAuthenticated,
-    benefactorController.deleteBenefactor
+	"/:id",
+	auth.isAuthenticated,
+	benefactorController.deleteBenefactor
 );
 
 /**
@@ -438,9 +439,9 @@ router.delete(
  *                   example: Internal Server Error
  */
 router.post(
-    "/all",
-    auth.isAuthenticated,
-    benefactorController.getAllBenefactors
+	"/all",
+	auth.isAuthenticated,
+	benefactorController.getAllBenefactors
 );
 
 /**
@@ -874,9 +875,9 @@ router.post("/:id/pickpoints/all", pickpointController.getAllPickpoints);
  *                   example: Internal Server Error
  */
 router.post(
-    "/:benefactorId/posts/",
-    auth.isAuthenticated,
-    postController.addPost
+	"/:benefactorId/posts/",
+	auth.isAuthenticated,
+	postController.addPost
 );
 
 /**
@@ -948,9 +949,9 @@ router.post(
  *                   example: error
  */
 router.put(
-    "/:benefactorId/posts/:postId",
-    auth.isAuthenticated,
-    postController.updatePost
+	"/:benefactorId/posts/:postId",
+	auth.isAuthenticated,
+	postController.updatePost
 );
 
 /**
@@ -1016,9 +1017,9 @@ router.put(
  *                   example: error
  */
 router.delete(
-    "/:benefactorId/posts/:postId",
-    auth.isAuthenticated,
-    postController.deletePost
+	"/:benefactorId/posts/:postId",
+	auth.isAuthenticated,
+	postController.deletePost
 );
 
 /**
@@ -1073,9 +1074,9 @@ router.delete(
  *                   example: error
  */
 router.get(
-    "/:benefactorId/posts/",
-    auth.isAuthenticated,
-    postController.getAllPosts
+	"/:benefactorId/posts/",
+	auth.isAuthenticated,
+	postController.getAllPosts
 );
 
 /**
@@ -1307,5 +1308,21 @@ router.put("/posts/:postId/links/:linkId", auth.isAuthenticated, linkController.
  *                   example: Error deleting link
  */
 router.delete("/posts/:postId/links/:linkId", auth.isAuthenticated, linkController.deleteLink);
+
+// Returns the latest offers.
+router.get('/offers/all/:n/:p', offerController.allOffers);
+
+// Returns all offers of the specified benefactor.
+router.get('/offers/:id', offerController.getBenefactorOffers);
+
+// Adds a new offer to the specified benefactor id.
+router.post('/offers/:id', offerController.addBenefactorOffer);
+
+// Update an offer of a specified benefactor.
+router.put('/offers/:id', offerController.editBenefactorOffer);
+
+// Disables an offer of a specified benefactor.
+router.delete('/offers/:id', offerController.disableBenefactorOffer);
+
 
 module.exports = router;

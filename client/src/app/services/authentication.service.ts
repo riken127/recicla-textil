@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse, HttpParams } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
-import { tap, map } from 'rxjs/operators';
-import {DonationsService} from "./donations.service";
+import { map } from 'rxjs/operators';
 
 export interface EntityAuthData {
   username: string;
