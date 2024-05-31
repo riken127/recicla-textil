@@ -5,6 +5,7 @@ const pickpointController = require("../controllers/PickpointController");
 const postController = require("../controllers/PostsController");
 const linkController = require("../controllers/LinkController");
 const offerController = require("../controllers/OfferController");
+const storeController = require("../controllers/StoreController");
 const upload = require("../middleware/multerMiddleware");
 const auth = require("../controllers/AuthenticationController");
 
@@ -123,7 +124,7 @@ router.get(
  *                   type: string
  *                   example: danger
  */
-router.post("/", benefactorController.addBenefactor);
+router.post("/", auth.isAuthenticated, benefactorController.addBenefactor);
 
 /**
  * @swagger
@@ -1324,5 +1325,19 @@ router.put('/offers/:id', offerController.editBenefactorOffer);
 // Disables an offer of a specified benefactor.
 router.delete('/offers/:id', offerController.disableBenefactorOffer);
 
+
+router.post("/store/redeem/:prize", storeController.redeemPrize);
+
+router.post("/store/", storeController.addPrize);
+
+router.put("/store/:id", storeController.editPrize);
+
+router.delete("/store/:id", storeController.deletePrize);
+
+router.get("/store/:id", storeController.getPrize);
+
+router.get("/store/benefactor/:id", storeController.getBenefactorPrizes);
+
+router.get("/store/all/:n/:p", storeController.getAllPrizes);
 
 module.exports = router;

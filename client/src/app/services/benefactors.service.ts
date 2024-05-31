@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {catchError, Observable, throwError, of} from "rxjs";
+import {catchError, Observable, pipe, throwError} from "rxjs";
 import {Benefactor} from "../models/benefactor";
 import {map} from "rxjs/operators";
 import {Pickpoint} from "../models/pickpoint";
 import {Post} from '../models/post';
 import {Link} from '../models/link';
+import {Prize} from '../models/prize';
 import {Offer} from '../models/offer';
 
 @Injectable({
@@ -300,7 +301,6 @@ export class BenefactorsService {
           return response.status === 200;
         }),
         catchError(error => {
-          console.error('Error updating offer:', error);
           return of(false);
         })
       );
@@ -330,4 +330,88 @@ export class BenefactorsService {
         })
       );
   }
+
+  public addPrize(prize: Prize): Observable<boolean> {
+    return this.http.post<any>(`${BenefactorsService.apiUrl}/store/`, prize)
+      .pipe(
+        map(response => {
+          if (response.status === 200) {
+            return true;
+          }
+
+          return false;
+        })
+      );
+  }
+
+  public updatePrize(prize: Prize): Observable<boolean> {
+    return this.http.put<any>(`${BenefactorsService.apiUrl}/store/` + prize._id, prize)
+      .pipe(
+        map(response => {
+          if (response.status === 200) {
+            return true;
+          }
+
+          return false;
+        })
+      )
+  }
+
+  public deletePrize(id: string): Observable<boolean> {
+    return this.http.delete<any>(`${BenefactorsService.apiUrl}/store/` + id)
+      .pipe(
+        map(response => {
+          return response.type === 'success'
+        })
+      )
+  }
+
+  public getPrize(id: string): Observable<any> {
+    return this.http.get<Prize>(`${BenefactorsService.apiUrl}/store/` + id, {observe: 'response', withCredentials: true})
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response;
+          } else {
+            throw new Error(response.body!.message)
+          }
+        }),
+        catchError(error => {
+          return throwError(error);
+        })
+      );
+  }
+
+  public getBenefactorPrizes(id: string): Observable<Prize[]> {
+    return this.http.get<Prize[]>(`${BenefactorsService.apiUrl}/store/benefactor/` + id, {observe: 'response', withCredentials: true})
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body;
+          } else {
+            throw new Error(response.body!.message)
+          }
+        }),
+        catchError(error => {
+          return throwError(error);
+        })
+      )
+  }
+
+  public getAllPrizes(prizeNumber: number, page: number): Observable<Prize[]> {
+    return this.http.get<Prize[]>(`${BenefactorsService.apiUrl}/store/all/${prizeNumber}/${page}`, {observe: 'response', withCredentials: true})
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body;
+          } else {
+            throw new Error(response.body!.message)
+          }
+        }),
+        catchError(error => {
+          return throwError(error);
+        })
+      )
+  }
+
 }

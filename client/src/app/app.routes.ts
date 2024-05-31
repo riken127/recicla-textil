@@ -9,9 +9,12 @@ import { ListComponent } from './benefactors/list/list.component';
 import { ListItemsComponent } from './donations/list-items/list-items.component';
 import { CreateDonationComponent } from './donations/create-donation/create-donation.component';
 import { CreateItemComponent } from './donations/create-item/create-item.component';
-import {CreateOfferComponent} from './benefactors/create-offer/create-offer.component';
-import {EditOfferComponent} from './benefactors/edit-offer/edit-offer.component';
-import {DisableOfferComponent} from './benefactors/disable-offer/disable-offer.component';
+import {CreatePrizeComponent} from "./benefactors/create-prize/create-prize.component";
+import {EditPrizeComponent} from "./benefactors/edit-prize/edit-prize.component";
+import {DisablePrizeComponent} from "./benefactors/disable-prize/disable-prize.component";
+import { CreateOfferComponent} from "./benefactors/create-offer/create-offer.component";
+import { EditOfferComponent} from "./benefactors/edit-offer/edit-offer.component";
+import { DisableOfferComponent} from "./benefactors/disable-offer/disable-offer.component";
 
 export const routes: Routes = [
   {
@@ -53,6 +56,18 @@ export const routes: Routes = [
   {
     path: ':id/list-items',
     component: ListItemsComponent,
+  },
+  {
+    path: 'create-prize',
+    component: CreatePrizeComponent,
+  },
+  {
+    path: 'edit-prize',
+    component: EditPrizeComponent,
+  },
+  {
+    path: 'delete-prize',
+    component: DisablePrizeComponent,
   },
   {
     path: 'create-offer',

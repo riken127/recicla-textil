@@ -66,9 +66,12 @@ export class ListDonationsComponent implements OnInit {
 
         this.donations.forEach((donation, index) => {
           if (!donation.details.benefactorId || !donation.details.pickpointId) {
-            console.error(
-              'BenefactorId or PickpointId is not defined for donation:',
-              donation
+            this.snackBar.open(
+              'Benefactor or Pickpoint not defined for donation.',
+              'Close',
+              {
+                duration: 5000,
+              }
             );
             return;
           }

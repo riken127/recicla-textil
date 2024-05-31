@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
 import {catchError, Observable, throwError} from "rxjs";
 import {User} from "../models/user";
@@ -11,12 +11,12 @@ export class UsersService {
   private static apiUrl = 'http://localhost:3000/users';
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   public getAllUsers(): Observable<User[]> | null {
-    return this.http.post<User[]>(`${UsersService.apiUrl}` + '/all', {}, { observe: 'response', withCredentials: true})
+    return this.http.post<User[]>(`${UsersService.apiUrl}` + '/all', {}, {observe: 'response', withCredentials: true})
       .pipe(
-        map((response: HttpResponse<any> ) => {
+        map((response: HttpResponse<any>) => {
           if (response.status === 200) {
             return response.body;
           } else {
@@ -29,7 +29,7 @@ export class UsersService {
       );
   }
 
-  public getUser(id: string): Observable<User>  | null {
+  public getUser(id: string): Observable<User> | null {
     return this.http.get<any | User>(`${UsersService.apiUrl}/${id}`, {})
       .pipe(
         map((response) => {
@@ -39,20 +39,20 @@ export class UsersService {
             throw new Error('Error getting specified user');
           }
         }),
-        catchError( error => {
+        catchError(error => {
           return throwError(error);
         })
       );
   }
 
-  public addUser(user: User): Observable<boolean> | null{
+  public addUser(user: User): Observable<boolean> | null {
     return this.http.post<any>(`${UsersService.apiUrl}/`, user, {})
       .pipe(
         map((response) => {
           if (response.statusCode === 200) {
             return true;
           }
-            return false;
+          return false;
         })
       )
   }
@@ -63,7 +63,7 @@ export class UsersService {
           if (response.statusCode === 200) {
             return true;
           }
-            return false;
+          return false;
         })
       )
   }
@@ -75,7 +75,16 @@ export class UsersService {
           if (response.statusCode === 200) {
             return true;
           }
-            return false;
+          return false;
+        })
+      )
+  }
+
+  public redeemPrize(prizeId: string): Observable<any> {
+    return this.http.post<any>("http://localhost:3000/benefactors/store/redeem/" + prizeId, {})
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          return response
         })
       )
   }
