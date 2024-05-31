@@ -71,10 +71,10 @@ const PickPointSchema = new mongoose.Schema({
  *           description: The weight metric for conversion
  *           example: g
  */
-const ConvertationRatioSchema = new mongoose.Schema({
+const ConversionRatioSchema = new mongoose.Schema({
     points: {type: Number, required: true},
     value: {type: Number, required: true},
-    weigthMetric: {type: String, required: true},
+    weightMetric: {type: String, required: true},
 });
 
 /**
@@ -162,7 +162,7 @@ const BenefactorSchema = new mongoose.Schema({
     createdAt: {type: Date, default: Date.now},
     lastUpdateAt: {type: Date, default: Date.now},
     pickpoints: [PickPointSchema], 
-    convertationRatio: {type: ConvertationRatioSchema, required: true}, 
+    conversionRatio: {type: ConversionRatioSchema, required: true},
     status:{
         type: String,
         enum: ['active', 'inactive', 'pending'],

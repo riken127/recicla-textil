@@ -1,7 +1,8 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const crypto = require("crypto");
-const User = require("../models/user/User");
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const User = require('../models/user/User');
+const Benefactor = require('../models/benefactor/Benefactor')
 
 const secretKey = process.env.JWT_SECRET;
 const algorithm = "aes-256-cbc";
@@ -16,69 +17,170 @@ async function validateLogin(req, res, next) {
   const { username, password } = req.body;
   const fromRest = req.body.rest ? req.body.rest : undefined;
 
-  try {
-    const user = await User.findOne({ username });
+    try {
+        const user = await User.findOne({ username });
+
+        if (!user && !fromRest) {
+            res.status(401).render("login", {
+                messages: { error: "Invalid username or password." },
+            });
+        } else if (!user && fromRest) {
+            res.status(401).json({ error: "Invalid username or password." });
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (passwordMatch) {
+            const token = jwt.sign({ user }, secretKey, { expiresIn: "1h" });
+
+            let encryptedToken = encrypt(token);
+
+            if (!fromRest) {
+                res.cookie("token", encryptedToken, {
+                    httpOnly: true,
+                    sameSite: "strict",
+                });
+
+                res.redirect("/home");
+            } else {
+                res.cookie("token", encryptedToken, {
+                    httpOnly: true,
+                    sameSite: "strict",
+                });
+
+                res.status(200).json({
+                    message: "User authenticated successfully.",
+                });
+            }
+        } else {
+            if (!fromRest) {
+                res.status(401).render("login", {
+                    messages: { error: "Invalid username or password." },
+                });
+            } else {
+                res.status(401).json("login", {
+                    messages: { error: "Invalid username or password." },
+                });
+            }
+        }
+    } catch (error) {
+        if (!fromRest) {
+            res.status(500).render("login", {
+                messages: {
+                    error:
+                        "An error occured while processing your request, please try again!",
+                },
+            });
+        } else {
+            res.status(500).json("login", {
+                messages: {
+                    error:
+                        "An error occured while processing your request, please try again!",
+                },
+            });
+        }
+    }
+}
+
+async function handleUserLogin(res, name, password, fromRest) {
+    const user = await User.findOne({ username })
 
     if (!user && !fromRest) {
-      res.status(401).render("login", {
-        messages: { error: "Invalid username or password." },
-      });
+        res.status(401).render('login', {
+            messages: { error: 'Invalid username or password.' }
+        });
     } else if (!user && fromRest) {
-      res.status(401).json({ error: "Invalid username or password." });
+        return res.status(401).json({ message: 'Invalid username or password.' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (passwordMatch) {
-      const token = jwt.sign({ user }, secretKey, { expiresIn: "1h" });
+        const token = jwt.sign( { user }, secretKey, { expiresIn: '1h' });
 
-      let encryptedToken = encrypt(token);
+        let encryptedToken = encrypt(token);
 
-      if (!fromRest) {
-        res.cookie("token", encryptedToken, {
-          httpOnly: true,
-          sameSite: "strict",
-        });
 
-        res.redirect("/home");
-      } else {
-        res.cookie("token", encryptedToken, {
-          httpOnly: true,
-          sameSite: "strict",
-        });
+        if (!fromRest) {
+            res.cookie('token', encryptedToken, {
+                sameSite: 'strict',
+            });
 
-        res.status(200).json({
-          message: "User authenticated successfully.",
-        });
-      }
+            return res.redirect('/home');
+        } else {
+            res.cookie('token', encryptedToken, {
+                sameSite: 'strict',
+            });
+
+            return res.status(200).json({
+                message: 'User authenticated successfully.'
+            })
+        }
     } else {
-      if (!fromRest) {
-        res.status(401).render("login", {
-          messages: { error: "Invalid username or password." },
-        });
-      } else {
-        res.status(401).json("login", {
-          messages: { error: "Invalid username or password." },
-        });
-      }
+        if (!fromRest) {
+            return res.status(401).render('login', {
+                messages: 'Invalid username or password.'
+            });
+        } else {
+            return res.status(401).json({
+                messages: {error: 'Invalid username or password.'}
+            });
+        }
     }
-  } catch (error) {
-    if (!fromRest) {
-      res.status(500).render("login", {
-        messages: {
-          error:
-            "An error occured while processing your request, please try again!",
-        },
-      });
+}
+
+async function handleBenefactorLogin(res, username, password) {
+    const benefactor = await Benefactor.findOne({username})
+
+    if (!benefactor) {
+        return res.status(401).json({
+            message: 'Invalid username of password.'
+        });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, benefactor.password);
+
+    if (passwordMatch) {
+        const token = jwt.sign( { benefactor }, secretKey, { expiresIn: '1h' });
+
+        let encryptedToken = encrypt(token);
+
+        res.cookie('token', encryptedToken, {
+            sameSite: 'strict',
+        });
+
+        return res.status(200).json({
+            message: 'Benefactor authenticated sucessfully.'
+        });
     } else {
-      res.status(500).json("login", {
-        messages: {
-          error:
-            "An error occured while processing your request, please try again!",
-        },
-      });
+        return res.status(401).json({
+            message: 'Invalid username or password.'
+        })
     }
-  }
+}
+
+async function validateLogin(req, res, next) {
+    const { benefactor } = req.body;
+    const {username, password} = req.body;
+    const fromRest = req.body.rest ? req.body.rest : undefined
+
+    try {
+        if (!benefactor) {
+            await handleUserLogin(res, username, password, fromRest);
+        } else {
+            await handleBenefactorLogin(res, username, password);
+        }
+    } catch (error) {
+        if (!fromRest) {
+            return res.status(500).render('login', {
+                messages: {error: 'An error occured while processing your request, please try again!'}
+            });
+        } else {
+            return res.status(500).json({
+                messages: 'An error occured while processing your request, please try again!' + error
+            });
+        }
+    }
 }
 
 function decrypt(encryptedToken) {
@@ -97,6 +199,32 @@ function encrypt(token) {
   encrypted += cipher.final("hex");
 
   return encrypted;
+}
+
+function isLoggedIn(req, res) {
+    const encryptedToken = req.cookies.token;
+
+    if (!encryptedToken) {
+        return res.status(401).json({
+            message: 'Unauthorized'
+        });
+    }
+
+    const decryptedToken = decrypt(encryptedToken);
+
+    jwt.verify(decryptedToken, secretKey, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({
+                message: 'Unauthorized'
+            });
+        }
+
+        return res.status(200).json({
+            message: 'The current entity is logged in.'
+        });
+
+    })
+
 }
 
 function isAuthenticated(req, res, next) {
@@ -205,7 +333,7 @@ function getDecodedToken(req, res) {
     if (fName !== undefined) {
       result.fName = decodedToken.user.firstName;
     }
-    
+
     if (lName !== undefined) {
       result.lName = decodedToken.user.lastName;
     }
@@ -220,7 +348,7 @@ function getDecodedToken(req, res) {
         message: "no parameters could be fulfilled.",
       });
     }
-    
+
     return res.status(200).json(result);
   } catch (error) {
     return res.status(500).json({
@@ -231,11 +359,12 @@ function getDecodedToken(req, res) {
 }
 
 module.exports = {
-  renderLoginForm,
-  validateLogin,
-  isAuthenticated,
-  isNotAuthenticated,
-  hasRoles,
-  logout,
-  getDecodedToken,
+    renderLoginForm,
+    validateLogin,
+    isAuthenticated,
+    isNotAuthenticated,
+    hasRoles,
+    logout,
+    isLoggedIn,
+    getDecodedToken,
 };

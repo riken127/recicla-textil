@@ -1,4 +1,9 @@
 import { Routes } from '@angular/router';
+import { UserLoginComponent } from './users/user-login/user-login.component';
+import { UserRegisterComponent } from "./users/user-register/user-register.component";
+import {BenefactorLoginComponent} from "./benefactors/benefactor-login/benefactor-login.component";
+import {BenefactorRegisterComponent} from "./benefactors/benefactor-register/benefactor-register.component";
+import {authGuard} from "./auth.guard";
 import { ListDonationsComponent } from './donations/list/list.component';
 import { ListComponent } from './benefactors/list/list.component';
 import { ListItemsComponent } from './donations/list-items/list-items.component';
@@ -12,7 +17,27 @@ export const routes: Routes = [
   },
   {
     path: 'list-donations',
-    component: ListDonationsComponent,
+    component: ListDonationsComponent
+  },
+    {
+        path: 'users/login',
+        component: UserLoginComponent,
+      canActivate: [authGuard]
+    },
+  {
+    path: 'users/register',
+    component: UserRegisterComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'benefactors/login',
+    component: BenefactorLoginComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'benefactors/register',
+    component: BenefactorRegisterComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'create-donation',

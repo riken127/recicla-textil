@@ -98,7 +98,7 @@ router.get('/all', auth.isAuthenticated, auth.hasRoles(['administrator']), userC
  *                   type: string
  *                   example: danger
  */
-router.post('/', auth.isAuthenticated, userController.addUser)
+router.post('/', userController.addUser)
 
 /**
  * @swagger

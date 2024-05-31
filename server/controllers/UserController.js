@@ -176,7 +176,6 @@ function getUser(req, res, next) {
  */
 async function addUser(req, res, next) {
   const userData = req.body;
-
   User.findOne({
     $or: [
       { username: userData.username },
@@ -196,7 +195,7 @@ async function addUser(req, res, next) {
           errorMessage = "Phone number already exists.";
         }
 
-        res.status(400).json({ message: errorMessage, type: "danger" });
+        return res.status(400).json({ message: errorMessage, type: "danger" });
       } else {
         let user = new User({
           lastName: userData.lastName,
@@ -224,28 +223,30 @@ async function addUser(req, res, next) {
                 recursive: true,
               });
             }
-            const email = mailController.createEmail("successEmail", {
-              to: req.user.email,
-              subject: "User Registration",
-              text:
-                "Dear " +
-                req.user.firstName +
-                ",\n\n" +
-                "We'd like to inform you that the account for the user has been successfully created. Here are the details for the new account:\n\n" +
-                "- Username: " +
-                savedUser.username +
-                "\n" +
-                "- Email: " +
-                savedUser.email +
-                "\n\n" +
-                "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
-                "If you need any further information, we are at your disposal.\n\n" +
-                "Best regards,\n\n" +
-                "Recicla-Textil Team",
-            });
+            if (req.user) {
+              const email = mailController.createEmail("successEmail", {
+                to: req.user.email,
+                subject: "User Registration",
+                text:
+                    "Dear " +
+                    req.user.firstName +
+                    ",\n\n" +
+                    "We'd like to inform you that the account for the user has been successfully created. Here are the details for the new account:\n\n" +
+                    "- Username: " +
+                    savedUser.username +
+                    "\n" +
+                    "- Email: " +
+                    savedUser.email +
+                    "\n\n" +
+                    "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
+                    "If you need any further information, we are at your disposal.\n\n" +
+                    "Best regards,\n\n" +
+                    "Recicla-Textil Team",
+              });
 
-            await email.send();
-            res.status(200).json({
+              await email.send();
+            }
+            return res.status(200).json({
               type: "success",
               result: savedUser._id,
             });
@@ -253,6 +254,7 @@ async function addUser(req, res, next) {
           .catch((err) => {
             throw err;
           });
+
       }
     })
     .catch(async (err) => {

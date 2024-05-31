@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse, HttpParams } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
+import {DonationsService} from "./donations.service";
 
 export interface EntityAuthData {
   username: string;
@@ -17,19 +18,31 @@ export class AuthenticationService {
 
   constructor(private http: HttpClient) {}
 
-  authenticateUser(
-    user: EntityAuthData
-  ): Observable<{ token: string | null; statusCode: number }> {
-    return this.http
-      .post(
-        `${this.apiUrl}${this.loginRoute}`,
-        { username: user.username, password: user.password, rest: true },
-        { observe: 'response', withCredentials: true }
-      )
+  public isAuthenticated(): Observable<boolean> {
+    return this.http.get<any>(`${this.apiUrl}/check`, {})
       .pipe(
         map((response: HttpResponse<any>) => {
-          const token = this.extractToken(response);
-          const statusCode = response.status;
+          if (response.status == 200) {
+            return true;
+          }
+
+          return false;
+        }),
+        catchError( error => {
+          return throwError(error);
+        })
+      )
+  }
+
+  public authenticateUser(user: { password: string | null | undefined; username: string | null | undefined }): Observable<{
+  token: string | null;
+  statusCode: number
+}> {
+  return this.http.post(`${this.apiUrl}${this.loginRoute}`, {username: user.username, password: user.password, rest: true}, { observe: 'response', withCredentials: true })
+    .pipe(
+      map((response: HttpResponse<any>) => {
+        const token = this.extractToken(response);
+        const statusCode = response.status;
 
           return {
             token: token,
@@ -37,6 +50,27 @@ export class AuthenticationService {
           };
         }),
         catchError((error) => {
+          return throwError(error);
+        })
+      );
+  }
+
+  public authenticateBenefactor(user: { password: string | null | undefined; username: string | null | undefined }): Observable<{
+    token: string | null;
+    statusCode: number
+  }> {
+    return this.http.post(`${this.apiUrl}${this.loginRoute}`, {username: user.username, password: user.password, rest: true, benefactor: true}, { observe: 'response', withCredentials: true })
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          const token = this.extractToken(response);
+          const statusCode = response.status;
+
+          return {
+            token: token,
+            statusCode: statusCode
+          };
+        }),
+        catchError(error => {
           return throwError(error);
         })
       );

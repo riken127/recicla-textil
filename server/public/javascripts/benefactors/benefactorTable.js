@@ -185,10 +185,10 @@ $(document).ready(function () {
                     $("#editCity").val(response.address.city);
                     $("#editPostalCode").val(response.address.postalCode);
                     $("#editCountry").val(response.address.country);
-                    $("#editPoints").val(response.convertationRatio.points);
-                    $("#editValue").val(response.convertationRatio.value);
+                    $("#editPoints").val(response.conversionRatio.points);
+                    $("#editValue").val(response.conversionRatio.value);
                     $("#editWeigthMetric").val(
-                        response.convertationRatio.weigthMetric
+                        response.conversionRatio.weigthMetric
                     );
                     $("#editPassword").val("");
                     $("#editConfirmPassword").val("");
@@ -269,7 +269,7 @@ $(document).ready(function () {
                 postalCode: $("#editPostalCode").val(),
                 country: $("#editCountry").val(),
             },
-            convertationRatio: {
+            conversionRatio: {
                 points: $("#editPoints").val(),
                 value: $("#editValue").val(),
                 weigthMetric: $("#editWeigthMetric").val(),
@@ -352,7 +352,7 @@ $(document).ready(function () {
                 postalCode: $("#createPostalCode").val(),
                 country: $("#createcountry").val(),
             },
-            convertationRatio: {
+            conversionRatio: {
                 points: $("#createPoints").val(),
                 value: $("#createValue").val(),
                 weigthMetric: $("#createWeigthMetric").val(),
@@ -380,7 +380,6 @@ $(document).ready(function () {
                 table.ajax.reload();
             },
             error: function (error) {
-                console.error("Error creating Benefactor:", error);
                 $("#createErrorMessage").text(
                     "Error: " + error.responseJSON.message
                 );

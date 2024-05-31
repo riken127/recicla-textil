@@ -122,7 +122,7 @@ router.get(
  *                   type: string
  *                   example: danger
  */
-router.post("/", auth.isAuthenticated, benefactorController.addBenefactor);
+router.post("/", benefactorController.addBenefactor);
 
 /**
  * @swagger

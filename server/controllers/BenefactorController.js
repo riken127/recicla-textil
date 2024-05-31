@@ -198,7 +198,7 @@ async function addBenefactor(req, res, next) {
           errorMessage = "Phone number already exists.";
         }
 
-        res.status(400).json({ message: errorMessage, type: "danger" });
+        return res.status(400).json({ message: errorMessage, type: "danger" });
       } else {
         let benefactor = new Benefactor({
           name: benefactorData.name || "",
@@ -211,8 +211,8 @@ async function addBenefactor(req, res, next) {
           logo: benefactorData.logo || "",
           banner: benefactorData.banner || "",
           pickpoints: benefactorData.pickpoints || [],
-          convertationRatio: benefactorData.convertationRatio || {},
-          active: benefactorData.status || "active",
+          conversionRatio: benefactorData.conversionRatio || {},
+          status: benefactorData.status || "active",
         });
 
         benefactor
@@ -229,11 +229,11 @@ async function addBenefactor(req, res, next) {
             }
 
             const email = mailController.createEmail("successEmail", {
-              to: req.user.email,
+              to: savedBenefactor.email,
               subject: "Benefactor Registration",
               text:
                 "Dear " +
-                req.user.firstName +
+                savedBenefactor.name +
                 ",\n\n" +
                 "We'd like to inform you that the account for the benefactor has been successfully created. Here are the details for the new account:\n\n" +
                 "- Username: " +
@@ -250,18 +250,18 @@ async function addBenefactor(req, res, next) {
 
             await email.send();
 
-            res.status(200).json({
+            return res.status(200).json({
               type: "success",
               result: savedBenefactor._id,
             });
           })
           .catch(async (err) => {
             const email = mailController.createEmail("errorEmail", {
-              to: req.user.email,
+              to: req.body.email,
               subject: "Benefactor Registration Error",
               text:
                 "Dear " +
-                req.user.firstName +
+                req.body.name +
                 ",\n\n" +
                 "An error occurred while creating the benefactor account. Please review and take necessary actions.\n\n" +
                 "Error Details:\n" +
@@ -278,7 +278,7 @@ async function addBenefactor(req, res, next) {
 
             await email.send();
 
-            res.status(500).json({
+            return res.status(500).json({
               message: err.message,
               type: "danger",
             });
@@ -287,11 +287,11 @@ async function addBenefactor(req, res, next) {
     })
     .catch(async (err) => {
       const email = mailController.createEmail("errorEmail", {
-        to: req.user.email,
+        to: req.body.email,
         subject: "Benefactor Registration Error",
         text:
           "Dear " +
-          req.user.firstName +
+          req.body.name +
           ",\n\n" +
           "An error occurred while creating the benefactor account. Please review and take necessary actions.\n\n" +
           "Error Details:\n" +
@@ -308,7 +308,7 @@ async function addBenefactor(req, res, next) {
 
       await email.send();
 
-      res.status(500).json({ message: err.message, type: "danger" });
+      return res.status(500).json({ message: err.message, type: "danger" });
     });
 }
 

@@ -106,4 +106,6 @@ router.post("/logout", authController.logout);
  */
 router.get("/getToken", authController.getDecodedToken);
 
+router.get('/check', authController.isNotAuthenticated);
+
 module.exports = router;
