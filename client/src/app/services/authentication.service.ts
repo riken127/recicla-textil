@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse, HttpParams } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpResponse, HttpParams} from '@angular/common/http';
+import {catchError, Observable, throwError} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 export interface EntityAuthData {
   username: string;

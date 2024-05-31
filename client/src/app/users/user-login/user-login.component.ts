@@ -40,16 +40,14 @@ export class UserLoginComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       this.authenticationService.authenticateUser({
-        username: this.loginForm.value.username,
-        password: this.loginForm.value.password
+        username: this.loginForm.value.username || '',
+        password: this.loginForm.value.password || ''
       })
         .subscribe(response => {
-          console.log(response);
           if (response.statusCode === 200) {
             this.router.navigate(['/']);
           } else {
             this.showErrorMessage("An error occurred during login.");
-            console.log("An error occurred:", response);
           }
         }, error => {
           if (error.status === 401) {
