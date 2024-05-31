@@ -6,12 +6,14 @@ export class Item {
     public size: string,
     public type: string,
     public photo: string
-  ) { }
+  ) {
+  }
 }
 
 export class Weight {
   constructor(
     public value: string,
     public unit: string
-  ) { }
+  ) {
+  }
 }

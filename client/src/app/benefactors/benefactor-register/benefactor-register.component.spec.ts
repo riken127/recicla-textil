@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { BenefactorRegisterComponent } from './benefactor-register.component';
+import {BenefactorRegisterComponent} from './benefactor-register.component';
 
 describe('BenefactorRegisterComponent', () => {
   let component: BenefactorRegisterComponent;
@@ -10,8 +10,8 @@ describe('BenefactorRegisterComponent', () => {
     await TestBed.configureTestingModule({
       imports: [BenefactorRegisterComponent]
     })
-    .compileComponents();
-    
+      .compileComponents();
+
     fixture = TestBed.createComponent(BenefactorRegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

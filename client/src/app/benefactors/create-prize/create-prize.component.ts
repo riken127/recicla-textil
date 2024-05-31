@@ -4,7 +4,7 @@ import {BenefactorsService} from "../../services/benefactors.service";
 import {MatCardModule} from "@angular/material/card";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
-import {ReactiveFormsModule, FormGroup, FormBuilder, Validators, AbstractControl, FormControl} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatGridListModule} from "@angular/material/grid-list";
 import {MatButtonModule} from "@angular/material/button";
 import {MatDatepickerModule} from "@angular/material/datepicker";
@@ -28,7 +28,7 @@ import {Router} from "@angular/router";
   templateUrl: './create-prize.component.html',
   styleUrl: './create-prize.component.css'
 })
-export class CreatePrizeComponent implements OnInit{
+export class CreatePrizeComponent implements OnInit {
   form!: FormGroup;
   benefactor = '66341183612bf8d5aff074f0';
   submitted = false;
@@ -38,20 +38,21 @@ export class CreatePrizeComponent implements OnInit{
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
     private router: Router
-  ) {}
-
-  ngOnInit() {
-    this.form = this.formBuilder.group({
-        price: [new FormControl("", Validators.required)],
-        title: [new FormControl("", Validators.required)],
-        description: [new FormControl("")],
-        image: [new FormControl("")],
-        benefactor: [this.benefactor]
-      });
+  ) {
   }
 
   get f() {
     return this.form.controls;
+  }
+
+  ngOnInit() {
+    this.form = this.formBuilder.group({
+      price: [new FormControl("", Validators.required)],
+      title: [new FormControl("", Validators.required)],
+      description: [new FormControl("")],
+      image: [new FormControl("")],
+      benefactor: [this.benefactor]
+    });
   }
 
   onSubmit() {

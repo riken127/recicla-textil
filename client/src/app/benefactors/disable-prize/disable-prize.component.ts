@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {Component} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {BenefactorsService} from "../../services/benefactors.service";
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from "@angular/material/button";
@@ -24,7 +24,8 @@ export class DisablePrizeComponent {
     private benefactorService: BenefactorsService,
     private snackBar: MatSnackBar,
     private router: Router,
-  ) { }
+  ) {
+  }
 
   onDelete() {
     this.benefactorService.deletePrize(this.currentPrize)

@@ -9,9 +9,11 @@
 .inner-table {
   width: 100%;
 }
+
 .hidden-row {
   display: none;
 }
+
 .center-cell {
   text-align: center;
 }

@@ -1,22 +1,22 @@
 <div class="container">
   <h1 mat-dialog-title>{{ post?.title }}</h1>
   <div mat-dialog-content>
-    <img src="https://picsum.photos/500/500" alt="Error Loading Image" />
+    <img alt="Error Loading Image" src="https://picsum.photos/500/500"/>
     <p>{{ post?.content }}</p>
     <div class="link-buttons" style="display: flex; flex-wrap: wrap;">
       <div class="dialog-actions">
-      <div *ngFor="let link of post?.links">
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="onLinkClick(link.link)"
-          title="{{ link.onHover }}"
-        >
-          {{ link.title }}
-        </button>
+        <div *ngFor="let link of post?.links">
+          <button
+            (click)="onLinkClick(link.link)"
+            color="primary"
+            mat-raised-button
+            title="{{ link.onHover }}"
+          >
+            {{ link.title }}
+          </button>
+        </div>
       </div>
-    </div>
-      <button mat-raised-button (click)="onClose()">Close</button>
+      <button (click)="onClose()" mat-raised-button>Close</button>
     </div>
   </div>
 </div>

@@ -8,6 +8,7 @@
   display: grid;
   grid-column-gap: 20px;
 }
+
 .mat-form-field {
   width: auto;
 }

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {catchError, Observable, pipe, throwError} from "rxjs";
+import {catchError, Observable, of, throwError} from "rxjs";
 import {Benefactor} from "../models/benefactor";
 import {map} from "rxjs/operators";
 import {Pickpoint} from "../models/pickpoint";
@@ -16,11 +16,14 @@ export class BenefactorsService {
   private static apiUrl = 'http://localhost:3000/benefactors';
 
 
-
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   public getAllBenefactors(): Observable<Benefactor[]> | null {
-    return this.http.post<Benefactor[]>(`${BenefactorsService.apiUrl}` + '/all', {rest: true}, {observe: 'response', withCredentials: true})
+    return this.http.post<Benefactor[]>(`${BenefactorsService.apiUrl}` + '/all', {rest: true}, {
+      observe: 'response',
+      withCredentials: true
+    })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -88,7 +91,10 @@ export class BenefactorsService {
   }
 
   public getAllPickpoints(benefactorId: string): Observable<Pickpoint[]> | null {
-    return this.http.post<Pickpoint[]>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/all`, {}, {observe: 'response', withCredentials: true})
+    return this.http.post<Pickpoint[]>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/all`, {}, {
+      observe: 'response',
+      withCredentials: true
+    })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -104,7 +110,10 @@ export class BenefactorsService {
   }
 
   public getPickpoint(benefactorId: string, pickpointId: string): Observable<Pickpoint> | null {
-    return this.http.get<Pickpoint>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/${pickpointId}`, {observe: 'response', withCredentials: true})
+    return this.http.get<Pickpoint>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/${pickpointId}`, {
+      observe: 'response',
+      withCredentials: true
+    })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -192,7 +201,10 @@ export class BenefactorsService {
   }
 
   public getPosts(benefactorId: string): Observable<Post[]> | null {
-    return this.http.get<Post[]>(`${BenefactorsService.apiUrl}/${benefactorId}/posts/`, {observe: 'response', withCredentials: true})
+    return this.http.get<Post[]>(`${BenefactorsService.apiUrl}/${benefactorId}/posts/`, {
+      observe: 'response',
+      withCredentials: true
+    })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -208,7 +220,10 @@ export class BenefactorsService {
   }
 
   public getLastPosts(limit: number, page: number): Observable<Post[]> | null {
-    return this.http.post<Post[]>(`${BenefactorsService.apiUrl}/posts/all`, {limit: limit, page: page}, {observe: 'response', withCredentials: true})
+    return this.http.post<Post[]>(`${BenefactorsService.apiUrl}/posts/all`, {
+      limit: limit,
+      page: page
+    }, {observe: 'response', withCredentials: true})
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -260,7 +275,10 @@ export class BenefactorsService {
   }
 
   public getLastOffers(limit: number, page: number): Observable<Offer[]> | null {
-    return this.http.get<Offer[]>(`${BenefactorsService.apiUrl}/offers/all/${limit}/${page}}`, {observe: 'response', withCredentials: true})
+    return this.http.get<Offer[]>(`${BenefactorsService.apiUrl}/offers/all/${limit}/${page}}`, {
+      observe: 'response',
+      withCredentials: true
+    })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -291,7 +309,6 @@ export class BenefactorsService {
         })
       );
   }
-
 
 
   public updateOffer(benefactor: string, offer: Offer): Observable<boolean> {
@@ -367,7 +384,10 @@ export class BenefactorsService {
   }
 
   public getPrize(id: string): Observable<any> {
-    return this.http.get<Prize>(`${BenefactorsService.apiUrl}/store/` + id, {observe: 'response', withCredentials: true})
+    return this.http.get<Prize>(`${BenefactorsService.apiUrl}/store/` + id, {
+      observe: 'response',
+      withCredentials: true
+    })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -383,7 +403,10 @@ export class BenefactorsService {
   }
 
   public getBenefactorPrizes(id: string): Observable<Prize[]> {
-    return this.http.get<Prize[]>(`${BenefactorsService.apiUrl}/store/benefactor/` + id, {observe: 'response', withCredentials: true})
+    return this.http.get<Prize[]>(`${BenefactorsService.apiUrl}/store/benefactor/` + id, {
+      observe: 'response',
+      withCredentials: true
+    })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -399,7 +422,10 @@ export class BenefactorsService {
   }
 
   public getAllPrizes(prizeNumber: number, page: number): Observable<Prize[]> {
-    return this.http.get<Prize[]>(`${BenefactorsService.apiUrl}/store/all/${prizeNumber}/${page}`, {observe: 'response', withCredentials: true})
+    return this.http.get<Prize[]>(`${BenefactorsService.apiUrl}/store/all/${prizeNumber}/${page}`, {
+      observe: 'response',
+      withCredentials: true
+    })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {

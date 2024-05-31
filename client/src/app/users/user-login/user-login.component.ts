@@ -1,14 +1,14 @@
-import {Component, OnInit} from '@angular/core';
-import { CommonModule } from "@angular/common";
-import { MatButtonModule } from "@angular/material/button";
-import { MatCardModule } from "@angular/material/card";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { MatInputModule } from "@angular/material/input";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatGridListModule } from "@angular/material/grid-list";
-import { AuthenticationService } from "../../services/authentication.service";
-import { Router } from "@angular/router";
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {Component} from '@angular/core';
+import {CommonModule} from "@angular/common";
+import {MatButtonModule} from "@angular/material/button";
+import {MatCardModule} from "@angular/material/card";
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {MatInputModule} from "@angular/material/input";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatGridListModule} from "@angular/material/grid-list";
+import {AuthenticationService} from "../../services/authentication.service";
+import {Router} from "@angular/router";
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {CookieService} from "../../services/cookie.service";
 
 @Component({
@@ -27,17 +27,18 @@ import {CookieService} from "../../services/cookie.service";
   styleUrls: ['./user-login.component.css']
 })
 export class UserLoginComponent {
+  loginForm = new FormGroup({
+    username: new FormControl('', [Validators.required]),
+    password: new FormControl('', [Validators.required])
+  });
+
   constructor(
     protected authenticationService: AuthenticationService,
     private router: Router,
     private snackBar: MatSnackBar,
     private cookieService: CookieService
-  ) { }
-
-  loginForm = new FormGroup({
-    username: new FormControl('', [Validators.required]),
-    password: new FormControl('', [Validators.required])
-  });
+  ) {
+  }
 
   onSubmit() {
     if (this.loginForm.valid) {

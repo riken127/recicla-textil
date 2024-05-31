@@ -6,7 +6,8 @@ export class Prize {
     public description: string,
     public image: string,
     public benefactor: string
-  ) {}
+  ) {
+  }
 }
 
 

@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
-import { User } from '../models/user';
-import { map } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpResponse} from '@angular/common/http';
+import {catchError, Observable, throwError} from 'rxjs';
+import {User} from '../models/user';
+import {map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -10,14 +10,15 @@ import { map } from 'rxjs/operators';
 export class UsersService {
   private static apiUrl = 'http://localhost:3000/users';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   public getAllUsers(): Observable<User[]> | null {
     return this.http
       .post<User[]>(
         `${UsersService.apiUrl}` + '/all',
         {},
-        { observe: 'response', withCredentials: true }
+        {observe: 'response', withCredentials: true}
       )
       .pipe(
         map((response: HttpResponse<any>) => {
@@ -64,6 +65,7 @@ export class UsersService {
         })
       )
   }
+
   public updateUser(user: User): Observable<boolean> | null {
     return this.http.put<any>(`${UsersService.apiUrl}/`, user, {})
       .pipe(

@@ -1,18 +1,17 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
-import { BenefactorsService } from '../../services/benefactors.service';
-import { Benefactor } from '../../models/benefactor';
-import { Post } from '../../models/post';
-import { MatCardModule } from '@angular/material/card';
-import { AuthenticationService } from "../../services/authentication.service";
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatDialog } from '@angular/material/dialog';
-import { PostComponent } from '../post/post.component';
-import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
+import {Component, HostListener, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ActivatedRoute, Router} from '@angular/router';
+import {BenefactorsService} from '../../services/benefactors.service';
+import {Benefactor} from '../../models/benefactor';
+import {Post} from '../../models/post';
+import {MatCardModule} from '@angular/material/card';
+import {AuthenticationService} from "../../services/authentication.service";
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatButtonModule} from '@angular/material/button';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatDialog} from '@angular/material/dialog';
+import {PostComponent} from '../post/post.component';
+import {MatIconModule} from '@angular/material/icon';
 
 @Component({
   selector: 'app-profile',
@@ -40,7 +39,8 @@ export class ProfileComponent implements OnInit {
     private snackBar: MatSnackBar,
     public dialog: MatDialog,
     private router: Router
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
     this.profile();
@@ -59,7 +59,7 @@ export class ProfileComponent implements OnInit {
 
     } else if (width >= 800) {
       this.gridCols = 2;
-      
+
     } else {
       this.gridCols = 1;
     }
@@ -77,7 +77,7 @@ export class ProfileComponent implements OnInit {
 
   getToken() {
     this.authService.getBenefactorDecodedToken(true, false).subscribe(result => {
-      this.benefactorId = result.id; 
+      this.benefactorId = result.id;
     });
   }
 
@@ -114,7 +114,7 @@ export class ProfileComponent implements OnInit {
 
   openDialog(post: Post) {
     this.dialog.open(PostComponent, {
-      data: { post: post },
+      data: {post: post},
     });
   }
 }

@@ -1,4 +1,4 @@
-import { Link } from './link'
+import {Link} from './link'
 
 export class Post {
   constructor(
@@ -9,5 +9,6 @@ export class Post {
     public createdAt: Date,
     public updatedAt: Date,
     public links: Link[]
-  ) {}
+  ) {
+  }
 }

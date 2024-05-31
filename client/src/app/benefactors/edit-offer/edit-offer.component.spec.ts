@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { EditOfferComponent } from './edit-offer.component';
+import {EditOfferComponent} from './edit-offer.component';
 
 describe('EditOfferComponent', () => {
   let component: EditOfferComponent;
@@ -10,8 +10,8 @@ describe('EditOfferComponent', () => {
     await TestBed.configureTestingModule({
       imports: [EditOfferComponent]
     })
-    .compileComponents();
-    
+      .compileComponents();
+
     fixture = TestBed.createComponent(EditOfferComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

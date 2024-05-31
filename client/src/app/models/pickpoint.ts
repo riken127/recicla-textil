@@ -4,5 +4,6 @@ export class Pickpoint {
               public city: string,
               public postalCode: string,
               public country: string,
-              public active: boolean) {}
+              public active: boolean) {
+  }
 }

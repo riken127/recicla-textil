@@ -1,4 +1,4 @@
-import { Item } from "./item";
+import {Item} from "./item";
 
 export class Donation {
   constructor(
@@ -10,7 +10,8 @@ export class Donation {
     public ip: string,
     public __v: number,
     public status: string
-  ) { }
+  ) {
+  }
 }
 
 export class ItemContainer {
@@ -20,5 +21,6 @@ export class ItemContainer {
     public items: Item[],
     public totalWeight: number,
     public numberOfItems: number
-  ) { }
+  ) {
+  }
 }

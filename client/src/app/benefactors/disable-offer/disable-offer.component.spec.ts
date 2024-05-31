@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { DisableOfferComponent } from './disable-offer.component';
+import {DisableOfferComponent} from './disable-offer.component';
 
 describe('DisableOfferComponent', () => {
   let component: DisableOfferComponent;
@@ -10,8 +10,8 @@ describe('DisableOfferComponent', () => {
     await TestBed.configureTestingModule({
       imports: [DisableOfferComponent]
     })
-    .compileComponents();
-    
+      .compileComponents();
+
     fixture = TestBed.createComponent(DisableOfferComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -8,5 +8,6 @@ export class Offer {
     public description: string,
     public image: string,
     public active: boolean
-  ) {}
+  ) {
+  }
 }

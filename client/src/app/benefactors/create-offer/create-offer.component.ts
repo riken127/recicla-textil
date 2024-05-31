@@ -4,7 +4,7 @@ import {BenefactorsService} from '../../services/benefactors.service';
 import {MatCardModule} from '@angular/material/card';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
-import {ReactiveFormsModule, FormGroup, FormBuilder, Validators, AbstractControl} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatButtonModule} from '@angular/material/button';
 import {MatDatepickerModule} from '@angular/material/datepicker';
@@ -38,7 +38,12 @@ export class CreateOfferComponent implements OnInit {
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
     private router: Router
-  ) {}
+  ) {
+  }
+
+  get f() {
+    return this.form.controls;
+  }
 
   MustBeGreater(greaterDateControl: string, smallerDateControl: string) {
     return (group: AbstractControl) => {
@@ -73,10 +78,6 @@ export class CreateOfferComponent implements OnInit {
     }, {
       validators: this.MustBeGreater('endDate', 'startDate')
     });
-  }
-
-  get f() {
-    return this.form.controls;
   }
 
   onSubmit() {

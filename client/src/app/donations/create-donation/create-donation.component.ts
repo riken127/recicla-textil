@@ -1,19 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Benefactor } from '../../models/benefactor';
-import { Pickpoint } from '../../models/pickpoint';
-import { Donation, ItemContainer } from '../../models/donation';
-import { AuthenticationService } from '../../services/authentication.service';
-import { DonationsService } from '../../services/donations.service';
-import { BenefactorsService } from '../../services/benefactors.service';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators,} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {Benefactor} from '../../models/benefactor';
+import {Pickpoint} from '../../models/pickpoint';
+import {Donation, ItemContainer} from '../../models/donation';
+import {AuthenticationService} from '../../services/authentication.service';
+import {DonationsService} from '../../services/donations.service';
+import {BenefactorsService} from '../../services/benefactors.service';
 
 @Component({
   selector: 'app-create-donation',
@@ -46,7 +41,7 @@ export class CreateDonationComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
       const benefactorId = '' + params.get('id') || '';
-      
+
       if (benefactorId) {
         this.loadBenefactorAndPickpoints(benefactorId);
       }
@@ -124,7 +119,7 @@ export class CreateDonationComponent implements OnInit {
           this.snackBar.open('Donation created successfully!', 'Close', {
             duration: 5000,
           });
-          
+
           this.router.navigate([donationId, 'list-items']);
         } else {
           this.snackBar.open(

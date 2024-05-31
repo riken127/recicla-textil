@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
-import { Donation } from '../models/donation';
-import { map } from 'rxjs/operators';
-import { Item } from '../models/item';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpResponse} from '@angular/common/http';
+import {catchError, Observable, throwError} from 'rxjs';
+import {Donation} from '../models/donation';
+import {map} from 'rxjs/operators';
+import {Item} from '../models/item';
 
 @Injectable({
   providedIn: 'root',
@@ -11,14 +11,15 @@ import { Item } from '../models/item';
 export class DonationsService {
   private static apiUrl = 'http://localhost:3000/donations';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   public getAllDonations(): Observable<Donation[]> | null {
     return this.http
       .post<Donation[]>(
         `${DonationsService.apiUrl}` + '/all',
         {},
-        { observe: 'response', withCredentials: true }
+        {observe: 'response', withCredentials: true}
       )
       .pipe(
         map((response: HttpResponse<any>) => {
@@ -106,7 +107,7 @@ export class DonationsService {
       .post<Item[]>(
         `${DonationsService.apiUrl}/${donationId}/items/all`,
         {},
-        { observe: 'response', withCredentials: true }
+        {observe: 'response', withCredentials: true}
       )
       .pipe(
         map((response: HttpResponse<any>) => {

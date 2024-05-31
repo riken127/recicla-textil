@@ -1,13 +1,13 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Post } from '../../models/post';
-import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
+import {Component, Inject} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {Post} from '../../models/post';
+import {MatButtonModule} from '@angular/material/button';
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-post',
-  standalone:true,
-  imports:[
+  standalone: true,
+  imports: [
     MatButtonModule,
     CommonModule
   ],
@@ -22,7 +22,7 @@ export class PostComponent {
     @Inject(MAT_DIALOG_DATA) public data: { post: Post }
   ) {
     this.post = data.post;
-    }
+  }
 
   onClose(): void {
     this.dialogRef.close();

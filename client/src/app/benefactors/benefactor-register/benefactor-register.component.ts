@@ -1,16 +1,16 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { BenefactorsService } from '../../services/benefactors.service';
-import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Benefactor } from '../../models/benefactor';
-import { Address } from '../../models/address';
+import {Component} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCardModule} from '@angular/material/card';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {BenefactorsService} from '../../services/benefactors.service';
+import {Router} from '@angular/router';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {Benefactor} from '../../models/benefactor';
+import {Address} from '../../models/address';
 import {ConversionRatio} from "../../models/conversion-ratio";
 
 @Component({
@@ -29,12 +29,6 @@ import {ConversionRatio} from "../../models/conversion-ratio";
   styleUrls: ['./benefactor-register.component.css']
 })
 export class BenefactorRegisterComponent {
-  constructor(
-    private benefactorsService: BenefactorsService,
-    private router: Router,
-    private snackBar: MatSnackBar
-  ) {}
-
   registerForm = new FormGroup({
     name: new FormControl('', [Validators.required]),
     username: new FormControl('', [Validators.required]),
@@ -48,6 +42,13 @@ export class BenefactorRegisterComponent {
     country: new FormControl(''),
     description: new FormControl('')
   });
+
+  constructor(
+    private benefactorsService: BenefactorsService,
+    private router: Router,
+    private snackBar: MatSnackBar
+  ) {
+  }
 
   onSubmit() {
     if (this.registerForm.valid) {
@@ -69,9 +70,9 @@ export class BenefactorRegisterComponent {
         '',
         new Date(),
         new Date(),
-      [],
-      new ConversionRatio(10, 1000, 'g'),
-      'pending'
+        [],
+        new ConversionRatio(10, 1000, 'g'),
+        'pending'
       );
 
       this.benefactorsService.addBenefactor(newBenefactor)

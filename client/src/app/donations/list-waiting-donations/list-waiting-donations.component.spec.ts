@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ListWaitingDonationsComponent } from './list-waiting-donations.component';
+import {ListWaitingDonationsComponent} from './list-waiting-donations.component';
 
 describe('ListWaitingDonationsComponent', () => {
   let component: ListWaitingDonationsComponent;
@@ -10,8 +10,8 @@ describe('ListWaitingDonationsComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ListWaitingDonationsComponent]
     })
-    .compileComponents();
-    
+      .compileComponents();
+
     fixture = TestBed.createComponent(ListWaitingDonationsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

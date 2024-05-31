@@ -1,68 +1,69 @@
 <div class="mat-elevation-z8">
   <table
-    mat-table
     [dataSource]="dataSource"
-    multiTemplateDataRows
     class="mat-elevation-z8"
+    mat-table
+    multiTemplateDataRows
   >
     <ng-container matColumnDef="expand">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let donation">
+      <th *matHeaderCellDef mat-header-cell></th>
+      <td *matCellDef="let donation" mat-cell>
         <button
-          mat-icon-button
           (click)="
             expandedElement = expandedElement === donation ? null : donation
           "
+          mat-icon-button
         >
           <mat-icon>{{
-            expandedElement === donation
-              ? "keyboard_arrow_up"
-              : "keyboard_arrow_down"
-          }}</mat-icon>
+              expandedElement === donation
+                ? "keyboard_arrow_up"
+                : "keyboard_arrow_down"
+            }}
+          </mat-icon>
         </button>
       </td>
     </ng-container>
     <ng-container matColumnDef="benefactorName">
-      <th mat-header-cell *matHeaderCellDef class="center-cell">
+      <th *matHeaderCellDef class="center-cell" mat-header-cell>
         Benefactor Name
       </th>
-      <td mat-cell *matCellDef="let donation" class="center-cell">
+      <td *matCellDef="let donation" class="center-cell" mat-cell>
         {{ donation.benefactorName }}
       </td>
     </ng-container>
     <ng-container matColumnDef="pickpointAddress">
-      <th mat-header-cell *matHeaderCellDef class="center-cell">
+      <th *matHeaderCellDef class="center-cell" mat-header-cell>
         Pickpoint Address
       </th>
-      <td mat-cell *matCellDef="let donation" class="center-cell">
+      <td *matCellDef="let donation" class="center-cell" mat-cell>
         {{ donation.pickpointAddress }}
       </td>
     </ng-container>
     <ng-container matColumnDef="items">
-      <th mat-header-cell *matHeaderCellDef class="center-cell">Items</th>
-      <td mat-cell *matCellDef="let donation" class="center-cell">
+      <th *matHeaderCellDef class="center-cell" mat-header-cell>Items</th>
+      <td *matCellDef="let donation" class="center-cell" mat-cell>
         {{ donation.details.items.length }}
       </td>
     </ng-container>
     <ng-container matColumnDef="weight">
-      <th mat-header-cell *matHeaderCellDef class="center-cell">
+      <th *matHeaderCellDef class="center-cell" mat-header-cell>
         Total Weight
       </th>
-      <td mat-cell *matCellDef="let donation" class="center-cell">
+      <td *matCellDef="let donation" class="center-cell" mat-cell>
         {{ donation.details.totalWeight }}
       </td>
     </ng-container>
     <ng-container matColumnDef="timeStamp">
-      <th mat-header-cell *matHeaderCellDef class="center-cell">
+      <th *matHeaderCellDef class="center-cell" mat-header-cell>
         Creation Date
       </th>
-      <td mat-cell *matCellDef="let donation" class="center-cell">
+      <td *matCellDef="let donation" class="center-cell" mat-cell>
         {{ formatTimestamp(donation.timestamp) }}
       </td>
     </ng-container>
     <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef class="center-cell">Status</th>
-      <td mat-cell *matCellDef="let donation" class="center-cell">
+      <th *matHeaderCellDef class="center-cell" mat-header-cell>Status</th>
+      <td *matCellDef="let donation" class="center-cell" mat-cell>
         <span [attr.data-status]="donation.status.toLowerCase().replace(' ', '')">
           {{ donation.status }}
         </span>
@@ -70,74 +71,74 @@
     </ng-container>
     <ng-container matColumnDef="expandedDetail">
       <td
-        mat-cell
         *matCellDef="let donation"
         [attr.colspan]="displayedColumns.length"
+        mat-cell
       >
-        <div class="element-detail" *ngIf="expandedElement === donation">
+        <div *ngIf="expandedElement === donation" class="element-detail">
           <h3>Items</h3>
           <table
-            mat-table
             [dataSource]="donation.details.items"
             class="inner-table"
+            mat-table
           >
             <ng-container matColumnDef="brand">
-              <th mat-header-cell *matHeaderCellDef class="center-cell">
+              <th *matHeaderCellDef class="center-cell" mat-header-cell>
                 Brand
               </th>
-              <td mat-cell *matCellDef="let item" class="center-cell">
+              <td *matCellDef="let item" class="center-cell" mat-cell>
                 {{ item.brand }}
               </td>
             </ng-container>
             <ng-container matColumnDef="weight">
-              <th mat-header-cell *matHeaderCellDef class="center-cell">
+              <th *matHeaderCellDef class="center-cell" mat-header-cell>
                 Weight
               </th>
-              <td mat-cell *matCellDef="let item" class="center-cell">
+              <td *matCellDef="let item" class="center-cell" mat-cell>
                 {{ item.weight.value }} {{ item.weight.unit }}
               </td>
             </ng-container>
             <ng-container matColumnDef="size">
-              <th mat-header-cell *matHeaderCellDef class="center-cell">
+              <th *matHeaderCellDef class="center-cell" mat-header-cell>
                 Size
               </th>
-              <td mat-cell *matCellDef="let item" class="center-cell">
+              <td *matCellDef="let item" class="center-cell" mat-cell>
                 {{ item.size }}
               </td>
             </ng-container>
             <ng-container matColumnDef="type">
-              <th mat-header-cell *matHeaderCellDef class="center-cell">
+              <th *matHeaderCellDef class="center-cell" mat-header-cell>
                 Type
               </th>
-              <td mat-cell *matCellDef="let item" class="center-cell">
+              <td *matCellDef="let item" class="center-cell" mat-cell>
                 {{ item.type }}
               </td>
             </ng-container>
 
             <tr
-              mat-header-row
               *matHeaderRowDef="['brand', 'weight', 'size', 'type']"
+              mat-header-row
             ></tr>
             <tr
-              mat-row
               *matRowDef="let row; columns: ['brand', 'weight', 'size', 'type']"
+              mat-row
             ></tr>
           </table>
         </div>
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
     <tr
-      mat-row
       *matRowDef="let row; columns: displayedColumns"
       [class.expanded-row]="expandedElement === row"
+      mat-row
     ></tr>
     <tr
-      mat-row
       *matRowDef="let row; columns: ['expandedDetail']"
       [class.detail-row]="expandedElement === row"
       [class.hidden-row]="expandedElement !== row"
+      mat-row
     ></tr>
   </table>
 </div>

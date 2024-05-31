@@ -1,20 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { DonationsService } from '../../services/donations.service';
-import { BenefactorsService } from '../../services/benefactors.service';
-import { AuthenticationService } from '../../services/authentication.service';
-import { Donation } from '../../models/donation';
-import { Benefactor } from '../../models/benefactor';
-import { Pickpoint } from '../../models/pickpoint';
-import { Router, ActivatedRoute } from '@angular/router';
-import { format } from 'date-fns';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {MatCardModule} from '@angular/material/card';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatButtonModule} from '@angular/material/button';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {MatIconModule} from '@angular/material/icon';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {DonationsService} from '../../services/donations.service';
+import {BenefactorsService} from '../../services/benefactors.service';
+import {AuthenticationService} from '../../services/authentication.service';
+import {Donation} from '../../models/donation';
+import {Benefactor} from '../../models/benefactor';
+import {Pickpoint} from '../../models/pickpoint';
+import {ActivatedRoute, Router} from '@angular/router';
+import {format} from 'date-fns';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-list',
@@ -33,16 +33,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class ListDonationsComponent implements OnInit {
   userId: string | null = null;
-
-  constructor(
-    private authenticationService: AuthenticationService,
-    private donationsService: DonationsService,
-    private benefactorsService: BenefactorsService,
-    private router: Router,
-    private snackBar: MatSnackBar,
-    private route: ActivatedRoute
-  ) {}
-
   donations: Donation[] = [];
   dataSource = new MatTableDataSource<Donation>(this.donations);
   displayedColumns: string[] = [
@@ -55,6 +45,16 @@ export class ListDonationsComponent implements OnInit {
     'status',
   ];
   expandedElement: Donation | null = null;
+
+  constructor(
+    private authenticationService: AuthenticationService,
+    private donationsService: DonationsService,
+    private benefactorsService: BenefactorsService,
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private route: ActivatedRoute
+  ) {
+  }
 
   ngOnInit() {
     this.authenticationService

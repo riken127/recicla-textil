@@ -1,16 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Item, Weight } from '../../models/item';
-import { AuthenticationService } from '../../services/authentication.service';
-import { DonationsService } from '../../services/donations.service';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators,} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {Item, Weight} from '../../models/item';
+import {DonationsService} from '../../services/donations.service';
 
 @Component({
   selector: 'app-create-item',
@@ -36,7 +30,8 @@ export class CreateItemComponent implements OnInit {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private donationsService: DonationsService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
@@ -46,10 +41,10 @@ export class CreateItemComponent implements OnInit {
 
   onSubmit() {
     if (this.itemForm.valid && this.donationId) {
-      const { brand, weightValue, weightUnit, size, type, photo } = this.itemForm.value;
+      const {brand, weightValue, weightUnit, size, type, photo} = this.itemForm.value;
       const weight = new Weight(weightValue, weightUnit);
       const item = new Item(undefined, brand, weight, size, type, photo);
-      
+
       this.donationsService
         .addItem(this.donationId, item)
         ?.subscribe((success) => {
@@ -59,7 +54,7 @@ export class CreateItemComponent implements OnInit {
             });
             this.router.navigate([this.donationId, 'list-items']);
           } else {
-            this.snackBar.open('Error adding item', '', { duration: 2000 });
+            this.snackBar.open('Error adding item', '', {duration: 2000});
           }
         });
     }
