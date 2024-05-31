@@ -1,0 +1,35 @@
+.container {
+  padding: 2vw;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: #ffffff;
+  font-size: 24px;;
+}
+
+p {
+  color: #fafafa;
+  font-size: 16px;
+  font-weight: lighter;
+  width: 26vw;
+  height: auto;
+  margin-top: 1vw;
+  overflow-wrap: break-word;
+}
+
+img{
+  border-radius: 10px;
+  height: 26vw;
+  width: 26vw;
+}
+
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1vw;
+  width: 21vw;
+  height: auto;
+}
+
+

@@ -272,7 +272,7 @@ $(document).ready(function () {
             conversionRatio: {
                 points: $("#editPoints").val(),
                 value: $("#editValue").val(),
-                weigthMetric: $("#editWeigthMetric").val(),
+                weightMetric: $("#editWeigthMetric").val(),
             },
             phone: editIti.getNumber(),
             notify: $("#editNotify").is(":checked"),
@@ -355,7 +355,7 @@ $(document).ready(function () {
             conversionRatio: {
                 points: $("#createPoints").val(),
                 value: $("#createValue").val(),
-                weigthMetric: $("#createWeigthMetric").val(),
+                weightMetric: $("#createWeigthMetric").val(),
             },
         };
         const jsonData = JSON.stringify(benefactorData);

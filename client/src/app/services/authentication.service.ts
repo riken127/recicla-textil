@@ -15,7 +15,7 @@ export class AuthenticationService {
   private apiUrl = 'http://localhost:3000/auth';
   private loginRoute = '/login';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   public isAuthenticated(): Observable<boolean> {
     return this.http.get<any>(`${this.apiUrl}/check`, {})
@@ -102,11 +102,34 @@ export class AuthenticationService {
     if (id) {
       params = params.append('id', id);
     }
+    
     if (fName) {
       params = params.append('fName', fName);
     }
+
     if (lName) {
       params = params.append('lName', lName);
+    }
+
+    return this.http
+      .get(`${this.apiUrl}/getToken`, { params, withCredentials: true })
+      .pipe(
+        map((response: any) => response),
+        catchError((error) => {
+          return throwError(error);
+        })
+      );
+  }
+
+  getBenefactorDecodedToken(id: boolean, name: boolean): Observable<any> {
+    let params = new HttpParams();
+
+    if (id) {
+      params = params.append('id', id);
+    }
+
+    if (name) {
+      params = params.append('name', name);
     }
 
     return this.http

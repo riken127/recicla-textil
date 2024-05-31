@@ -4,7 +4,7 @@ import { UserRegisterComponent } from "./users/user-register/user-register.compo
 import {BenefactorLoginComponent} from "./benefactors/benefactor-login/benefactor-login.component";
 import {BenefactorRegisterComponent} from "./benefactors/benefactor-register/benefactor-register.component";
 import {authGuard} from "./auth.guard";
-import { ListDonationsComponent } from './donations/list/list.component';
+import { ListDonationsComponent } from './donations/list/list-donations.component';
 import { ListComponent } from './benefactors/list/list.component';
 import { ListItemsComponent } from './donations/list-items/list-items.component';
 import { CreateDonationComponent } from './donations/create-donation/create-donation.component';
@@ -16,11 +16,16 @@ import {DisablePrizeComponent} from "./benefactors/disable-prize/disable-prize.c
 import { CreateOfferComponent} from "./benefactors/create-offer/create-offer.component";
 import { EditOfferComponent} from "./benefactors/edit-offer/edit-offer.component";
 import { DisableOfferComponent} from "./benefactors/disable-offer/disable-offer.component";
+import { ProfileComponent } from './benefactors/profile/profile.component';
 
 export const routes: Routes = [
   {
     path: 'benefactors',
     component: ListComponent,
+  },
+  {
+    path: 'benefactors/:id',
+    component: ProfileComponent
   },
   {
     path: 'list-user-donations',

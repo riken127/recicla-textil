@@ -56,7 +56,7 @@ const PickPointSchema = new mongoose.Schema({
  *       required:
  *         - points
  *         - value
- *         - weigthMetric
+ *         - weightMetric
  *       properties:
  *         points:
  *           type: number
@@ -66,7 +66,7 @@ const PickPointSchema = new mongoose.Schema({
  *           type: number
  *           description: The value for conversion
  *           example: 100
- *         weigthMetric:
+ *         weightMetric:
  *           type: string
  *           description: The weight metric for conversion
  *           example: g
