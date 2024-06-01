@@ -1,1134 +1,1135 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Donations</title>
     <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"
     />
     <script
-      crossorigin="anonymous"
-      src="https://kit.fontawesome.com/3eb5f00bae.js"
+            crossorigin="anonymous"
+            src="https://kit.fontawesome.com/3eb5f00bae.js"
     ></script>
     <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css"
+            rel="stylesheet"
+            type="text/css"
+            href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css"
     />
     <style>
-      .country-select {
-        width: 100%;
-      }
+        .country-select {
+            width: 100%;
+        }
 
-      .iti {
-        width: 100%;
-      }
+        .iti {
+            width: 100%;
+        }
     </style>
     <%- include('../partials/sidebar') %>
     <!--Donations Table-->
     <div class="container md-col-12 mb-3 py-4">
-      <table
-        id="donationsTable"
-        class="table table-striped display"
-        style="width: 100%"
-      ></table>
+        <table
+                id="donationsTable"
+                class="table table-striped display"
+                style="width: 100%"
+        ></table>
     </div>
 
     <!-- Create Donation Modal -->
     <div
-      class="modal fade"
-      id="createModal"
-      tabindex="-1"
-      aria-labelledby="createModalLabel"
-      aria-hidden="true"
+            class="modal fade"
+            id="createModal"
+            tabindex="-1"
+            aria-labelledby="createModalLabel"
+            aria-hidden="true"
     >
-      <div class="modal-dialog modal-dialog-scrollable modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="createModalLabel">
-              <i class="fa-solid fa-hand-holding-heart"></i> Create Donation
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div
-              class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center"
-              role="alert"
-              id="errorAlert"
-              style="display: none"
-            >
-              <i class="fa-solid fa-circle-exclamation fa-shake fa-xl"></i>
-              <span id="errorMessage">This is an error message</span>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close"
-              ></button>
-            </div>
-            <form id="createDonationForm" method="POST">
-              <!--Labels for User and Benefactor-->
-              <div class="row">
-                <div class="col-md-6">
-                  <label for="createUserName" class="form-label">User</label>
-                </div>
-                <div class="col-md-6">
-                  <label for="createBenefactorName" class="form-label"
-                    >Benefactor</label
-                  >
-                </div>
-              </div>
-              <!--Input Fields for UserId, UserName, BenefactorId and BenefactorName-->
-              <div class="row mb-4">
-                <div class="col-md-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="createUserName"
-                    name="userName"
-                    placeholder="Select User"
-                    readonly
-                  />
-                  <input type="hidden" id="createUserId" name="userId" />
-                </div>
-                <div class="col-md-3">
-                  <button
-                    id="openUserModalButton"
-                    type="button"
-                    class="btn btn-primary"
-                  >
-                    <i class="fa-solid fa-plus"></i>
-                  </button>
-                </div>
-                <div class="col-md-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="createBenefactorName"
-                    name="benefactorName"
-                    placeholder="Select Benefactor"
-                    readonly
-                  />
-                  <input
-                    type="hidden"
-                    id="createBenefactorId"
-                    name="benefactorId"
-                  />
-                </div>
-                <div class="col-md-3">
-                  <button
-                    id="openBenefactorModalButton"
-                    type="button"
-                    class="btn btn-primary"
-                  >
-                    <i class="fa-solid fa-plus"></i>
-                  </button>
-                </div>
-              </div>
-              <!--Pickpoint Information-->
-              <div id="pickpointInfo" hidden>
-                <div class="row">
-                  <div class="col-md-6">
-                    <label for="createPickpointAddress" class="form-label"
-                      >Pickpoint Address</label
-                    >
-                    <input
-                      type="hidden"
-                      id="createDonationPickpointId"
-                      name="pickpointId"
-                    />
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <div class="col-md-9">
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="createPickpointAddress"
-                      readonly
-                    />
-                  </div>
-                  <div class="col-md-3">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">
+                        <i class="fa-solid fa-hand-holding-heart"></i> Create Donation
+                    </h5>
                     <button
-                      type="button"
-                      class="btn btn-primary"
-                      id="openPickpointModalButton"
-                    >
-                      <i class="fa-solid fa-plus"></i>
-                    </button>
-                  </div>
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
                 </div>
-              </div>
-              <input type="hidden" id="createTimestamp" name="timestamp" />
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">
-                  Create Donation
-                </button>
-              </div>
-            </form>
-          </div>
+                <div class="modal-body">
+                    <div
+                            class="alert alert-danger alert-dismissible fade mb-3 w-100 align-self-center"
+                            role="alert"
+                            id="errorAlert"
+                            style="display: none"
+                    >
+                        <i class="fa-solid fa-circle-exclamation fa-shake fa-xl"></i>
+                        <span id="errorMessage">This is an error message</span>
+                        <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert"
+                                aria-label="Close"
+                        ></button>
+                    </div>
+                    <form id="createDonationForm" method="POST">
+                        <!--Labels for User and Benefactor-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="createUserName" class="form-label">User</label>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="createBenefactorName" class="form-label"
+                                >Benefactor</label
+                                >
+                            </div>
+                        </div>
+                        <!--Input Fields for UserId, UserName, BenefactorId and BenefactorName-->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        id="createUserName"
+                                        name="userName"
+                                        placeholder="Select User"
+                                        readonly
+                                />
+                                <input type="hidden" id="createUserId" name="userId"/>
+                            </div>
+                            <div class="col-md-3">
+                                <button
+                                        id="openUserModalButton"
+                                        type="button"
+                                        class="btn btn-primary"
+                                >
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="col-md-3">
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        id="createBenefactorName"
+                                        name="benefactorName"
+                                        placeholder="Select Benefactor"
+                                        readonly
+                                />
+                                <input
+                                        type="hidden"
+                                        id="createBenefactorId"
+                                        name="benefactorId"
+                                />
+                            </div>
+                            <div class="col-md-3">
+                                <button
+                                        id="openBenefactorModalButton"
+                                        type="button"
+                                        class="btn btn-primary"
+                                >
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!--Pickpoint Information-->
+                        <div id="pickpointInfo" hidden>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="createPickpointAddress" class="form-label"
+                                    >Pickpoint Address</label
+                                    >
+                                    <input
+                                            type="hidden"
+                                            id="createDonationPickpointId"
+                                            name="pickpointId"
+                                    />
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-9">
+                                    <input
+                                            type="text"
+                                            class="form-control"
+                                            id="createPickpointAddress"
+                                            readonly
+                                    />
+                                </div>
+                                <div class="col-md-3">
+                                    <button
+                                            type="button"
+                                            class="btn btn-primary"
+                                            id="openPickpointModalButton"
+                                    >
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="createTimestamp" name="timestamp"/>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">
+                                Create Donation
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <!-- User Modal to Create Donation -->
     <div class="modal" id="userModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">Users</h4>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <input
-              class="form-control"
-              id="userSearch"
-              type="text"
-              placeholder="Search..."
-            />
-            <div id="userContainer"></div>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-danger"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-          </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Users</h4>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <input
+                            class="form-control"
+                            id="userSearch"
+                            type="text"
+                            placeholder="Search..."
+                    />
+                    <div id="userContainer"></div>
+                </div>
+                <div class="modal-footer">
+                    <button
+                            type="button"
+                            class="btn btn-danger"
+                            data-bs-dismiss="modal"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <!-- Benefactor Modal to Create Donation-->
     <div class="modal" id="benefactorModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">Benefactor</h4>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Benefactor</h4>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                    ></button>
+                </div>
 
-          <div class="modal-body">
-            <input
-              class="form-control"
-              id="benefactorSearch"
-              type="text"
-              placeholder="Search..."
-            />
-            <div id="benefactorContainer"></div>
-          </div>
+                <div class="modal-body">
+                    <input
+                            class="form-control"
+                            id="benefactorSearch"
+                            type="text"
+                            placeholder="Search..."
+                    />
+                    <div id="benefactorContainer"></div>
+                </div>
 
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-danger"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-          </div>
+                <div class="modal-footer">
+                    <button
+                            type="button"
+                            class="btn btn-danger"
+                            data-bs-dismiss="modal"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <!-- Pickpoint Modal to create Donation-->
     <div class="modal" id="pickpointModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">Pickpoints</h4>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Pickpoints</h4>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                    ></button>
+                </div>
 
-          <div class="modal-body">
-            <input
-              class="form-control"
-              id="pickpointSearch"
-              type="text"
-              placeholder="Search by city..."
-            />
-            <div id="pickpointContainer"></div>
-          </div>
+                <div class="modal-body">
+                    <input
+                            class="form-control"
+                            id="pickpointSearch"
+                            type="text"
+                            placeholder="Search by city..."
+                    />
+                    <div id="pickpointContainer"></div>
+                </div>
 
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-danger"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-          </div>
+                <div class="modal-footer">
+                    <button
+                            type="button"
+                            class="btn btn-danger"
+                            data-bs-dismiss="modal"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <!-- Edit Donation Modal -->
     <div
-      class="modal fade"
-      id="editModal"
-      tabindex="-1"
-      aria-labelledby="editModalLabel"
-      aria-hidden="true"
+            class="modal fade"
+            id="editModal"
+            tabindex="-1"
+            aria-labelledby="editModalLabel"
+            aria-hidden="true"
     >
-      <div class="modal-dialog modal-dialog-scrollable modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="editModalLabel">
-              <i class="fa-solid fa-hand-holding-heart"></i> Edit Donation
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form id="editDonationForm" method="POST">
-              <input type="hidden" id="editDonationId" name="donationId" />
-              <!--Labels for User and Benefactor-->
-              <div class="row">
-                <div class="col-md-6">
-                  <label for="editUserName" class="form-label">User</label>
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">
+                        <i class="fa-solid fa-hand-holding-heart"></i> Edit Donation
+                    </h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
                 </div>
-                <div class="col-md-6">
-                  <label for="editBenefactorName" class="form-label"
-                    >Benefactor</label
-                  >
-                </div>
-              </div>
-              <!--Input Fields for UserId, UserName, BenefactorId and BenefactorName-->
-              <div class="row mb-4">
-                <div class="col-md-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="editUserName"
-                    name="userName"
-                    placeholder="Select User"
-                    readonly
-                  />
-                  <input type="hidden" id="editUserId" name="userId" />
-                </div>
-                <div class="col-md-3">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    id="openEditUserModalButton"
-                  >
-                    <i class="fa-solid fa-plus"></i>
-                  </button>
-                </div>
-                <div class="col-md-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="editBenefactorName"
-                    name="benefactorName"
-                    placeholder="Select Benefactor"
-                    readonly
-                  />
-                  <input
-                    type="hidden"
-                    id="editBenefactorId"
-                    name="benefactorId"
-                  />
-                </div>
-                <div class="col-md-3">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    id="openEditBenefactorModalButton"
-                  >
-                    <i class="fa-solid fa-plus"></i>
-                  </button>
-                </div>
-              </div>
-              <!--Pickpoint Information-->
-              <div id="editPickpointInfo">
-                <label for="editPickpointAddress" class="form-label"
-                  >Pickpoint Address</label
-                >
-                <input
-                  type="hidden"
-                  id="editDonationPickpointId"
-                  name="pickpointId"
-                />
-                <div class="row">
-                  <div class="row mb-3">
-                    <div class="col-md-9">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="editPickpointAddress"
-                        readonly
-                      />
-                    </div>
-                    <div class="col-md-3">
-                      <button
-                        type="button"
-                        class="btn btn-primary"
-                        id="openEditPickpointModalButton"
-                      >
-                        <i class="fa-solid fa-plus"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <div class="modal-body">
+                    <form id="editDonationForm" method="POST">
+                        <input type="hidden" id="editDonationId" name="donationId"/>
+                        <!--Labels for User and Benefactor-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="editUserName" class="form-label">User</label>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editBenefactorName" class="form-label"
+                                >Benefactor</label
+                                >
+                            </div>
+                        </div>
+                        <!--Input Fields for UserId, UserName, BenefactorId and BenefactorName-->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        id="editUserName"
+                                        name="userName"
+                                        placeholder="Select User"
+                                        readonly
+                                />
+                                <input type="hidden" id="editUserId" name="userId"/>
+                            </div>
+                            <div class="col-md-3">
+                                <button
+                                        type="button"
+                                        class="btn btn-primary"
+                                        id="openEditUserModalButton"
+                                >
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="col-md-3">
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        id="editBenefactorName"
+                                        name="benefactorName"
+                                        placeholder="Select Benefactor"
+                                        readonly
+                                />
+                                <input
+                                        type="hidden"
+                                        id="editBenefactorId"
+                                        name="benefactorId"
+                                />
+                            </div>
+                            <div class="col-md-3">
+                                <button
+                                        type="button"
+                                        class="btn btn-primary"
+                                        id="openEditBenefactorModalButton"
+                                >
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!--Pickpoint Information-->
+                        <div id="editPickpointInfo">
+                            <label for="editPickpointAddress" class="form-label"
+                            >Pickpoint Address</label
+                            >
+                            <input
+                                    type="hidden"
+                                    id="editDonationPickpointId"
+                                    name="pickpointId"
+                            />
+                            <div class="row">
+                                <div class="row mb-3">
+                                    <div class="col-md-9">
+                                        <input
+                                                type="text"
+                                                class="form-control"
+                                                id="editPickpointAddress"
+                                                readonly
+                                        />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button
+                                                type="button"
+                                                class="btn btn-primary"
+                                                id="openEditPickpointModalButton"
+                                        >
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
 
-                <input type="hidden" id="editTimestamp" name="timestamp" />
-              </div>
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">
-                  Edit Donation
-                </button>
-              </div>
-            </form>
-          </div>
+                            <input type="hidden" id="editTimestamp" name="timestamp"/>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">
+                                Edit Donation
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <!-- User Modal to Edit Donation -->
     <div class="modal" id="editUserModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">Users</h4>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <input
-              class="form-control"
-              id="editUserSearch"
-              type="text"
-              placeholder="Search..."
-            />
-            <div id="editUserContainer"></div>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-danger"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-          </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Users</h4>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <input
+                            class="form-control"
+                            id="editUserSearch"
+                            type="text"
+                            placeholder="Search..."
+                    />
+                    <div id="editUserContainer"></div>
+                </div>
+                <div class="modal-footer">
+                    <button
+                            type="button"
+                            class="btn btn-danger"
+                            data-bs-dismiss="modal"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <!-- Benefactor Modal to Edit Donation-->
     <div class="modal" id="editBenefactorModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">Benefactor</h4>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Benefactor</h4>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                    ></button>
+                </div>
 
-          <div class="modal-body">
-            <input
-              class="form-control"
-              id="editBenefactorSearch"
-              type="text"
-              placeholder="Search..."
-            />
-            <div id="editBenefactorContainer"></div>
-          </div>
+                <div class="modal-body">
+                    <input
+                            class="form-control"
+                            id="editBenefactorSearch"
+                            type="text"
+                            placeholder="Search..."
+                    />
+                    <div id="editBenefactorContainer"></div>
+                </div>
 
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-danger"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-          </div>
+                <div class="modal-footer">
+                    <button
+                            type="button"
+                            class="btn btn-danger"
+                            data-bs-dismiss="modal"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <!-- Pickpoint Modal to Edit Donation-->
     <div class="modal" id="editPickpointModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">Pickpoints</h4>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Pickpoints</h4>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                    ></button>
+                </div>
 
-          <div class="modal-body">
-            <input
-              class="form-control"
-              id="editPickpointSearch"
-              type="text"
-              placeholder="Search by city..."
-            />
-            <div id="editPickpointContainer"></div>
-          </div>
+                <div class="modal-body">
+                    <input
+                            class="form-control"
+                            id="editPickpointSearch"
+                            type="text"
+                            placeholder="Search by city..."
+                    />
+                    <div id="editPickpointContainer"></div>
+                </div>
 
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-danger"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-          </div>
+                <div class="modal-footer">
+                    <button
+                            type="button"
+                            class="btn btn-danger"
+                            data-bs-dismiss="modal"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
     <!-- Delete Modal -->
     <div
-      class="modal fade"
-      id="deleteModal"
-      tabindex="-1"
-      aria-labelledby="deleteModalLabel"
-      aria-hidden="true"
+            class="modal fade"
+            id="deleteModal"
+            tabindex="-1"
+            aria-labelledby="deleteModalLabel"
+            aria-hidden="true"
     >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deleteModalLabel">
-              <i class="fa-solid fa-hand-holding-heart"></i> Delete Donation
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <p>Are you sure you want to delete this donation?</p>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              No
-            </button>
-            <button type="button" class="btn btn-danger" id="confirmDelete">
-              Yes
-            </button>
-          </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="fa-solid fa-hand-holding-heart"></i> Delete Donation
+                    </h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this donation?</p>
+                </div>
+                <div class="modal-footer">
+                    <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                    >
+                        No
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">
+                        Yes
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <!-- Items Modal -->
     <div
-      class="modal fade"
-      id="itemsModal"
-      tabindex="-1"
-      aria-labelledby="itemsModalLabel"
-      aria-hidden="true"
+            class="modal fade"
+            id="itemsModal"
+            tabindex="-1"
+            aria-labelledby="itemsModalLabel"
+            aria-hidden="true"
     >
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="itemsModalLabel">
-              <i class="fa-solid fa-shirt"></i> Items
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="container md-col-12 mb-3 py-4">
-              <table
-                id="itemsTable"
-                class="table table-striped display"
-                style="width: 100%"
-              ></table>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="itemsModalLabel">
+                        <i class="fa-solid fa-shirt"></i> Items
+                    </h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container md-col-12 mb-3 py-4">
+                        <table
+                                id="itemsTable"
+                                class="table table-striped display"
+                                style="width: 100%"
+                        ></table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="openAddItemButton">
+                        Add Item
+                    </button>
+                </div>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-primary" id="openAddItemButton">
-              Add Item
-            </button>
-          </div>
         </div>
-      </div>
     </div>
 
     <!-- Add Item Modal -->
     <div
-      class="modal fade"
-      id="addItemModal"
-      tabindex="-1"
-      aria-labelledby="addItemModalLabel"
-      aria-hidden="true"
+            class="modal fade"
+            id="addItemModal"
+            tabindex="-1"
+            aria-labelledby="addItemModalLabel"
+            aria-hidden="true"
     >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addItemModalLabel">
-              <i class="fa-solid fa-shirt"></i> Add Item
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form id="addItemForm" class="row g-3">
-              <div class="row mt-3">
-                <div class="col-md-4">
-                  <label for="brand" class="form-label">Brand</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="brand"
-                    name="brand"
-                    placeholder="Enter Brand"
-                    required
-                  />
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addItemModalLabel">
+                        <i class="fa-solid fa-shirt"></i> Add Item
+                    </h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
                 </div>
-                <div class="col-md-4">
-                  <div class="mb-3">
-                    <label for="itemType" class="form-label"
-                      >Type of Item</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="itemType"
-                      name="itemType"
-                      placeholder="Enter Type of Item"
-                      required
-                    />
-                  </div>
+                <div class="modal-body">
+                    <form id="addItemForm" class="row g-3">
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <label for="brand" class="form-label">Brand</label>
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        id="brand"
+                                        name="brand"
+                                        placeholder="Enter Brand"
+                                        required
+                                />
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="itemType" class="form-label"
+                                    >Type of Item</label
+                                    >
+                                    <input
+                                            type="text"
+                                            class="form-control"
+                                            id="itemType"
+                                            name="itemType"
+                                            placeholder="Enter Type of Item"
+                                            required
+                                    />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-2">
+                                    <label for="size" class="form-label">Size</label>
+                                    <input
+                                            type="text"
+                                            class="form-control"
+                                            id="size"
+                                            name="size"
+                                            placeholder="Enter Size"
+                                            required
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-8 mb-2">
+                                        <label for="weight" class="form-label">Weight</label>
+                                        <input
+                                                type="number"
+                                                class="form-control"
+                                                id="weight"
+                                                name="weight"
+                                                placeholder="Enter Weight"
+                                                required
+                                        />
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label for="weightUnit" class="form-label">Unit</label>
+                                        <select
+                                                class="form-control"
+                                                id="weightUnit"
+                                                name="weightUnit"
+                                        >
+                                            <option value="g">g</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="itemPhoto" class="form-label">Photo</label>
+                                    <input
+                                            type="file"
+                                            class="form-control"
+                                            id="itemPhoto"
+                                            name="itemPhoto"
+                                            accept="image/*"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button
+                                    type="submit"
+                                    class="btn btn-primary"
+                                    id="saveItem"
+                            >
+                                Add Item
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <div class="col-md-4">
-                  <div class="mb-2">
-                    <label for="size" class="form-label">Size</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="size"
-                      name="size"
-                      placeholder="Enter Size"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="row">
-                    <div class="col-md-8 mb-2">
-                      <label for="weight" class="form-label">Weight</label>
-                      <input
-                        type="number"
-                        class="form-control"
-                        id="weight"
-                        name="weight"
-                        placeholder="Enter Weight"
-                        required
-                      />
-                    </div>
-                    <div class="col-md-4 mb-2">
-                      <label for="weightUnit" class="form-label">Unit</label>
-                      <select
-                        class="form-control"
-                        id="weightUnit"
-                        name="weightUnit"
-                      >
-                        <option value="g">g</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="itemPhoto" class="form-label">Photo</label>
-                    <input
-                      type="file"
-                      class="form-control"
-                      id="itemPhoto"
-                      name="itemPhoto"
-                      accept="image/*"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  id="saveItem"
-                >
-                  Add Item
-                </button>
-              </div>
-            </form>
-          </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <!-- Edit Item Modal -->
     <div
-      class="modal fade"
-      id="editItemModal"
-      tabindex="-1"
-      aria-labelledby="editItemModalLabel"
-      aria-hidden="true"
+            class="modal fade"
+            id="editItemModal"
+            tabindex="-1"
+            aria-labelledby="editItemModalLabel"
+            aria-hidden="true"
     >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="editItemModalLabel">
-              <i class="fa-solid fa-shirt"></i> Edit Item
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form id="editItemForm" class="row g-3">
-              <div class="row mt-3">
-                <div class="col-md-4">
-                  <label for="editBrand" class="form-label">Brand</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="editBrand"
-                    name="brand"
-                    placeholder="Enter Brand"
-                  />
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editItemModalLabel">
+                        <i class="fa-solid fa-shirt"></i> Edit Item
+                    </h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
                 </div>
-                <div class="col-md-4">
-                  <div class="mb-3">
-                    <label for="editItemType" class="form-label"
-                      >Type of Item</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="editItemType"
-                      name="itemType"
-                      placeholder="Enter Type of Item"
-                    />
-                  </div>
+                <div class="modal-body">
+                    <form id="editItemForm" class="row g-3">
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <label for="editBrand" class="form-label">Brand</label>
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        id="editBrand"
+                                        name="brand"
+                                        placeholder="Enter Brand"
+                                />
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="editItemType" class="form-label"
+                                    >Type of Item</label
+                                    >
+                                    <input
+                                            type="text"
+                                            class="form-control"
+                                            id="editItemType"
+                                            name="itemType"
+                                            placeholder="Enter Type of Item"
+                                    />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-2">
+                                    <label for="editSize" class="form-label">Size</label>
+                                    <input
+                                            type="text"
+                                            class="form-control"
+                                            id="editSize"
+                                            name="size"
+                                            placeholder="Enter Size"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-8 mb-2">
+                                        <label for="editWeight" class="form-label">Weight</label>
+                                        <input
+                                                type="number"
+                                                class="form-control"
+                                                id="editWeight"
+                                                name="weight"
+                                                placeholder="Enter Weight"
+                                        />
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label for="editWeightUnit" class="form-label"
+                                        >Unit</label
+                                        >
+                                        <select
+                                                class="form-control"
+                                                id="editWeightUnit"
+                                                name="weightUnit"
+                                        >
+                                            <option value="g">g</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editItemPhoto" class="form-label">Photo</label>
+                                    <input
+                                            type="file"
+                                            class="form-control"
+                                            id="editItemPhoto"
+                                            name="itemPhoto"
+                                            accept="image/*"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button
+                                    type="submit"
+                                    class="btn btn-primary"
+                                    data-bs-target="itemsModal"
+                                    id="updateItem"
+                            >
+                                Update Item
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <div class="col-md-4">
-                  <div class="mb-2">
-                    <label for="editSize" class="form-label">Size</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="editSize"
-                      name="size"
-                      placeholder="Enter Size"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="row">
-                    <div class="col-md-8 mb-2">
-                      <label for="editWeight" class="form-label">Weight</label>
-                      <input
-                        type="number"
-                        class="form-control"
-                        id="editWeight"
-                        name="weight"
-                        placeholder="Enter Weight"
-                      />
-                    </div>
-                    <div class="col-md-4 mb-2">
-                      <label for="editWeightUnit" class="form-label"
-                        >Unit</label
-                      >
-                      <select
-                        class="form-control"
-                        id="editWeightUnit"
-                        name="weightUnit"
-                      >
-                        <option value="g">g</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="editItemPhoto" class="form-label">Photo</label>
-                    <input
-                      type="file"
-                      class="form-control"
-                      id="editItemPhoto"
-                      name="itemPhoto"
-                      accept="image/*"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  data-bs-target="itemsModal"
-                  id="updateItem"
-                >
-                  Update Item
-                </button>
-              </div>
-            </form>
-          </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <!-- Delete Item Modal -->
     <div
-      class="modal fade"
-      id="deleteItemModal"
-      tabindex="-1"
-      aria-labelledby="deleteItemModalLabel"
-      aria-hidden="true"
+            class="modal fade"
+            id="deleteItemModal"
+            tabindex="-1"
+            aria-labelledby="deleteItemModalLabel"
+            aria-hidden="true"
     >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deleteItemModalLabel">
-              <i class="fa-solid fa-shirt"></i> Delete Item
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <p>Are you sure you want to delete this item?</p>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              No
-            </button>
-            <button type="button" class="btn btn-danger" id="confirmDeleteItem">
-              Yes
-            </button>
-          </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteItemModalLabel">
+                        <i class="fa-solid fa-shirt"></i> Delete Item
+                    </h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this item?</p>
+                </div>
+                <div class="modal-footer">
+                    <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                    >
+                        No
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteItem">
+                        Yes
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <div class="modal fade" id="showPhotoModal" tabindex="-1" aria-labelledby="showPhotoModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="showPhotoModalLabel">Photo</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <img src="https://api.dicebear.com/8.x/shapes/svg?seed=undefined" class="img-fluid" alt="Photo" id="showPhotoModalImage">
-          </div>
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="showPhotoModalLabel">Photo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="https://api.dicebear.com/8.x/shapes/svg?seed=undefined" class="img-fluid" alt="Photo"
+                         id="showPhotoModalImage">
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <!-- Details Modal -->
     <div
-      class="modal fade"
-      id="detailsModal"
-      tabindex="-1"
-      aria-labelledby="detailsModalLabel"
-      aria-hidden="true"
+            class="modal fade"
+            id="detailsModal"
+            tabindex="-1"
+            aria-labelledby="detailsModalLabel"
+            aria-hidden="true"
     >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="detailsModalLabel">
-              <i class="fa-solid fa-hand-holding-heart"></i> Details
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <!-- Accordion -->
-            <div class="accordion" id="detailsAccordion">
-              <!-- User Section -->
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="userHeading">
-                  <button
-                    class="accordion-button"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#userCollapse"
-                    aria-expanded="true"
-                    aria-controls="userCollapse"
-                  >
-                    User
-                  </button>
-                </h2>
-                <div
-                  id="userCollapse"
-                  class="accordion-collapse collapse show"
-                  aria-labelledby="userHeading"
-                  data-bs-parent="#detailsAccordion"
-                >
-                  <div class="accordion-body">
-                    <form>
-                      <div class="row">
-                        <div class="col">
-                          <div class="mb-3">
-                            <label for="detailsUserName" class="form-label"
-                              >Name</label
-                            >
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="detailsUserName"
-                              readonly
-                            />
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="mb-3">
-                            <label for="detailsUserUsername" class="form-label"
-                              >Username</label
-                            >
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="detailsUserUsername"
-                              readonly
-                            />
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="mb-3">
-                            <label
-                              for="detailsUserPhoneNumber"
-                              class="form-label"
-                              >Phone Number</label
-                            >
-                            <input
-                              type="tel"
-                              class="form-control"
-                              id="detailsUserPhoneNumber"
-                              readonly
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div class="mb-3">
-                        <label for="detailsUserAddress" class="form-label"
-                          >Address</label
-                        >
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="detailsUserAddress"
-                          readonly
-                        />
-                      </div>
-                    </form>
-                  </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">
+                        <i class="fa-solid fa-hand-holding-heart"></i> Details
+                    </h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
                 </div>
-              </div>
-              <!-- Benefactor Section -->
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="benefactorHeading">
-                  <button
-                    class="accordion-button collapsed"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#benefactorCollapse"
-                    aria-expanded="false"
-                    aria-controls="benefactorCollapse"
-                  >
-                    Benefactor
-                  </button>
-                </h2>
-                <div
-                  id="benefactorCollapse"
-                  class="accordion-collapse collapse"
-                  aria-labelledby="benefactorHeading"
-                  data-bs-parent="#detailsAccordion"
-                >
-                  <div class="accordion-body">
-                    <form>
-                      <div class="row">
-                        <div class="col">
-                          <div class="mb-3">
-                            <label
-                              for="detailsBenefactorName"
-                              class="form-label"
-                              >Name</label
+                <div class="modal-body">
+                    <!-- Accordion -->
+                    <div class="accordion" id="detailsAccordion">
+                        <!-- User Section -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="userHeading">
+                                <button
+                                        class="accordion-button"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#userCollapse"
+                                        aria-expanded="true"
+                                        aria-controls="userCollapse"
+                                >
+                                    User
+                                </button>
+                            </h2>
+                            <div
+                                    id="userCollapse"
+                                    class="accordion-collapse collapse show"
+                                    aria-labelledby="userHeading"
+                                    data-bs-parent="#detailsAccordion"
                             >
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="detailsBenefactorName"
-                              readonly
-                            />
-                          </div>
+                                <div class="accordion-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="mb-3">
+                                                    <label for="detailsUserName" class="form-label"
+                                                    >Name</label
+                                                    >
+                                                    <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="detailsUserName"
+                                                            readonly
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="mb-3">
+                                                    <label for="detailsUserUsername" class="form-label"
+                                                    >Username</label
+                                                    >
+                                                    <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="detailsUserUsername"
+                                                            readonly
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="mb-3">
+                                                    <label
+                                                            for="detailsUserPhoneNumber"
+                                                            class="form-label"
+                                                    >Phone Number</label
+                                                    >
+                                                    <input
+                                                            type="tel"
+                                                            class="form-control"
+                                                            id="detailsUserPhoneNumber"
+                                                            readonly
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="detailsUserAddress" class="form-label"
+                                            >Address</label
+                                            >
+                                            <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    id="detailsUserAddress"
+                                                    readonly
+                                            />
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col">
-                          <div class="mb-3">
-                            <label
-                              for="detailsBenefactorPhone"
-                              class="form-label"
-                              >Phone</label
+                        <!-- Benefactor Section -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="benefactorHeading">
+                                <button
+                                        class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#benefactorCollapse"
+                                        aria-expanded="false"
+                                        aria-controls="benefactorCollapse"
+                                >
+                                    Benefactor
+                                </button>
+                            </h2>
+                            <div
+                                    id="benefactorCollapse"
+                                    class="accordion-collapse collapse"
+                                    aria-labelledby="benefactorHeading"
+                                    data-bs-parent="#detailsAccordion"
                             >
-                            <input
-                              type="tel"
-                              class="form-control"
-                              id="detailsBenefactorPhone"
-                              readonly
-                            />
-                          </div>
+                                <div class="accordion-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="mb-3">
+                                                    <label
+                                                            for="detailsBenefactorName"
+                                                            class="form-label"
+                                                    >Name</label
+                                                    >
+                                                    <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="detailsBenefactorName"
+                                                            readonly
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="mb-3">
+                                                    <label
+                                                            for="detailsBenefactorPhone"
+                                                            class="form-label"
+                                                    >Phone</label
+                                                    >
+                                                    <input
+                                                            type="tel"
+                                                            class="form-control"
+                                                            id="detailsBenefactorPhone"
+                                                            readonly
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="detailsPickpointAddress" class="form-label"
+                                            >Pickpoint Address</label
+                                            >
+                                            <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    id="detailsPickpointAddress"
+                                                    readonly
+                                            />
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                      <div class="mb-3">
-                        <label for="detailsPickpointAddress" class="form-label"
-                          >Pickpoint Address</label
-                        >
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="detailsPickpointAddress"
-                          readonly
-                        />
-                      </div>
-                    </form>
-                  </div>
+                        <!-- Items Section -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="itemsHeading">
+                                <button
+                                        class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#itemsCollapse"
+                                        aria-expanded="false"
+                                        aria-controls="itemsCollapse"
+                                >
+                                    Items
+                                </button>
+                            </h2>
+                            <div
+                                    id="itemsCollapse"
+                                    class="accordion-collapse collapse"
+                                    aria-labelledby="itemsHeading"
+                                    data-bs-parent="#detailsAccordion"
+                            >
+                                <div class="accordion-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="mb-3">
+                                                    <label for="itemCount" class="form-label"
+                                                    >Number of Items</label
+                                                    >
+                                                    <input
+                                                            type="number"
+                                                            class="form-control"
+                                                            id="itemCount"
+                                                            readonly
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="mb-3">
+                                                    <label for="totalWeight" class="form-label"
+                                                    >Total Weight</label
+                                                    >
+                                                    <input
+                                                            type="number"
+                                                            class="form-control"
+                                                            id="totalWeight"
+                                                            readonly
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <table
+                                                id="itemsDetailsTable"
+                                                class="table table-striped display"
+                                                style="width: 100%"
+                                        ></table>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <!-- Items Section -->
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="itemsHeading">
-                  <button
-                    class="accordion-button collapsed"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#itemsCollapse"
-                    aria-expanded="false"
-                    aria-controls="itemsCollapse"
-                  >
-                    Items
-                  </button>
-                </h2>
-                <div
-                  id="itemsCollapse"
-                  class="accordion-collapse collapse"
-                  aria-labelledby="itemsHeading"
-                  data-bs-parent="#detailsAccordion"
-                >
-                  <div class="accordion-body">
-                    <form>
-                      <div class="row">
-                        <div class="col">
-                          <div class="mb-3">
-                            <label for="itemCount" class="form-label"
-                              >Number of Items</label
-                            >
-                            <input
-                              type="number"
-                              class="form-control"
-                              id="itemCount"
-                              readonly
-                            />
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="mb-3">
-                            <label for="totalWeight" class="form-label"
-                              >Total Weight</label
-                            >
-                            <input
-                              type="number"
-                              class="form-control"
-                              id="totalWeight"
-                              readonly
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <table
-                        id="itemsDetailsTable"
-                        class="table table-striped display"
-                        style="width: 100%"
-                      ></table>
-                    </form>
-                  </div>
+                <div class="modal-footer">
+                    <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                    >
+                        Close
+                    </button>
                 </div>
-              </div>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-          </div>
         </div>
-      </div>
     </div>
 
     <!--SCRIPTS-->
@@ -1138,32 +1139,32 @@
     <!-- DataTables JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-      // When the modal is shown, set the timestamp to the current date and time
-      $("#createModal").on("show.bs.modal", function (event) {
-        var now = new Date();
-        var datetimeLocal = now.toISOString().slice(0, 19);
-        $("#createTimestamp").val(datetimeLocal);
-      });
+        // When the modal is shown, set the timestamp to the current date and time
+        $("#createModal").on("show.bs.modal", function (event) {
+            var now = new Date();
+            var datetimeLocal = now.toISOString().slice(0, 19);
+            $("#createTimestamp").val(datetimeLocal);
+        });
     </script>
     <!-- Bootstrap Bundle (Bootstrap JS and Popper.js) -->
     <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
     <!-- DataTables Buttons JavaScript -->
     <script
-      type="text/javascript"
-      src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.dataTables.js"
+            type="text/javascript"
+            src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.dataTables.js"
     ></script>
     <script
-      type="text/javascript"
-      src="https://cdn.datatables.net/buttons/3.0.1/js/dataTables.buttons.js"
+            type="text/javascript"
+            src="https://cdn.datatables.net/buttons/3.0.1/js/dataTables.buttons.js"
     ></script>
     <script
-      type="text/javascript"
-      src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.html5.min.js"
+            type="text/javascript"
+            src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.html5.min.js"
     ></script>
     <script
-      type="text/javascript"
-      src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.print.min.js"
+            type="text/javascript"
+            src="https://cdn.datatables.net/buttons/2.3.0/js/buttons.print.min.js"
     ></script>
     <!-- Initialization scripts -->
     <!-- Include intl-tel-input JavaScript -->
@@ -1174,5 +1175,5 @@
     <script src="/javascripts/donations/donationTable.js"></script>
     <script src="/javascripts/donations/itemsTable.js"></script>
     <%- include('../partials/footer') %>
-  </head>
+</head>
 </html>

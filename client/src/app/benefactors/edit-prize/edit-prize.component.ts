@@ -10,7 +10,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Prize} from "../../models/prize";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-edit-prize',
@@ -29,23 +29,17 @@ import {Router} from "@angular/router";
   styleUrl: './edit-prize.component.css'
 })
 export class EditPrizeComponent implements OnInit {
-  form: FormGroup;
+  form!: FormGroup;
   submitted = false;
-  current: string = '665751daf93e401bd9642dd8';
-  benefactor: string = '66341183612bf8d5aff074f0';
 
   constructor(
     private benefactorsService: BenefactorsService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
-    this.form = this.formBuilder.group({
-      price: [new FormControl("", Validators.required)],
-      title: [new FormControl("", Validators.required)],
-      description: [new FormControl("", Validators.required)],
-      benefactor: [new FormControl("")]
-    });
+
   }
 
   get f() {
@@ -53,24 +47,30 @@ export class EditPrizeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.benefactorsService.getBenefactorPrizes(this.benefactor)
-      ?.subscribe(result => {
-          const matchingPrize = result?.find(prize => prize?._id === this.current);
-
-          if (matchingPrize) {
-            this.form.setValue({
-              price: matchingPrize!.price,
-              title: matchingPrize!.title,
-              benefactor: matchingPrize!.benefactor,
-              description: matchingPrize!.description
+    this.route.paramMap.subscribe((params) => {
+      this.form = this.formBuilder.group({
+        price: [new FormControl("", Validators.required)],
+        title: [new FormControl("", Validators.required)],
+        description: [new FormControl("", Validators.required)],
+        benefactor: [new FormControl(params.get('benefactor')), Validators.required],
+      });
+      this.benefactorsService.getPrize(params.get('prize') || ' ')
+        ?.subscribe(result => {
+            if (result) {
+              this.form.setValue({
+                price: result!.price,
+                title: result!.title,
+                benefactor: result!.benefactor,
+                description: result!.description
+              });
+            }
+          },
+          error => {
+            this.snackBar.open(error?.message || 'An error occurred', 'Close', {
+              duration: 3000
             });
-          }
-        },
-        error => {
-          this.snackBar.open(error?.message || 'An error occurred', 'Close', {
-            duration: 3000
           });
-        });
+    });
   }
 
   onSubmit() {
@@ -80,14 +80,15 @@ export class EditPrizeComponent implements OnInit {
       return;
     }
 
-    const updatedPrize = new Prize(
-      this.current,
-      this.f['price'].value,
-      this.f['title'].value,
-      this.f['description'].value,
-      '',
-      this.benefactor
-    );
+    this.route.paramMap.subscribe((params) => {
+      const updatedPrize = new Prize(
+        params.get('prize') || '',
+        this.f['price'].value,
+        this.f['title'].value,
+        this.f['description'].value,
+        '',
+        params.get('benefactor') || ''
+      );
 
     if (!updatedPrize)
       return;
@@ -109,6 +110,7 @@ export class EditPrizeComponent implements OnInit {
           });
         }
       );
+    });
     this.onReset();
   }
 

@@ -23,8 +23,8 @@ function addLink(req, res) {
 
     Post.findByIdAndUpdate(
         postId,
-        { $push: { links: linkData }, updatedAt: Date.now() },
-        { new: true }
+        {$push: {links: linkData}, updatedAt: Date.now()},
+        {new: true}
     )
         .then((post) => {
             res.status(200).json({

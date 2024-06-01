@@ -10,16 +10,16 @@ var nodemailer = require("nodemailer");
  * @returns {Object} The transporter object.
  */
 const createTransporter = () => {
-  return nodemailer.createTransport({
-    service: "gmail",
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL,
-      pass: process.env.PASSWORD,
-    },
-  });
+    return nodemailer.createTransport({
+        service: "gmail",
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.EMAIL,
+            pass: process.env.PASSWORD,
+        },
+    });
 };
 
 /**
@@ -35,38 +35,38 @@ const createTransporter = () => {
  * @returns {Object} An object containing the send function.
  */
 const createEmail = (emailTo, emailSubject, emailText) => {
-  const email = {
-    sucessEmail: () => {
-      from: process.env.EMAIL;
-      to: emailTo;
-      subject: emailSubject;
-      text: emailText;
-    },
-    errorEmail: () => {
-      from: process.env.EMAIL;
-      to: emailTo;
-      subject: emailSubject;
-      text: emailText;
-    },
-  };
+    const email = {
+        sucessEmail: () => {
+            from: process.env.EMAIL;
+            to: emailTo;
+            subject: emailSubject;
+            text: emailText;
+        },
+        errorEmail: () => {
+            from: process.env.EMAIL;
+            to: emailTo;
+            subject: emailSubject;
+            text: emailText;
+        },
+    };
 
-  mailOptions = { ...emailTo, ...emailSubject, ...emailText };
+    mailOptions = {...emailTo, ...emailSubject, ...emailText};
 
-  const transporter = createTransporter();
+    const transporter = createTransporter();
 
-  /**
-   * Sends the email.
-   *
-   * This function sends the email using the previously created transporter
-   * object and the mail options. If an error occurs, it logs the error message.
-   */
-  async function send() {
-    await transporter.sendMail(mailOptions);
-  }
+    /**
+     * Sends the email.
+     *
+     * This function sends the email using the previously created transporter
+     * object and the mail options. If an error occurs, it logs the error message.
+     */
+    async function send() {
+        await transporter.sendMail(mailOptions);
+    }
 
-  return { send };
+    return {send};
 };
 
 module.exports = {
-  createEmail: createEmail,
+    createEmail: createEmail,
 };

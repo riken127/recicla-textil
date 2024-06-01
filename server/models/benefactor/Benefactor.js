@@ -151,7 +151,7 @@ const ConversionRatioSchema = new mongoose.Schema({
  */
 const BenefactorSchema = new mongoose.Schema({
     name: {type: String, required: true},
-    address: {type: Address.schema, required: true}, 
+    address: {type: Address.schema, required: true},
     username: {type: String, required: true},
     password: {type: String, required: true},
     email: {type: String, required: true},
@@ -161,9 +161,9 @@ const BenefactorSchema = new mongoose.Schema({
     banner: {type: String},
     createdAt: {type: Date, default: Date.now},
     lastUpdateAt: {type: Date, default: Date.now},
-    pickpoints: [PickPointSchema], 
+    pickpoints: [PickPointSchema],
     conversionRatio: {type: ConversionRatioSchema, required: true},
-    status:{
+    status: {
         type: String,
         enum: ['active', 'inactive', 'pending'],
         default: 'active'

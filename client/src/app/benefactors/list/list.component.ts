@@ -43,15 +43,6 @@ export class ListComponent {
   }
 
   getBenefactors() {
-
-    this.authenticationService.authenticateUser({
-      username: 'anakin',
-      password: '123'
-    }).subscribe(() => {
-    }, error => {
-      this.showErrorMessage("An error occured: " + error.message);
-    });
-
     this.benefactorsService.getAllBenefactors()?.subscribe(benefactors => {
       this.benefactors = benefactors;
     }, error => {
@@ -63,7 +54,7 @@ export class ListComponent {
     if (!id) {
       return;
     }
-    this.router.navigate(['/benefactors/', id]);
+    this.router.navigate(['/benefactors/profile/', id]);
   }
 
   showErrorMessage(message: string) {

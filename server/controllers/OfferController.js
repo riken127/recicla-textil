@@ -16,28 +16,28 @@ const fs = require('fs');
  * router.get('all/:n/:p', offerController.getAllOffers);
  */
 function allOffers(req, res, next) {
-	let numberOfOffers = parseInt(req.params.n, 10);
-	let pageNumber = parseInt(req.params.p, 10);
+    let numberOfOffers = parseInt(req.params.n, 10);
+    let pageNumber = parseInt(req.params.p, 10);
 
-	if (isNaN(numberOfOffers) || isNaN(pageNumber)) {
-		return res.status(400).send({
-			type: 'error',
-			message: 'Invalid parameters',
-		});
-	}
+    if (isNaN(numberOfOffers) || isNaN(pageNumber)) {
+        return res.status(400).send({
+            type: 'error',
+            message: 'Invalid parameters',
+        });
+    }
 
-	let skip = (pageNumber - 1) * numberOfOffers;
+    let skip = (pageNumber - 1) * numberOfOffers;
 
-	Post.find({})
-		.sort({createdAt: -1})
-		.skip(skip)
-		.limit(numberOfOffers)
-		.then(offers => {
-			return res.status(200).send(offers);
-		})
-		.catch(err => {
-			next(err);
-		});
+    Post.find({})
+        .sort({createdAt: -1})
+        .skip(skip)
+        .limit(numberOfOffers)
+        .then(offers => {
+            return res.status(200).send(offers);
+        })
+        .catch(err => {
+            next(err);
+        });
 }
 
 /**
@@ -54,25 +54,25 @@ function allOffers(req, res, next) {
  * router.get('/:id', offerController.getBenefactorOffers);
  */
 function getBenefactorOffers(req, res, next) {
-	let id = req.params.id;
+    let id = req.params.id;
 
-	Offer.find({benefactor: id})
-		.then(offers => {
-			if (!offers) {
-				return res.status(400).json({
-					type: 'error',
-					message: 'could not find any posts related to the specified id',
-				});
-			}
+    Offer.find({benefactor: id})
+        .then(offers => {
+            if (!offers) {
+                return res.status(400).json({
+                    type: 'error',
+                    message: 'could not find any posts related to the specified id',
+                });
+            }
 
-			return res.status(200).json(offers);
-		})
-		.catch(error => {
-			return res.status(500).json({
-				type: 'error',
-				message: error,
-			});
-		});
+            return res.status(200).json(offers);
+        })
+        .catch(error => {
+            return res.status(500).json({
+                type: 'error',
+                message: error,
+            });
+        });
 }
 
 /**
@@ -88,44 +88,44 @@ function getBenefactorOffers(req, res, next) {
  * @returns {void}
  */
 function upload(req, res) {
-	try {
-		const originalname = req.file.originalname;
-		const benefactorId = req.params.benefactorId;
-		const imageUrl = path.join(
-			'./uploads/benefactors/',
-			benefactorId,
-			'/offers/',
-			originalname
-		);
+    try {
+        const originalname = req.file.originalname;
+        const benefactorId = req.params.benefactorId;
+        const imageUrl = path.join(
+            './uploads/benefactors/',
+            benefactorId,
+            '/offers/',
+            originalname
+        );
 
-		Offer.findByIdAndUpdate(
-			req.body.offerId,
-			{image: imageUrl},
-			{new: true}
-		)
-			.then(post => {
-				return res.status(200).json({
-					type: 'success',
-					message: 'updated successfully',
-				});
-			})
-			.catch(error => {
-				return res.status(500).json({
-					type: 'error',
-					message: 'failted to upload',
-				})
-			});
-	} catch (error) {
-		return res.status(500).json({
-			type: 'error',
-			message: error,
-		});
-	}
+        Offer.findByIdAndUpdate(
+            req.body.offerId,
+            {image: imageUrl},
+            {new: true}
+        )
+            .then(post => {
+                return res.status(200).json({
+                    type: 'success',
+                    message: 'updated successfully',
+                });
+            })
+            .catch(error => {
+                return res.status(500).json({
+                    type: 'error',
+                    message: 'failted to upload',
+                })
+            });
+    } catch (error) {
+        return res.status(500).json({
+            type: 'error',
+            message: error,
+        });
+    }
 }
 
 /**
  * Adds an offer to the specified benefactor.
- * 
+ *
  * This function accesses the database and creates a new offer for a specified benefactor.
  *
  * @param {Object} req - The request object.
@@ -134,47 +134,47 @@ function upload(req, res) {
  * @return {void}
  * @example
  * // Usage:
- * router.post('/:id', offerController.addBenefactorOffer); 
+ * router.post('/:id', offerController.addBenefactorOffer);
  */
 function addBenefactorOffer(req, res, next) {
-	let id = req.params.id;
-	let offerData = req.body;
-	let offer = new Offer({
-		startDate: offerData.startDate,
-		endDate: offerData.endDate,
-		benefactor: id,
-		title: offerData.title,
-		description: offerData.description,
-		image: offerData.image
-	});
+    let id = req.params.id;
+    let offerData = req.body;
+    let offer = new Offer({
+        startDate: offerData.startDate,
+        endDate: offerData.endDate,
+        benefactor: id,
+        title: offerData.title,
+        description: offerData.description,
+        image: offerData.image
+    });
 
-	offer.save()
-		.then(offer => {
-			if (offerData.image &&
-				!fs.existsSync('./uploads/benefactor/' + id)
-			) {
-				fs.mkdirSync(
-					'./uploads/benefactor/' + id + '/offers',
-					{recursive: true}
-				);
-			}
+    offer.save()
+        .then(offer => {
+            if (offerData.image &&
+                !fs.existsSync('./uploads/benefactor/' + id)
+            ) {
+                fs.mkdirSync(
+                    './uploads/benefactor/' + id + '/offers',
+                    {recursive: true}
+                );
+            }
 
-			return res.status(200).json({
-				type: 'success',
-				result: offer._id,
-			});
-		})
-		.catch(error => {
-			return res.status(500).json({
-				type: 'error',
-				result: error,
-			});
-		});
+            return res.status(200).json({
+                type: 'success',
+                result: offer._id,
+            });
+        })
+        .catch(error => {
+            return res.status(500).json({
+                type: 'error',
+                result: error,
+            });
+        });
 }
 
 /**
  * Edits an offer of the given benefactor id.
- * 
+ *
  * This function queries the database for the specified offer id, and, if it exists, changes the offer (if the specified parameters in the body of the request are valid).
  *
  * @param {Object} req - The request object.
@@ -186,49 +186,49 @@ function addBenefactorOffer(req, res, next) {
  * router.put('/:id/', offerController.editBenefactorOffer);
  */
 function editBenefactorOffer(req, res, next) {
-	let benefactorId = req.params.id;
-	let offerData = req.body;
-	let offer = {
-		_id: offerData._id,
-		startDate: offerData.startDate,
-		endDate: offerData.endDate,
-		benefactor: offerData.benefactor,
-		title: offerData.title,
-		description: offerData.description,
-		image: offerData.image || '',
-		active: offerData.active
-	};
-	Offer.findByIdAndUpdate(offerData._id, offer, {new: true})
-		.then(offer => {
-			if (
-				offerData.image &&
-				!fs.existsSync('./uploads/benefactor/' + benefactorId)
-			) {
-				fs.existsSync(
-					'./uploads/benefactor/' + benefactorId + '/offers',
-					{recursive: true}
-				);
-			}
+    let benefactorId = req.params.id;
+    let offerData = req.body;
+    let offer = {
+        _id: offerData._id,
+        startDate: offerData.startDate,
+        endDate: offerData.endDate,
+        benefactor: offerData.benefactor,
+        title: offerData.title,
+        description: offerData.description,
+        image: offerData.image || '',
+        active: offerData.active
+    };
+    Offer.findByIdAndUpdate(offerData._id, offer, {new: true})
+        .then(offer => {
+            if (
+                offerData.image &&
+                !fs.existsSync('./uploads/benefactor/' + benefactorId)
+            ) {
+                fs.existsSync(
+                    './uploads/benefactor/' + benefactorId + '/offers',
+                    {recursive: true}
+                );
+            }
 
-			if (!offer) {
-				return res.status(500).json({
-					message: 'not found',
-					type: 'error',
-				});
-			}
+            if (!offer) {
+                return res.status(500).json({
+                    message: 'not found',
+                    type: 'error',
+                });
+            }
 
-			return res.status(200).json({
-				type: 'success',
-				message: offer.title + " was successfully updated",
-			});
-		})
-		.catch(error => {
-			console.log(error);
-			return res.status(500).json({
-				type: 'error',
-				result: error,
-			});
-		});
+            return res.status(200).json({
+                type: 'success',
+                message: offer.title + " was successfully updated",
+            });
+        })
+        .catch(error => {
+            console.log(error);
+            return res.status(500).json({
+                type: 'error',
+                result: error,
+            });
+        });
 }
 
 /**
@@ -245,34 +245,34 @@ function editBenefactorOffer(req, res, next) {
  * router.delete('/:id', offerController.disableBenefactorOffer);
  */
 function disableBenefactorOffer(req, res, next) {
-	let offerId = req.params.id;
+    let offerId = req.params.id;
 
-	Offer.findByIdAndUpdate(offerId, {active: false}, {new: true})
-		.then(offer => {
-			if (!offer) {
-				return res.status(404).json({
-					type: 'error',
-					message: 'Offer not found',
-				});
-			}
+    Offer.findByIdAndUpdate(offerId, {active: false}, {new: true})
+        .then(offer => {
+            if (!offer) {
+                return res.status(404).json({
+                    type: 'error',
+                    message: 'Offer not found',
+                });
+            }
 
-			return res.status(200).json({
-				offer,
-			});
-		})
-		.catch(error => {
-			return res.status(500).json({
-				type: 'error',
-				message: 'An error occurred while disabling the offer',
-				error,
-			});
-		});
+            return res.status(200).json({
+                offer,
+            });
+        })
+        .catch(error => {
+            return res.status(500).json({
+                type: 'error',
+                message: 'An error occurred while disabling the offer',
+                error,
+            });
+        });
 }
 
 module.exports = {
-	allOffers,
-	addBenefactorOffer,
-	editBenefactorOffer,
-	getBenefactorOffers,
-	disableBenefactorOffer,
+    allOffers,
+    addBenefactorOffer,
+    editBenefactorOffer,
+    getBenefactorOffers,
+    disableBenefactorOffer,
 };

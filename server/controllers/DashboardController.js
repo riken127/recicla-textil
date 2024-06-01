@@ -87,8 +87,8 @@ const createdAtInOrderOfMonth = async () => {
         },
         {
             $group: {
-                _id: { $month: "$createdAt" }, // Group by month
-                totalUsers: { $sum: 1 }, // Count users for each month
+                _id: {$month: "$createdAt"}, // Group by month
+                totalUsers: {$sum: 1}, // Count users for each month
             },
         },
         {
@@ -127,15 +127,15 @@ const percentagePerCountry = async () => {
             {
                 $group: {
                     _id: "$address.country",
-                    count: { $sum: 1 },
+                    count: {$sum: 1},
                 },
             },
             {
                 // Calculate the total number of users
                 $group: {
                     _id: null,
-                    totalUsers: { $sum: "$count" },
-                    countries: { $push: { country: "$_id", count: "$count" } },
+                    totalUsers: {$sum: "$count"},
+                    countries: {$push: {country: "$_id", count: "$count"}},
                 },
             },
             {
@@ -164,13 +164,13 @@ const percentagePerCountry = async () => {
                     },
                 },
             },
-            { $unwind: "$countries" },
-            { $sort: { "countries.percentage": -1 } },
-            { $limit: 10 },
+            {$unwind: "$countries"},
+            {$sort: {"countries.percentage": -1}},
+            {$limit: 10},
             {
                 $group: {
                     _id: null,
-                    countries: { $push: "$countries" },
+                    countries: {$push: "$countries"},
                 },
             },
         ]);
@@ -203,15 +203,15 @@ const percentagePerLanguage = async () => {
             {
                 $group: {
                     _id: "$language",
-                    count: { $sum: 1 },
+                    count: {$sum: 1},
                 },
             },
             {
                 // Calculate the total number of users
                 $group: {
                     _id: null,
-                    totalUsers: { $sum: "$count" },
-                    languages: { $push: { language: "$_id", count: "$count" } },
+                    totalUsers: {$sum: "$count"},
+                    languages: {$push: {language: "$_id", count: "$count"}},
                 },
             },
             {
@@ -240,13 +240,13 @@ const percentagePerLanguage = async () => {
                     },
                 },
             },
-            { $unwind: "$languages" },
-            { $sort: { "languages.percentage": -1 } },
-            { $limit: 10 },
+            {$unwind: "$languages"},
+            {$sort: {"languages.percentage": -1}},
+            {$limit: 10},
             {
                 $group: {
                     _id: null,
-                    languages: { $push: "$languages" },
+                    languages: {$push: "$languages"},
                 },
             },
         ]);
@@ -277,12 +277,12 @@ const roleDistribution = async () => {
             {
                 $group: {
                     _id: "$roles",
-                    count: { $sum: 1 },
+                    count: {$sum: 1},
                 },
             },
             {
                 // Optionally, sort the result by role name
-                $sort: { _id: 1 },
+                $sort: {_id: 1},
             },
         ]);
         return result;
@@ -312,12 +312,12 @@ const titleDistribution = async () => {
             {
                 $group: {
                     _id: "$title",
-                    count: { $sum: 1 },
+                    count: {$sum: 1},
                 },
             },
             {
                 // Optionally, sort the result by title name
-                $sort: { _id: 1 },
+                $sort: {_id: 1},
             },
         ]);
 
@@ -347,14 +347,14 @@ const leafsPerCountry = async () => {
             {
                 $group: {
                     _id: "$address.country",
-                    count: { $sum: "$leafs" },
+                    count: {$sum: "$leafs"},
                 },
             },
             {
                 $group: {
                     _id: null,
                     countries: {
-                        $push: { country: "$_id", leafs: "$count" },
+                        $push: {country: "$_id", leafs: "$count"},
                     },
                 },
             },
@@ -373,9 +373,9 @@ const leafsPerCountry = async () => {
                     },
                 },
             },
-            { $unwind: "$countries" },
-            { $sort: { "countries.points": -1 } },
-            { $limit: 10 },
+            {$unwind: "$countries"},
+            {$sort: {"countries.points": -1}},
+            {$limit: 10},
             {
                 $group: {
                     _id: null,
@@ -437,7 +437,7 @@ async function calculateTotalPoints() {
             {
                 $group: {
                     _id: null,
-                    totalPoints: { $sum: "$leafs" },
+                    totalPoints: {$sum: "$leafs"},
                 },
             },
         ]);
@@ -513,7 +513,7 @@ const totalPickpoints = async () => {
             {
                 $group: {
                     _id: null,
-                    totalPickpoints: { $sum: 1 },
+                    totalPickpoints: {$sum: 1},
                 },
             },
         ]);
@@ -544,13 +544,13 @@ const pickPointsPerCountry = async () => {
             {
                 $group: {
                     _id: "$pickpoints.country",
-                    totalPickpoints: { $sum: 1 },
+                    totalPickpoints: {$sum: 1},
                 },
             },
             {
-                $sort: { totalPickpoints: -1 },
+                $sort: {totalPickpoints: -1},
             },
-            { $limit: 10 },
+            {$limit: 10},
         ]);
         return result;
     } catch (error) {
@@ -580,13 +580,13 @@ const pickPointsPerCity = async () => {
             {
                 $group: {
                     _id: "$pickpoints.city",
-                    totalPickpoints: { $sum: 1 },
+                    totalPickpoints: {$sum: 1},
                 },
             },
             {
-                $sort: { totalPickpoints: -1 },
+                $sort: {totalPickpoints: -1},
             },
-            { $limit: 10 },
+            {$limit: 10},
         ]);
         return result;
     } catch (error) {
@@ -621,15 +621,15 @@ const benefactorsPerMonth = async () => {
             {
                 $group: {
                     _id: {
-                        $dateToString: { format: "%m", date: "$createdAt" },
+                        $dateToString: {format: "%m", date: "$createdAt"},
                     },
-                    count: { $sum: 1 },
+                    count: {$sum: 1},
                 },
             },
             {
-                $sort: { _id: 1 },
+                $sort: {_id: 1},
             },
-            { $limit: 12 },
+            {$limit: 12},
         ]);
         return result;
     } catch (error) {
@@ -656,13 +656,13 @@ const benefactorsPerCountry = async () => {
             {
                 $group: {
                     _id: "$address.country",
-                    count: { $sum: 1 },
+                    count: {$sum: 1},
                 },
             },
             {
-                $sort: { count: -1 },
+                $sort: {count: -1},
             },
-            { $limit: 10 },
+            {$limit: 10},
         ]);
         return result;
     } catch (error) {
@@ -689,13 +689,13 @@ const benefactorsPerCity = async () => {
             {
                 $group: {
                     _id: "$address.city",
-                    count: { $sum: 1 },
+                    count: {$sum: 1},
                 },
             },
             {
-                $sort: { count: -1 },
+                $sort: {count: -1},
             },
-            { $limit: 10 },
+            {$limit: 10},
         ]);
         return result;
     } catch (error) {
@@ -748,23 +748,23 @@ const benefactorsCreationsVsUpdates = async () => {
                     yearMonth: {
                         $dateToString: {
                             format: "%m",
-                            date: { $ifNull: ["$lastUpdateAt", "$createdAt"] },
+                            date: {$ifNull: ["$lastUpdateAt", "$createdAt"]},
                         },
                     },
-                    isUpdate: { $ne: ["$createdAt", "$lastUpdateAt"] },
+                    isUpdate: {$ne: ["$createdAt", "$lastUpdateAt"]},
                 },
             },
             {
                 $group: {
                     _id: "$yearMonth",
                     creations: {
-                        $sum: { $cond: [{ $not: "$isUpdate" }, 1, 0] },
+                        $sum: {$cond: [{$not: "$isUpdate"}, 1, 0]},
                     },
-                    updates: { $sum: { $cond: ["$isUpdate", 1, 0] } },
+                    updates: {$sum: {$cond: ["$isUpdate", 1, 0]}},
                 },
             },
             {
-                $sort: { _id: 1 },
+                $sort: {_id: 1},
             },
         ]);
         return result;
@@ -792,13 +792,13 @@ const usersWithMostDonations = async () => {
             {
                 $group: {
                     _id: "$userId",
-                    totalDonations: { $sum: 1 },
+                    totalDonations: {$sum: 1},
                 },
             },
             {
-                $sort: { totalDonations: -1 },
+                $sort: {totalDonations: -1},
             },
-            { $limit: 10 },
+            {$limit: 10},
             {
                 $lookup: {
                     from: "users",
@@ -844,13 +844,13 @@ const getTotalDonations = async () => {
             {
                 $group: {
                     _id: "$activityType",
-                    totalDonations: { $sum: 1 },
+                    totalDonations: {$sum: 1},
                 },
             },
             {
-                $sort: { totalDonations: -1 },
+                $sort: {totalDonations: -1},
             },
-            { $limit: 10 },
+            {$limit: 10},
         ]);
         return result;
     } catch (error) {
@@ -875,15 +875,15 @@ const getDonationsPerMonth = async () => {
             {
                 $group: {
                     _id: {
-                        $dateToString: { format: "%m", date: "$timestamp" },
+                        $dateToString: {format: "%m", date: "$timestamp"},
                     },
-                    totalDonations: { $sum: 1 },
+                    totalDonations: {$sum: 1},
                 },
             },
             {
-                $sort: { _id: 1 },
+                $sort: {_id: 1},
             },
-            { $limit: 12 },
+            {$limit: 12},
         ]);
         return result;
     } catch (error) {
@@ -909,7 +909,7 @@ const getTotalWeightDonated = async () => {
             {
                 $group: {
                     _id: null,
-                    totalWeight: { $sum: "$details.totalWeight" },
+                    totalWeight: {$sum: "$details.totalWeight"},
                 },
             },
         ]);
@@ -937,7 +937,7 @@ const getAverageWeightPerDonation = async () => {
             {
                 $group: {
                     _id: null,
-                    averageWeight: { $avg: "$details.totalWeight" },
+                    averageWeight: {$avg: "$details.totalWeight"},
                 },
             },
         ]);
@@ -962,17 +962,17 @@ const getMostDonatedItems = async () => {
     try {
         // Get the most donated items
         const result = await UserActivity.aggregate([
-            { $unwind: "$details.items" },
+            {$unwind: "$details.items"},
             {
                 $group: {
                     _id: "$details.items.type",
-                    totalDonations: { $sum: 1 },
+                    totalDonations: {$sum: 1},
                 },
             },
             {
-                $sort: { totalDonations: -1 },
+                $sort: {totalDonations: -1},
             },
-            { $limit: 10 },
+            {$limit: 10},
         ]);
         return result;
     } catch (error) {
@@ -998,11 +998,11 @@ const getDonationsPerBeneficiary = async () => {
             {
                 $group: {
                     _id: "$details.benefactorId",
-                    totalDonations: { $sum: 1 },
+                    totalDonations: {$sum: 1},
                 },
             },
             {
-                $sort: { totalDonations: -1 },
+                $sort: {totalDonations: -1},
             },
             {
                 $limit: 10,
@@ -1010,7 +1010,7 @@ const getDonationsPerBeneficiary = async () => {
             {
                 $lookup: {
                     from: "benefactors",
-                    let: { benefactorId: { $toObjectId: "$_id" } },
+                    let: {benefactorId: {$toObjectId: "$_id"}},
                     pipeline: [
                         {
                             $match: {

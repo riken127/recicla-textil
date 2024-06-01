@@ -10,7 +10,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Offer} from '../../models/offer';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-create-offer',
@@ -37,7 +37,8 @@ export class CreateOfferComponent implements OnInit {
     private benefactorsService: BenefactorsService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
   ) {
   }
 
@@ -69,14 +70,16 @@ export class CreateOfferComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.form = this.formBuilder.group({
-      startDate: [new Date(Date.now()), Validators.required],
-      endDate: [new Date(Date.now()), Validators.required],
-      benefactor: ['66341183612bf8d5aff074f0'],
-      title: ['', [Validators.required, Validators.minLength(6)]],
-      description: ['']
-    }, {
-      validators: this.MustBeGreater('endDate', 'startDate')
+    this.route.paramMap.subscribe((params) => {
+      this.form = this.formBuilder.group({
+        startDate: [new Date(Date.now()), Validators.required],
+        endDate: [new Date(Date.now()), Validators.required],
+        benefactor: [params.get('id')],
+        title: ['', [Validators.required, Validators.minLength(6)]],
+        description: ['']
+      }, {
+        validators: this.MustBeGreater('endDate', 'startDate')
+      });
     });
   }
 

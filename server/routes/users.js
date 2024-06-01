@@ -5,7 +5,7 @@ var userController = require('../controllers/UserController');
 var auth = require('../controllers/AuthenticationController')
 
 // upload user image
-router.post('/upload/',upload.single('image'),userController.uploadImage);
+router.post('/upload/', upload.single('image'), userController.uploadImage);
 
 /**
  * @swagger

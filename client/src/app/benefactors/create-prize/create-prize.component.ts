@@ -10,7 +10,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Prize} from "../../models/prize";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-create-prize',
@@ -30,14 +30,14 @@ import {Router} from "@angular/router";
 })
 export class CreatePrizeComponent implements OnInit {
   form!: FormGroup;
-  benefactor = '66341183612bf8d5aff074f0';
   submitted = false;
 
   constructor(
     private benefactorsService: BenefactorsService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
   ) {
   }
 
@@ -46,12 +46,14 @@ export class CreatePrizeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.form = this.formBuilder.group({
-      price: [new FormControl("", Validators.required)],
-      title: [new FormControl("", Validators.required)],
-      description: [new FormControl("")],
-      image: [new FormControl("")],
-      benefactor: [this.benefactor]
+    this.route.paramMap.subscribe((params) => {
+      this.form = this.formBuilder.group({
+        price: [new FormControl("", Validators.required)],
+        title: [new FormControl("", Validators.required)],
+        description: [new FormControl("")],
+        image: [new FormControl("")],
+        benefactor: [params.get('id')],
+      });
     });
   }
 

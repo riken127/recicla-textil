@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {BenefactorsService} from '../../services/benefactors.service';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
@@ -21,14 +21,16 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 export class DisableOfferComponent {
   currentBenefactor: string = '';
   currentOffer: string = '';
-
   constructor(
     private benefactorsService: BenefactorsService,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
   ) {
-    this.currentBenefactor = '66341183612bf8d5aff074f0';
-    this.currentOffer = '66558beacdfdbbfbc77f620d';
+    this.route.paramMap.subscribe(params => {
+      this.currentBenefactor = params.get('benefactor') || '';
+      this.currentOffer = params.get('offer') || '';
+    })
   }
 
   onDelete() {

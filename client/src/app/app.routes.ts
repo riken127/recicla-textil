@@ -22,73 +22,82 @@ export const routes: Routes = [
   {
     path: 'benefactors',
     component: ListComponent,
+    canActivate: [authGuard]
   },
   {
-    path: 'benefactors/:id',
-    component: ProfileComponent
+    path: 'benefactors/profile/:id',
+    component: ProfileComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'list-user-donations',
-    component: ListDonationsComponent
+    component: ListDonationsComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'users/login',
     component: UserLoginComponent,
-    canActivate: [authGuard]
   },
   {
     path: 'users/register',
     component: UserRegisterComponent,
-    canActivate: [authGuard]
   },
   {
     path: 'benefactors/login',
     component: BenefactorLoginComponent,
-    canActivate: [authGuard]
   },
   {
     path: 'benefactors/register',
     component: BenefactorRegisterComponent,
-    canActivate: [authGuard]
   },
   {
     path: ':id/list-benefactor-donations',
     component: ListWaitingDonationsComponent,
+    canActivate: [authGuard]
   },
   {
     path: ':id/create-donation',
     component: CreateDonationComponent,
+    canActivate: [authGuard]
   },
   {
     path: ':id/create-item',
     component: CreateItemComponent,
+    canActivate: [authGuard]
   },
   {
     path: ':id/list-items',
     component: ListItemsComponent,
+    canActivate: [authGuard]
   },
   {
-    path: 'create-prize',
+    path: ':id/create-prize',
     component: CreatePrizeComponent,
+    canActivate: [authGuard]
   },
   {
-    path: 'edit-prize',
+    path: ':benefactor/:prize/edit-prize',
     component: EditPrizeComponent,
+    canActivate: [authGuard]
   },
   {
-    path: 'delete-prize',
+    path: ':id/disable-prize',
     component: DisablePrizeComponent,
+    canActivate: [authGuard]
   },
   {
-    path: 'create-offer',
-    component: CreateOfferComponent
+    path: ':id/create-offer',
+    component: CreateOfferComponent,
+    canActivate: [authGuard]
   },
   {
-    path: 'edit-offer',
-    component: EditOfferComponent
+    path: ':benefactor/:offer/edit-offer',
+    component: EditOfferComponent,
+    canActivate: [authGuard]
   },
   {
-    path: 'disable-offer',
-    component: DisableOfferComponent
+    path: ':benefactor/:offer/disable-offer',
+    component: DisableOfferComponent,
+    canActivate: [authGuard]
   }
 ];

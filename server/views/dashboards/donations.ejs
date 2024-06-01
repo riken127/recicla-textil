@@ -64,7 +64,8 @@
                             <div class="py-3 px-3">
                                 <h3><i class="fa-solid fa-shirt"></i>&nbsp; <%= data[1][0].totalDonations %></h3>
                                 <h3><i class="fa-solid fa-weight-hanging"></i>&nbsp; <%= data[3][0].totalWeight %></h3>
-                                <h3><i class="fa-solid fa-weight-hanging"></i>&nbsp; <%= data[4][0].averageWeight %> ~</h3>
+                                <h3><i class="fa-solid fa-weight-hanging"></i>&nbsp; <%= data[4][0].averageWeight %> ~
+                                </h3>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -134,7 +135,6 @@
         const donationsPerMonthGraph = document.getElementById("donationsPerMonth")
 
         <%
-
         let topDonators = data[0];
         let topItems = data[5];
         let donationsPerMonth = data[2];
@@ -148,10 +148,10 @@
         new Chart(donationsPerMonthGraph, {
             type: 'line',
             data: {
-                labels: <%- JSON.stringify(donationsPerMonth.map(item => getMonthName(item._id)))%>,
+                labels: <%- JSON.stringify(donationsPerMonth.map(item => getMonthName(item._id))) %>,
                 datasets: [{
                     label: 'Number of donations',
-                    data: <%- JSON.stringify(donationsPerMonth.map(item => item.totalDonations))%>,
+                    data: <%- JSON.stringify(donationsPerMonth.map(item => item.totalDonations)) %>,
                     fill: true,
                     backgroundColor: 'rgba(255, 255, 255, 0.1)', // white background with 10% opacity
                     borderColor: '#06D6A0',
@@ -159,15 +159,15 @@
                 }]
             }
         })
-        <%- console.log(donationsPerMonth)%>
+        <%- console.log(donationsPerMonth) %>
         new Chart(topBenefactorsGraph,
             {
                 type: 'bar',
                 data: {
-                    labels: <%- JSON.stringify(topBenefactors.map(item => item.benefactor[0].name))%>,
+                    labels: <%- JSON.stringify(topBenefactors.map(item => item.benefactor[0].name)) %>,
                     datasets: [{
                         label: 'Number of donations given to this benefactor.',
-                        data: <%- JSON.stringify(topBenefactors.map(item => item.totalDonations))%>,
+                        data: <%- JSON.stringify(topBenefactors.map(item => item.totalDonations)) %>,
                         backgroundColor: '#7B2'
                     }]
                 }
@@ -175,15 +175,15 @@
         new Chart(topDonatorsGraph,
             {
                 type: 'bar',
-        data: {
-            labels: <%- JSON.stringify(topDonators.map(item => item.username)) %>,
-            datasets: [
-                {
-                    label: 'Number of donations.',
-                    data: <%- JSON.stringify(topDonators.map(item => item.totalDonations)) %>,
-                    backgroundColor: '#FF6B6B'
-                }]
-        }
+                data: {
+                    labels: <%- JSON.stringify(topDonators.map(item => item.username)) %>,
+                    datasets: [
+                        {
+                            label: 'Number of donations.',
+                            data: <%- JSON.stringify(topDonators.map(item => item.totalDonations)) %>,
+                            backgroundColor: '#FF6B6B'
+                        }]
+                }
             });
         new Chart(topItemsGraph,
             {
@@ -193,7 +193,7 @@
                     datasets: [
                         {
                             label: 'Number of donations that include that type of item.',
-                            data: <%- JSON.stringify(topItems.map(item => item.totalDonations))%>,
+                            data: <%- JSON.stringify(topItems.map(item => item.totalDonations)) %>,
                             backgroundColor: '#FF6'
                         }]
                 }

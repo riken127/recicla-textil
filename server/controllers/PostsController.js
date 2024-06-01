@@ -1,4 +1,4 @@
-const { type } = require("os");
+const {type} = require("os");
 const Benefactor = require("../models/benefactor/Benefactor");
 const Post = require("../models/benefactor/BenefactorPost");
 const fs = require("fs");
@@ -22,41 +22,41 @@ const path = require("path");
  * router.post("/:benefactorId/posts/", benefactorController.addPost);
  */
 function addPost(req, res) {
-	let benefactorId = req.params.benefactorId;
-	let postData = req.body;
-	let post = new Post({
-		benefactorId: benefactorId || "",
-		title: postData.title || "",
-		content: postData.content || "",
-		image: postData.image || "",
-		links: postData.links || [],
-		createdAt: Date.now(),
-		updatedAt: Date.now(),
-	});
+    let benefactorId = req.params.benefactorId;
+    let postData = req.body;
+    let post = new Post({
+        benefactorId: benefactorId || "",
+        title: postData.title || "",
+        content: postData.content || "",
+        image: postData.image || "",
+        links: postData.links || [],
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+    });
 
-	post.save()
-		.then((post) => {
-			if (
-				postData.image &&
-				!fs.existsSync("./uploads/benefactor/" + benefactorId)
-			) {
-				fs.mkdirSync(
-					"./uploads/benefactor/" + benefactorId + "/posts",
-					{ recursive: true }
-				);
-			}
+    post.save()
+        .then((post) => {
+            if (
+                postData.image &&
+                !fs.existsSync("./uploads/benefactor/" + benefactorId)
+            ) {
+                fs.mkdirSync(
+                    "./uploads/benefactor/" + benefactorId + "/posts",
+                    {recursive: true}
+                );
+            }
 
-			res.status(200).json({
-				type: "success",
-				result: post._id,
-			});
-		})
-		.catch((error) => {
-			res.status(500).json({
-				type: "error",
-				result: error,
-			});
-		});
+            res.status(200).json({
+                type: "success",
+                result: post._id,
+            });
+        })
+        .catch((error) => {
+            res.status(500).json({
+                type: "error",
+                result: error,
+            });
+        });
 }
 
 /**
@@ -77,41 +77,41 @@ function addPost(req, res) {
  * router.put("/:benefactorId/posts/:postId", benefactorController.updatePost);
  */
 function updatePost(req, res) {
-	let postId = req.params.postId;
-	let benefactorId = req.params.benefactorId;
-	let postData = req.body;
-	postData.updatedAt = Date.now();
+    let postId = req.params.postId;
+    let benefactorId = req.params.benefactorId;
+    let postData = req.body;
+    postData.updatedAt = Date.now();
 
-	Post.findByIdAndUpdate(postId, postData, { new: true })
-		.then((post) => {
-			if (
-				req.body.image &&
-				!fs.existsSync("./uploads/benefactor/" + benefactorId)
-			) {
-				fs.mkdirSync(
-					"./uploads/benefactor/" + benefactorId + "/posts",
-					{ recursive: true }
-				);
-			}
+    Post.findByIdAndUpdate(postId, postData, {new: true})
+        .then((post) => {
+            if (
+                req.body.image &&
+                !fs.existsSync("./uploads/benefactor/" + benefactorId)
+            ) {
+                fs.mkdirSync(
+                    "./uploads/benefactor/" + benefactorId + "/posts",
+                    {recursive: true}
+                );
+            }
 
-			if (!post) {
-				res.json({
-					message: "Post not found",
-					type: "danger",
-				});
-			}
+            if (!post) {
+                res.json({
+                    message: "Post not found",
+                    type: "danger",
+                });
+            }
 
-			res.json({
-				type: "success",
-				message: post.title + " was updated successfully.",
-			});
-		})
-		.catch((error) => {
-			res.status(500).json({
-				type: "error",
-				result: error,
-			});
-		});
+            res.json({
+                type: "success",
+                message: post.title + " was updated successfully.",
+            });
+        })
+        .catch((error) => {
+            res.status(500).json({
+                type: "error",
+                result: error,
+            });
+        });
 }
 
 /**
@@ -132,37 +132,37 @@ function updatePost(req, res) {
  *  router.delete('/:benefactorId/posts/:postId', auth.isAuthenticated, postController.deletePost);
  */
 function deletePost(req, res) {
-	let postId = req.params.postId;
-	let postData = req.body;
+    let postId = req.params.postId;
+    let postData = req.body;
 
-	Post.findByIdAndDelete(postId, postData, { new: true })
-		.then((post) => {
-			if (post.image) {
-				try {
-					fs.unlinkSync("./uploads/" + post.image);
-				} catch (err) {
-					console.log(err);
-				}
-			}
+    Post.findByIdAndDelete(postId, postData, {new: true})
+        .then((post) => {
+            if (post.image) {
+                try {
+                    fs.unlinkSync("./uploads/" + post.image);
+                } catch (err) {
+                    console.log(err);
+                }
+            }
 
-			if (!post) {
-				res.json({
-					message: "Post not found",
-					type: "danger",
-				});
-			}
+            if (!post) {
+                res.json({
+                    message: "Post not found",
+                    type: "danger",
+                });
+            }
 
-			res.json({
-				type: "success",
-				message: post.title + " was deleted successfully.",
-			});
-		})
-		.catch((error) => {
-			res.status(500).json({
-				type: "error",
-				result: error,
-			});
-		});
+            res.json({
+                type: "success",
+                message: post.title + " was deleted successfully.",
+            });
+        })
+        .catch((error) => {
+            res.status(500).json({
+                type: "error",
+                result: error,
+            });
+        });
 }
 
 /**
@@ -180,18 +180,18 @@ function deletePost(req, res) {
  * router.get('/:benefactorId/posts/', auth.isAuthenticated, postController.getAllPosts);
  */
 function getAllPosts(req, res) {
-	let benefactorId = req.params.benefactorId;
+    let benefactorId = req.params.benefactorId;
 
-	Post.find({ benefactorId: benefactorId })
-		.then((posts) => {
-			res.json(posts);
-		})
-		.catch((error) => {
-			res.status(500).json({
-				type: "error",
-				result: error,
-			});
-		});
+    Post.find({benefactorId: benefactorId})
+        .then((posts) => {
+            res.json(posts);
+        })
+        .catch((error) => {
+            res.status(500).json({
+                type: "error",
+                result: error,
+            });
+        });
 }
 
 /**
@@ -209,37 +209,37 @@ function getAllPosts(req, res) {
  * @example
  */
 function uploadImage(req, res) {
-	try {
-		const originalFilename = req.file.originalname;
-		const benefactorId = req.params.benefactorId;
-		const imageUrl = paht.join(
-			"./uploads/benefactors/",
-			benefactorId,
-			"/posts/",
-			originalFilename
-		);
+    try {
+        const originalFilename = req.file.originalname;
+        const benefactorId = req.params.benefactorId;
+        const imageUrl = paht.join(
+            "./uploads/benefactors/",
+            benefactorId,
+            "/posts/",
+            originalFilename
+        );
 
-		Post.findByIdAndUpdate(
-			req.body.postId,
-			{ image: imageUrl },
-			{ new: true }
-		)
-			.then((post) => {
-				res.json({
-					type: "success",
-					message: "Image uploaded successfully.",
-				});
-			})
-			.catch((error) => {
-				res.status(500).json({
-					error: "Failed to upload image.",
-				});
-			});
-	} catch (error) {
-		res.status(500).json({
-			error: "Failed to upload image.",
-		});
-	}
+        Post.findByIdAndUpdate(
+            req.body.postId,
+            {image: imageUrl},
+            {new: true}
+        )
+            .then((post) => {
+                res.json({
+                    type: "success",
+                    message: "Image uploaded successfully.",
+                });
+            })
+            .catch((error) => {
+                res.status(500).json({
+                    error: "Failed to upload image.",
+                });
+            });
+    } catch (error) {
+        res.status(500).json({
+            error: "Failed to upload image.",
+        });
+    }
 }
 
 /**
@@ -257,28 +257,28 @@ function uploadImage(req, res) {
  * router.get('/posts/all', auth.isAuthenticated, postController.getLastPosts);
  */
 function getLastPosts(req, res) {
-	let { page = 1, limit = 10 } = req.body;
+    let {page = 1, limit = 10} = req.body;
 
-	Post.find()
-		.sort({ createdAt: -1 })
-		.skip((page - 1) * limit)
-		.limit(limit)
-		.then((posts) => {
-			res.json(posts);
-		})
-		.catch((error) => {
-			res.status(500).json({
-				type: "error",
-				result: error,
-			});
-		});
+    Post.find()
+        .sort({createdAt: -1})
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .then((posts) => {
+            res.json(posts);
+        })
+        .catch((error) => {
+            res.status(500).json({
+                type: "error",
+                result: error,
+            });
+        });
 }
 
 module.exports = {
-	addPost: addPost,
-	updatePost: updatePost,
-	deletePost: deletePost,
-	getAllPosts: getAllPosts,
-	uploadImage: uploadImage,
-	getLastPosts: getLastPosts,
+    addPost: addPost,
+    updatePost: updatePost,
+    deletePost: deletePost,
+    getAllPosts: getAllPosts,
+    uploadImage: uploadImage,
+    getLastPosts: getLastPosts,
 };

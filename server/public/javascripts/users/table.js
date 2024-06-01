@@ -112,7 +112,7 @@ $(document).ready(function () {
                     $("#editcountry").countrySelect("setCountry", response.address.country);
                     editIti.setNumber(response.phone);
                     $("#editRoles").val(response.roles[0]).change();
-                        $("#editNotify")[0].checked = response.notify;
+                    $("#editNotify")[0].checked = response.notify;
                     $("#editLanguage").val(response.language);
                     $("#editModal").modal("show");
                 },
@@ -179,7 +179,7 @@ $(document).ready(function () {
                     data: jsonData,
                     contentType: "application/json",
                     dataType: "json",
-                    success:  (response) => {
+                    success: (response) => {
                         if (imageFile) {
                             uploadEditImage(userData.userId, imageFile);
                         } else {
@@ -224,6 +224,7 @@ $(document).ready(function () {
             }
         });
     }
+
     // Function to get language for country.
     function getLanguageForCountry(countryName) {
         // Fetch language data from restAPI.
@@ -339,6 +340,7 @@ $(document).ready(function () {
             }
         });
     }
+
     // Confirm delete action.
     $(document).on("click", "#confirmDelete", function () {
         var userId = $(this).data("userid");

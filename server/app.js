@@ -16,8 +16,8 @@ var swaggerUI = require("swagger-ui-express");
 var cors = require('cors')
 
 app.use(cors({
-	origin: 'http://localhost:4200',
-	credentials: true
+    origin: 'http://localhost:4200',
+    credentials: true
 }));
 
 app.set("views", path.join(__dirname, "views"));
@@ -38,35 +38,35 @@ app.use("/home", homeRouter);
 app.use("/auth", authRouter);
 
 app.use((req, res, next) => {
-	if (req.originalUrl === "/") {
-		res.redirect("/auth/login");
-	} else {
-		next();
-	}
+    if (req.originalUrl === "/") {
+        res.redirect("/auth/login");
+    } else {
+        next();
+    }
 });
 
 app.use((req, res, next) => {
-	next(createError(404));
+    next(createError(404));
 });
 
 mongoose
-	.connect(process.env.MONGODB_URI, {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-	})
-	.then(() => {
-		console.log("MongoDB Connected successfully.");
-	})
-	.catch((error) => {
-		console.error("Error connecting to MongoDB:", error);
-	});
+    .connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
+    .then(() => {
+        console.log("MongoDB Connected successfully.");
+    })
+    .catch((error) => {
+        console.error("Error connecting to MongoDB:", error);
+    });
 
 app.use((err, req, res, next) => {
-	res.locals.message = err.message;
-	res.locals.error = req.app.get("env") === "development" ? err : {};
+    res.locals.message = err.message;
+    res.locals.error = req.app.get("env") === "development" ? err : {};
 
-	res.status(err.status || 500);
-	res.render("error");
+    res.status(err.status || 500);
+    res.render("error");
 });
 
 module.exports = app;

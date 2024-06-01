@@ -98,6 +98,6 @@ router.get('/benefactors', auth.isAuthenticated, auth.hasRoles(['administrator']
  *                   type: string
  *                   example: Error fetching aggregation data
  */
-router.get('/donations', auth.isAuthenticated, auth.hasRoles(['administrator']),dashboardController.returnDonationsDashboard);
+router.get('/donations', auth.isAuthenticated, auth.hasRoles(['administrator']), dashboardController.returnDonationsDashboard);
 
 module.exports = router;

@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {BenefactorsService} from "../../services/benefactors.service";
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from "@angular/material/button";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
@@ -18,13 +18,16 @@ import {MatSnackBar} from "@angular/material/snack-bar";
   styleUrl: './disable-prize.component.css'
 })
 export class DisablePrizeComponent {
-  currentPrize: string = '6657593d5a8a218dad4eeb55';
-
+  currentPrize: string = '';
   constructor(
     private benefactorService: BenefactorsService,
     private snackBar: MatSnackBar,
     private router: Router,
+    private route: ActivatedRoute,
   ) {
+    this.route.paramMap.subscribe(params => {
+      this.currentPrize = params.get('id') || ''
+    })
   }
 
   onDelete() {

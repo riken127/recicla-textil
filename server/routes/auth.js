@@ -24,7 +24,7 @@ var authController = require("../controllers/AuthenticationController");
  *         description: Internal server error
  */
 router.get("/login", authController.isNotAuthenticated, (req, res) => {
-  res.render("login.ejs");
+    res.render("login.ejs");
 });
 
 /**
@@ -69,9 +69,9 @@ router.get("/login", authController.isNotAuthenticated, (req, res) => {
  *                   type: string
  */
 router.post(
-  "/login",
-  authController.isNotAuthenticated,
-  authController.validateLogin
+    "/login",
+    authController.isNotAuthenticated,
+    authController.validateLogin
 );
 
 /**
@@ -106,6 +106,6 @@ router.post("/logout", authController.logout);
  */
 router.get("/getToken", authController.getDecodedToken);
 
-router.get('/check', authController.isNotAuthenticated);
+router.get('/check', authController.checkAuth);
 
 module.exports = router;

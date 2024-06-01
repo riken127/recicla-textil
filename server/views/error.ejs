@@ -1,122 +1,132 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title><%= message %></title>
     <style>
-      body {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        background-color: #f1f1f1;
-        text-align: left;
-        line-height: 0.9;
-        font-family: "Public Sans", sans-serif;
-      }
-      #error-stack {
-        display: none;
-      }
-      .content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .content img {
-        margin-right: 20px;
-        max-width: 100px;
-        height: auto;
-      }
-      .content div {
-        max-width: 380px;
-      }
-      h1 {
-        font-size: 3em;
-      }
-      p {
-        font-size: 1.2em;
-      }
-      #errorMessage {
-        font-size: 1em;
-        color: #888;
-      }
-      #links {
-        font-size: 1em;
-      }
-      #links a {
-        text-decoration: none;
-        color: blue;
-      }
-      p {
-        margin: 0.5em 0;
-      }
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f1f1f1;
+            text-align: left;
+            line-height: 0.9;
+            font-family: "Public Sans", sans-serif;
+        }
+
+        #error-stack {
+            display: none;
+        }
+
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content img {
+            margin-right: 20px;
+            max-width: 100px;
+            height: auto;
+        }
+
+        .content div {
+            max-width: 380px;
+        }
+
+        h1 {
+            font-size: 3em;
+        }
+
+        p {
+            font-size: 1.2em;
+        }
+
+        #errorMessage {
+            font-size: 1em;
+            color: #888;
+        }
+
+        #links {
+            font-size: 1em;
+        }
+
+        #links a {
+            text-decoration: none;
+            color: blue;
+        }
+
+        p {
+            margin: 0.5em 0;
+        }
     </style>
-  </head>
-  <body>
-    <div class="content">
-      <img src="images/sadSmile.png" />
-      <div>
+</head>
+<body>
+<div class="content">
+    <img src="images/sadSmile.png"/>
+    <div>
         <h1><%= error.status %></h1>
         <p>OOPS! PAGE NOT BE FOUND</p>
         <p id="errorMessage">
-          Sorry but the page you are lookin for does not exist, have been
-          removed, name changed or is temporarily unavailable
+            Sorry but the page you are lookin for does not exist, have been
+            removed, name changed or is temporarily unavailable
         </p>
         <p id="error-stack"><%= error.stack %></p>
         <div id="links">
-          <a href="http://localhost:3000/home">Back to homepage</a> |
-          <a href="#" id="expand-error">Expand Error</a>
+            <a href="http://localhost:3000/home">Back to homepage</a> |
+            <a href="#" id="expand-error">Expand Error</a>
         </div>
-      </div>
     </div>
+</div>
 
-    <!-- Error Modal -->
-    <div
-      class="modal fade"
-      id="error-modal"
-      tabindex="-1"
-      aria-labelledby="errorModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-lg">
+<!-- Error Modal -->
+<div
+        class="modal fade"
+        id="error-modal"
+        tabindex="-1"
+        aria-labelledby="errorModalLabel"
+        aria-hidden="true"
+>
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="errorModalLabel">Error Details</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <p id="modal-content"></p>
-          </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error Details</h5>
+                <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-content"></p>
+            </div>
         </div>
-      </div>
     </div>
+</div>
 
-    <link
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script>
-      $(document).ready(function () {
+<link
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        rel="stylesheet"
+/>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
         $("#expand-error").click(function (e) {
-          e.preventDefault();
-          var errorStack = $("#error-stack").text();
-          $("#modal-content").text(errorStack);
-          $("#error-modal").modal("show");
+            e.preventDefault();
+            var errorStack = $("#error-stack").text();
+            $("#modal-content").text(errorStack);
+            $("#error-modal").modal("show");
         });
 
         $(".btn-close, .btn-secondary").click(function () {
-          $("#error-modal").modal("hide");
+            $("#error-modal").modal("hide");
         });
-      });
-    </script>
-  </body>
+    });
+</script>
+</body>
 </html>

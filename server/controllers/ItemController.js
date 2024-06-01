@@ -20,9 +20,9 @@ const path = require("path");
  */
 async function getAllItems(req, res, next) {
     const donationId = req.params.id;
-    const { draw } = req.body;
+    const {draw} = req.body;
     const search_value = req.body["search[value]"];
-    const query = { _id: donationId };
+    const query = {_id: donationId};
     const orderBy = req.body["order[0][dir]"];
     const columnIndex = req.body["order[0][column]"];
     const order = orderBy === "asc" ? 1 : -1;
@@ -35,11 +35,11 @@ async function getAllItems(req, res, next) {
     const column = columnMapping[columnIndex];
 
     if (search_value) {
-        query["details.items.$text"] = { $search: search_value };
+        query["details.items.$text"] = {$search: search_value};
     }
 
     Donation.findOne(query)
-        .sort({ [column]: order })
+        .sort({[column]: order})
         .then((donation) => {
             res.json({
                 draw: parseInt(draw),
@@ -89,10 +89,10 @@ function addItem(req, res, next) {
     Donation.findByIdAndUpdate(
         donationId,
         {
-            $push: { "details.items": itemData },
-            $inc: { "details.totalWeight": weight, "details.numberOfItems": 1 },
+            $push: {"details.items": itemData},
+            $inc: {"details.totalWeight": weight, "details.numberOfItems": 1},
         },
-        { new: true, runValidators: true }
+        {new: true, runValidators: true}
     )
         .then((updateDonation) => {
             res.json({
@@ -102,7 +102,7 @@ function addItem(req, res, next) {
             });
         })
         .catch((err) => {
-            res.status(500).json({ message: err.message });
+            res.status(500).json({message: err.message});
         });
 }
 
@@ -133,7 +133,7 @@ async function deleteItem(req, res, next) {
         if (!donation) {
             return res
                 .status(404)
-                .json({ message: "Donation not found", type: "danger" });
+                .json({message: "Donation not found", type: "danger"});
         }
 
         const itemToRemove = itemId;
@@ -141,7 +141,7 @@ async function deleteItem(req, res, next) {
         if (!itemToRemove) {
             return res
                 .status(404)
-                .json({ message: "Item not found", type: "danger" });
+                .json({message: "Item not found", type: "danger"});
         }
 
         for (let i = 0; i < donation.details.items.length; i++) {
@@ -154,7 +154,7 @@ async function deleteItem(req, res, next) {
             }
         }
 
-        await Donation.findByIdAndUpdate(donationId, donation, { new: true });
+        await Donation.findByIdAndUpdate(donationId, donation, {new: true});
 
         res.status(200).json({
             message: "Item deleted successfully",
@@ -162,7 +162,7 @@ async function deleteItem(req, res, next) {
         });
     } catch (err) {
         console.error(`Error: ${err}`);
-        res.status(500).json({ message: err.message, type: "danger" });
+        res.status(500).json({message: err.message, type: "danger"});
     }
 }
 
@@ -189,7 +189,7 @@ function getItem(req, res, next) {
     Donation.findById(donationId)
         .then((donation) => {
             if (!donation) {
-                return res.status(404).json({ message: "Donation not found" });
+                return res.status(404).json({message: "Donation not found"});
             }
 
             const item = donation.details.items.find(
@@ -197,14 +197,14 @@ function getItem(req, res, next) {
             );
 
             if (!item) {
-                return res.status(404).json({ message: "Item not found" });
+                return res.status(404).json({message: "Item not found"});
             }
 
             res.json(item);
         })
         .catch((err) => {
             console.error("Error retrieving donation:", err);
-            res.status(500).json({ message: "Internal Server Error" });
+            res.status(500).json({message: "Internal Server Error"});
         });
 }
 
@@ -243,7 +243,7 @@ function updateItem(req, res, next) {
         .then((donation) => {
 
             if (!donation) {
-                return res.status(404).json({ message: "Donation not found" });
+                return res.status(404).json({message: "Donation not found"});
             }
 
             const item = donation.details.items.find(
@@ -251,7 +251,7 @@ function updateItem(req, res, next) {
             );
 
             if (!item) {
-                return res.status(404).json({ message: "Item not found" });
+                return res.status(404).json({message: "Item not found"});
             }
 
             item.brand = itemData.brand;
@@ -283,7 +283,7 @@ function updateItem(req, res, next) {
             console.error("Error updating item:", err);
 
             if (!res.headersSent) {
-                res.status(500).json({ message: "Internal Server Error" });
+                res.status(500).json({message: "Internal Server Error"});
             }
         });
 }
@@ -313,7 +313,7 @@ function uploadImage(req, res, next) {
     Donation.findById(req.body.entityId)
         .then((donation) => {
             if (!donation) {
-                return res.status(404).json({ message: "Donation not found" });
+                return res.status(404).json({message: "Donation not found"});
             }
 
             const item = donation.details.items.find(
@@ -321,7 +321,7 @@ function uploadImage(req, res, next) {
             );
 
             if (!item) {
-                return res.status(404).json({ message: "Item not found" });
+                return res.status(404).json({message: "Item not found"});
             }
 
             item.photo = imageUrl;
@@ -337,7 +337,7 @@ function uploadImage(req, res, next) {
             console.error("Error updating item: ", err);
 
             if (!res.headersSent) {
-                res.status(500).json({ message: "Internal server error." });
+                res.status(500).json({message: "Internal server error."});
             }
         });
 }

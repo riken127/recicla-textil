@@ -19,7 +19,7 @@ export class AuthenticationService {
   }
 
   public isAuthenticated(): Observable<boolean> {
-    return this.http.get<any>(`${this.apiUrl}/check`, {})
+    return this.http.get<any>(`${this.apiUrl}/check`, {observe: 'response', withCredentials: true})
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status == 200) {

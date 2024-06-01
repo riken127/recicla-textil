@@ -116,7 +116,7 @@ $(document).ready(function () {
 
     // Function to open the Details modal
     window.openDetailsModal = (donationId) => {
-        currentDonationId = donationId; 
+        currentDonationId = donationId;
 
         if (donationId) {
             $.ajax({
@@ -140,23 +140,23 @@ $(document).ready(function () {
                     $("#detailsUserPhoneNumber").val(user.phone);
                     $("#detailsUserAddress").val(
                         user.address.street +
-                            ", " +
-                            user.address.city +
-                            ", " +
-                            user.address.country +
-                            ", " +
-                            user.address.postalCode
+                        ", " +
+                        user.address.city +
+                        ", " +
+                        user.address.country +
+                        ", " +
+                        user.address.postalCode
                     );
                     $("#detailsBenefactorName").val(benefactor.name);
                     $("#detailsBenefactorPhone").val(benefactor.phone);
                     $("#detailsPickpointAddress").val(
                         pickpoint.street +
-                            ", " +
-                            pickpoint.city +
-                            ", " +
-                            pickpoint.country +
-                            ", " +
-                            pickpoint.postalCode
+                        ", " +
+                        pickpoint.city +
+                        ", " +
+                        pickpoint.country +
+                        ", " +
+                        pickpoint.postalCode
                     );
                     $("#itemCount").val(response.details.numberOfItems);
                     $("#totalWeight").val(response.details.totalWeight);
@@ -170,7 +170,7 @@ $(document).ready(function () {
                         dataSrc: "",
                     },
                     columns: [
-                        { data: "brand", title: "Brand" },
+                        {data: "brand", title: "Brand"},
                         {
                             data: null,
                             title: "Weight",
@@ -180,8 +180,8 @@ $(document).ready(function () {
                                 );
                             },
                         },
-                        { data: "size", title: "Size" },
-                        { data: "type", title: "Type" },
+                        {data: "size", title: "Size"},
+                        {data: "type", title: "Type"},
                     ],
                 });
             } else {
@@ -357,7 +357,7 @@ $(document).ready(function () {
         currentDonationId = donationId;
         $("#deleteModal").modal("show");
     };
-    
+
     // Click event listener for delete confirmation button
     $(document).on("click", "#confirmDelete", function () {
         var donationId = currentDonationId;
@@ -444,7 +444,7 @@ $(document).ready(function () {
         $.ajax({
             url: "/users/all",
             type: "POST",
-            data: { length: 10 },
+            data: {length: 10},
             success: function (users) {
                 $("#userContainer").empty();
 
@@ -479,7 +479,7 @@ $("#userSearch").on("input", function () {
     $.ajax({
         url: "/users/all",
         type: "POST",
-        data: { "search[value]": searchValue, length: 10 },
+        data: {"search[value]": searchValue, length: 10},
         success: function (users) {
             $("#userContainer").empty();
 
@@ -521,7 +521,7 @@ $(document).ready(function () {
         $.ajax({
             url: "/benefactors/all",
             type: "POST",
-            data: { length: 10 },
+            data: {length: 10},
             success: function (benefactors) {
                 $("#benefactorContainer").empty();
 
@@ -560,7 +560,7 @@ $("#benefactorSearch").on("input", function () {
     $.ajax({
         url: "/benefactors/all",
         type: "POST",
-        data: { "search[value]": searchValue, length: 10 },
+        data: {"search[value]": searchValue, length: 10},
         success: function (benefactors) {
             $("#benefactorContainer").empty();
             benefactors.data.forEach((benefactor) => {
@@ -752,7 +752,7 @@ $(document).ready(function () {
         $.ajax({
             url: "/users/all",
             type: "POST",
-            data: { length: 10 },
+            data: {length: 10},
             success: function (users) {
                 $("#editUserContainer").empty();
 
@@ -787,7 +787,7 @@ $("#editUserSearch").on("input", function () {
     $.ajax({
         url: "/users/all",
         type: "POST",
-        data: { "search[value]": searchValue, length: 10 },
+        data: {"search[value]": searchValue, length: 10},
         success: function (users) {
             $("#editUserContainer").empty();
             users.data.forEach((user) => {
@@ -828,7 +828,7 @@ $(document).ready(function () {
         $.ajax({
             url: "/benefactors/all",
             type: "POST",
-            data: { length: 10 },
+            data: {length: 10},
             success: function (benefactors) {
                 $("#editBenefactorContainer").empty();
 
@@ -867,7 +867,7 @@ $("#editBenefactorSearch").on("input", function () {
     $.ajax({
         url: "/benefactors/all",
         type: "POST",
-        data: { "search[value]": searchValue, length: 10 },
+        data: {"search[value]": searchValue, length: 10},
         success: function (benefactors) {
             $("#editBenefactorContainer").empty();
 

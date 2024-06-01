@@ -76,7 +76,7 @@ $(document).ready(function () {
                         : "N/A";
                 },
             },
-            { data: "phone", title: "Phone" },
+            {data: "phone", title: "Phone"},
             {
                 data: "createdAt",
                 title: "Created At",
@@ -331,7 +331,7 @@ $(document).ready(function () {
                 .addClass("show")
                 .removeClass("fade")
                 .css("display", "block");
-                
+
             return;
         }
 

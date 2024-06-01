@@ -10,7 +10,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Offer} from '../../models/offer';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-edit-offer',
@@ -30,7 +30,7 @@ import {Router} from '@angular/router';
 })
 
 export class EditOfferComponent implements OnInit {
-  form: FormGroup;
+  form!: FormGroup;
   submitted = false;
   current: string = '';
 
@@ -39,16 +39,9 @@ export class EditOfferComponent implements OnInit {
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
     private router: Router,
-  ) {
-    this.form = this.formBuilder.group({
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
-      benefactor: ['66341183612bf8d5aff074f0'],
-      title: ['', [Validators.required, Validators.minLength(6)]],
-      description: ['']
-    }, {
-      validators: this.MustBeGreater('endDate', 'startDate')
-    });
+    private route: ActivatedRoute
+    ) {
+
   }
 
   get f() {
@@ -79,28 +72,40 @@ export class EditOfferComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.benefactorsService.getOffers('66341183612bf8d5aff074f0')
-      ?.subscribe(
-        result => {
-          const matchingOffer = result?.find(offer => offer?._id === "66558beacdfdbbfbc77f620d");
+    this.route.paramMap.subscribe((params) => {
+      this.form = this.formBuilder.group({
+        startDate: ['', Validators.required],
+        endDate: ['', Validators.required],
+        benefactor: [params.get('benefactor')],
+        title: ['', [Validators.required, Validators.minLength(6)]],
+        description: ['']
+      }, {
+        validators: this.MustBeGreater('endDate', 'startDate')
+      });
 
-          if (matchingOffer) {
-            this.current = matchingOffer!._id;
-            this.form.setValue({
-              startDate: new Date(matchingOffer!.startDate).toISOString().slice(0, 10),
-              endDate: new Date(matchingOffer!.endDate).toISOString().slice(0, 10),
-              benefactor: '66341183612bf8d5aff074f0',
-              title: matchingOffer!.title || '',
-              description: matchingOffer!.description || ''
+      this.benefactorsService.getOffers(params.get('benefactor') || '')
+        ?.subscribe(
+          result => {
+            const matchingOffer = result?.find(offer => offer?._id === params.get('offer'));
+
+            if (matchingOffer) {
+              this.current = matchingOffer!._id;
+              this.form.setValue({
+                startDate: new Date(matchingOffer!.startDate).toISOString().slice(0, 10),
+                endDate: new Date(matchingOffer!.endDate).toISOString().slice(0, 10),
+                benefactor: params.get('benefactor'),
+                title: matchingOffer!.title || '',
+                description: matchingOffer!.description || ''
+              });
+            }
+          },
+          error => {
+            this.snackBar.open(error?.error?.message || 'An error occurred', 'Close', {
+              duration: 3000
             });
           }
-        },
-        error => {
-          this.snackBar.open(error?.error?.message || 'An error occurred', 'Close', {
-            duration: 3000
-          });
-        }
-      );
+        );
+    });
   }
 
   onSubmit() {

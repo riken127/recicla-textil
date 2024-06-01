@@ -54,239 +54,239 @@
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-<%- include('../partials/sidebar')%>
-<div class="mt-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="header border-0 rounded shadow">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <h1 class="header-title"><i class="fas fa-socks fa-lg"></i>&nbsp;reciclatextil</h1>
-                        <div class="py-3 px-3">
-                            <h3><i class="fa-solid fa-user-tie"></i>&nbsp; <%= data[6] %></h3>
-                            <h3><i class="fa-solid fa-store"></i>&nbsp; <%= data[7][0].totalPickpoints %>
-                            </h3>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <h2>Benefactor Activity</h2>
-                        <div class="chart-container">
-                            <canvas id="benefactorActivity"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="jumbotron py-3">
-    <div class="container">
+    <%- include('../partials/sidebar') %>
+    <div class="mt-4">
         <div class="row">
             <div class="col-12">
-                <h1 class="display-6">Benefactor Distribution</h1>
-            </div>
-            <div class="col-lg-6">
-                <div class="card bg-white border-0 shadow">
-                    <div class="card-body">
-                        <h2 class="card-title">Country Distribution</h2>
-                        <div class="chart-container" style="padding: 20px;">
-                            <canvas id="benefactorCountries" style="width:100%; height:auto;"></canvas>
+                <div class="header border-0 rounded shadow">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h1 class="header-title"><i class="fas fa-socks fa-lg"></i>&nbsp;reciclatextil</h1>
+                            <div class="py-3 px-3">
+                                <h3><i class="fa-solid fa-user-tie"></i>&nbsp; <%= data[6] %></h3>
+                                <h3><i class="fa-solid fa-store"></i>&nbsp; <%= data[7][0].totalPickpoints %>
+                                </h3>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card bg-white border-0 shadow">
-                    <div class="card-body">
-                        <h2 class="card-title">City Distribution</h2>
-                        <div class="chart-container" style="padding: 20px;">
-                            <canvas id="benefactorCities" style="width:100%; height:auto;"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="jumbotron py-3">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="display-6">Pickpoint Distribution</h1>
-            </div>
-            <div class="col-lg-6">
-                <div class="card bg-white border-0 shadow">
-                    <div class="card-body">
-                        <h2 class="card-title">Country Distribution</h2>
-                        <div class="chart-container" style="padding: 20px;">
-                            <canvas id="pickpointCountries" style="width:100%; height:auto;"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card bg-white border-0 shadow">
-                    <div class="card-body">
-                        <h2 class="card-title">City Distribution</h2>
-                        <div class="chart-container" style="padding: 20px;">
-                            <canvas id="pickpointCities" style="width:100%; height:auto;"></canvas>
+                        <div class="col-md-6">
+                            <h2>Benefactor Activity</h2>
+                            <div class="chart-container">
+                                <canvas id="benefactorActivity"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    const ba = document.getElementById("benefactorActivity");
-    const bct = document.getElementById("benefactorCountries");
-    const bci = document.getElementById("benefactorCities");
-    const ppci = document.getElementById("pickpointCities");
-    const ppco = document.getElementById("pickpointCountries");
-    <% let benefactorActivity = data[5];
-    let benefactorCountries = data[3];
-    let benefactorCities = data[4];
-    let pickpointCities = data[0];
-    let pickpointCountries = data[1];
+    <div class="jumbotron py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="display-6">Benefactor Distribution</h1>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card bg-white border-0 shadow">
+                        <div class="card-body">
+                            <h2 class="card-title">Country Distribution</h2>
+                            <div class="chart-container" style="padding: 20px;">
+                                <canvas id="benefactorCountries" style="width:100%; height:auto;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card bg-white border-0 shadow">
+                        <div class="card-body">
+                            <h2 class="card-title">City Distribution</h2>
+                            <div class="chart-container" style="padding: 20px;">
+                                <canvas id="benefactorCities" style="width:100%; height:auto;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    function getMonthName(monthNumber) {
-        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        return monthNames[monthNumber - 1];
-    } %>
+    <div class="jumbotron py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="display-6">Pickpoint Distribution</h1>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card bg-white border-0 shadow">
+                        <div class="card-body">
+                            <h2 class="card-title">Country Distribution</h2>
+                            <div class="chart-container" style="padding: 20px;">
+                                <canvas id="pickpointCountries" style="width:100%; height:auto;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card bg-white border-0 shadow">
+                        <div class="card-body">
+                            <h2 class="card-title">City Distribution</h2>
+                            <div class="chart-container" style="padding: 20px;">
+                                <canvas id="pickpointCities" style="width:100%; height:auto;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ba = document.getElementById("benefactorActivity");
+        const bct = document.getElementById("benefactorCountries");
+        const bci = document.getElementById("benefactorCities");
+        const ppci = document.getElementById("pickpointCities");
+        const ppco = document.getElementById("pickpointCountries");
+        <% let benefactorActivity = data[5];
+        let benefactorCountries = data[3];
+        let benefactorCities = data[4];
+        let pickpointCities = data[0];
+        let pickpointCountries = data[1];
+
+        function getMonthName(monthNumber) {
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            return monthNames[monthNumber - 1];
+        } %>
 
 
-    new Chart(ba, {
-        type: 'line',
-        data: {
-            labels: <%- JSON.stringify(benefactorActivity.map(item => getMonthName(item._id))) %>,
-            datasets: [
-                {
-                    label: 'Updates Per Month',
-                    data: <%- JSON.stringify(benefactorActivity.map(item => item.updates)) %>,
-                    fill: true,
-                    tension: 0.1,
-                    borderColor: '#00ffbf',
-                },
-                {
-                    label: 'Creates Per Month',
-                    data: <%- JSON.stringify(benefactorActivity.map(item => item.creations)) %>,
-                    fill: true,
-                    tension: 0.1,
-                    borderColor: '#ff4c00',
-                }
-            ],
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)',
-                        borderColor: 'rgba(255, 255, 255, 0.1)'
+        new Chart(ba, {
+            type: 'line',
+            data: {
+                labels: <%- JSON.stringify(benefactorActivity.map(item => getMonthName(item._id))) %>,
+                datasets: [
+                    {
+                        label: 'Updates Per Month',
+                        data: <%- JSON.stringify(benefactorActivity.map(item => item.updates)) %>,
+                        fill: true,
+                        tension: 0.1,
+                        borderColor: '#00ffbf',
                     },
-                    ticks: {
-                        color: 'white',
+                    {
+                        label: 'Creates Per Month',
+                        data: <%- JSON.stringify(benefactorActivity.map(item => item.creations)) %>,
+                        fill: true,
+                        tension: 0.1,
+                        borderColor: '#ff4c00',
                     }
-                },
-                x: {
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)',
-                        borderColor: 'rgba(255, 255, 255, 0.1)'
-                    },
-                    ticks: {
-                        color: 'white'
-                    }
-                }
+                ],
             },
-            plugins: {
-                legend: {
-                    labels: {
-                        color: 'white'
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            borderColor: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: 'white',
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            borderColor: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: 'white'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
                     }
                 }
             }
-        }
-    });
+        });
 
-    new Chart(ppci, {
-        type: 'bar',
-        data: {
-            labels: <%- JSON.stringify(pickpointCities.map(item => item._id)) %>,
-            datasets: [{
-                label: 'Number of PickPoints p/ City (Top 10).',
-                data: <%= JSON.stringify(pickpointCities.map(item => item.totalPickpoints)) %>,
-                borderWidth: 1,
-                backgroundColor: [
-                    '#960000',
-                    '#775400',
-                    '#00946e',
-                    '#005977',
-                    '#00475e',
-                ],
-            }]
-        }
-    });
-    new Chart(ppco, {
-        type: 'bar',
-        data: {
-            labels: <%- JSON.stringify(pickpointCountries.map(item => item._id)) %>,
-            datasets: [{
-                label: 'Number of PickPoints p/Country (Top 10).',
-                data: <%= JSON.stringify(pickpointCountries.map(item => item.totalPickpoints)) %>,
-                borderWidth: 1,
-                backgroundColor: [
-                    '#ff6868',
-                    '#ffbe76',
-                    '#ffe07c',
-                    '#dcff87',
-                    '#bcff94',
-                    '#90ffd9',
-                ]
-            }]
-        }
-    });
-    new Chart(bct, {
-        type: 'bar',
-        data: {
-            labels: <%- JSON.stringify(benefactorCountries.map(item => item._id)) %>,
-            datasets: [{
-                label: 'Number of Benefactors p/ Country (Top 10)',
-                data: <%= JSON.stringify(benefactorCountries.map(item => item.count)) %>,
-                borderWidth: 1,
-                backgroundColor: [
-                    '#FF6B6B',
-                    '#FFD166',
-                    '#06D6A0',
-                    '#118AB2',
-                    '#073B4C',
-                ],
-            }]
-        },
-    });
-    new Chart(bci, {
-        type: 'bar',
-        data: {
-            labels: <%- JSON.stringify(benefactorCities.map(item => item._id)) %>,
-            datasets: [{
-                label: 'Number of Benefactors p/ City (Top 10)',
-                data: <%= JSON.stringify(benefactorCities.map(item => item.count)) %>,
-                borderWidth: 1,
-                backgroundColor: [
-                    '#ff0000',
-                    '#ff8800',
-                    '#ffc400',
-                    '#b7ff00',
-                    '#5eff00',
-                    '#00ffa6',
-                ]
-            }]
-        }
-    });
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-<%- include('../partials/footer') %>
+        new Chart(ppci, {
+            type: 'bar',
+            data: {
+                labels: <%- JSON.stringify(pickpointCities.map(item => item._id)) %>,
+                datasets: [{
+                    label: 'Number of PickPoints p/ City (Top 10).',
+                    data: <%= JSON.stringify(pickpointCities.map(item => item.totalPickpoints)) %>,
+                    borderWidth: 1,
+                    backgroundColor: [
+                        '#960000',
+                        '#775400',
+                        '#00946e',
+                        '#005977',
+                        '#00475e',
+                    ],
+                }]
+            }
+        });
+        new Chart(ppco, {
+            type: 'bar',
+            data: {
+                labels: <%- JSON.stringify(pickpointCountries.map(item => item._id)) %>,
+                datasets: [{
+                    label: 'Number of PickPoints p/Country (Top 10).',
+                    data: <%= JSON.stringify(pickpointCountries.map(item => item.totalPickpoints)) %>,
+                    borderWidth: 1,
+                    backgroundColor: [
+                        '#ff6868',
+                        '#ffbe76',
+                        '#ffe07c',
+                        '#dcff87',
+                        '#bcff94',
+                        '#90ffd9',
+                    ]
+                }]
+            }
+        });
+        new Chart(bct, {
+            type: 'bar',
+            data: {
+                labels: <%- JSON.stringify(benefactorCountries.map(item => item._id)) %>,
+                datasets: [{
+                    label: 'Number of Benefactors p/ Country (Top 10)',
+                    data: <%= JSON.stringify(benefactorCountries.map(item => item.count)) %>,
+                    borderWidth: 1,
+                    backgroundColor: [
+                        '#FF6B6B',
+                        '#FFD166',
+                        '#06D6A0',
+                        '#118AB2',
+                        '#073B4C',
+                    ],
+                }]
+            },
+        });
+        new Chart(bci, {
+            type: 'bar',
+            data: {
+                labels: <%- JSON.stringify(benefactorCities.map(item => item._id)) %>,
+                datasets: [{
+                    label: 'Number of Benefactors p/ City (Top 10)',
+                    data: <%= JSON.stringify(benefactorCities.map(item => item.count)) %>,
+                    borderWidth: 1,
+                    backgroundColor: [
+                        '#ff0000',
+                        '#ff8800',
+                        '#ffc400',
+                        '#b7ff00',
+                        '#5eff00',
+                        '#00ffa6',
+                    ]
+                }]
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+    <%- include('../partials/footer') %>

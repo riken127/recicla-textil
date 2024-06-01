@@ -17,67 +17,67 @@ const {Type} = require("mongoose");
  * router.post('redeem/:prize', storeController.redeemPrize);
  */
 function redeemPrize(req, res, next) {
-	let user = req.body.user;
-	let prize;
+    let user = req.body.user;
+    let prize;
 
-	if (!req.params.prize) {
-		return res.status(500).json({
-			type: 'error',
-			message: 'prize is undefined.'
-		})
-	}
+    if (!req.params.prize) {
+        return res.status(500).json({
+            type: 'error',
+            message: 'prize is undefined.'
+        })
+    }
 
-	if (!user) {
-		return res.status(401).json({
-			type: 'error',
-			message: 'unauthorized'
-		});
-	}
+    if (!user) {
+        return res.status(401).json({
+            type: 'error',
+            message: 'unauthorized'
+        });
+    }
 
-	User.findById(user._id)
-		.then(curr => {
-			user = user;
-		})
-		.catch(err => {
-			return res.status(500).json({
-				type: 'error',
-				message: err
-			});
-		});
+    User.findById(user._id)
+        .then(curr => {
+            user = user;
+        })
+        .catch(err => {
+            return res.status(500).json({
+                type: 'error',
+                message: err
+            });
+        });
 
-	Prize.findById(req.params.prize)
-		.then(curr => {
-			prize = curr;
-		})
-		.catch(err => {
-			return res.status(500).json({
-				type: 'error',
-				message: err
-			});
-		});
+    Prize.findById(req.params.prize)
+        .then(curr => {
+            prize = curr;
+        })
+        .catch(err => {
+            return res.status(500).json({
+                type: 'error',
+                message: err
+            });
+        });
 
-	if (user.points < prize.price) {
-		return res.status(500).json({
-			type: 'error',
-			message: 'unsufficient amount of points to complete the choosen trasaction.'
-		});
-	}
+    if (user.points < prize.price) {
+        return res.status(500).json({
+            type: 'error',
+            message: 'unsufficient amount of points to complete the choosen trasaction.'
+        });
+    }
 
-	user.points -= prize.price;
+    user.points -= prize.price;
 
-	User.findByIdAndUpdate(user._id, user, {new: true})
-		.then(user => {
-			return res.status(200).json({
-				type: 'success',
-				message: '42X132-X12313-Z1241241-Z124141'
-			});
-		})
-		.catch(err => {
-			return res.status(500).json({
-				type: 'error',
-				message: err
-			});
-		});
+    User.findByIdAndUpdate(user._id, user, {new: true})
+        .then(user => {
+            return res.status(200).json({
+                type: 'success',
+                message: '42X132-X12313-Z1241241-Z124141'
+            });
+        })
+        .catch(err => {
+            return res.status(500).json({
+                type: 'error',
+                message: err
+            });
+        });
 }
 
 /**
@@ -93,44 +93,44 @@ function redeemPrize(req, res, next) {
  * router.post('/', storeController.addPrize);
  */
 function addPrize(req, res, next) {
-	let prize = new Prize({
-		price: req.body.price,
-		title: req.body.title,
-		description: req.body.description,
-		image: req.body.image,
-		benefactor: req.body.benefactor
-	});
+    let prize = new Prize({
+        price: req.body.price,
+        title: req.body.title,
+        description: req.body.description,
+        image: req.body.image,
+        benefactor: req.body.benefactor
+    });
 
-	if (!prize.price || !prize.title || !prize.benefactor) {
-		return res.status(500).json({
-			type: 'error',
-			message: 'required fields were not written.'
-		});
-	}
+    if (!prize.price || !prize.title || !prize.benefactor) {
+        return res.status(500).json({
+            type: 'error',
+            message: 'required fields were not written.'
+        });
+    }
 
-	prize.save()
-		.then(prize => {
-			if (
-				prize.image &&
-				!fs.existsSync('./uploads/benefactor/' + prize.benefactor)
-			) {
-				fs.mkdirSync(
-					'./uploads/benefactor/' + prize.benefactor + '/prizes',
-					{recursive: true}
-				);
-			}
+    prize.save()
+        .then(prize => {
+            if (
+                prize.image &&
+                !fs.existsSync('./uploads/benefactor/' + prize.benefactor)
+            ) {
+                fs.mkdirSync(
+                    './uploads/benefactor/' + prize.benefactor + '/prizes',
+                    {recursive: true}
+                );
+            }
 
-			return res.status(200).json({
-				type: 'success',
-				message: 'prize was created successfully'
-			});
-		})
-		.catch(error => {
-			return res.status(500).json({
-				type: 'error',
-				result: error
-			})
-		})
+            return res.status(200).json({
+                type: 'success',
+                message: 'prize was created successfully'
+            });
+        })
+        .catch(error => {
+            return res.status(500).json({
+                type: 'error',
+                result: error
+            })
+        })
 }
 
 /**
@@ -146,42 +146,43 @@ function addPrize(req, res, next) {
  * router.put('/:id', storeController.editPrize);
  */
 function editPrize(req, res, next) {
-	let prize = req.body;
+    let prize = req.body;
 
-	Prize.findByIdAndUpdate(req.params.id, prize, {new: true})
-		.then(prize => {
-			if (
-				prize.image &&
-				!fs.existsSync('./uploads/benefactor/' + prize.benefactor)
-			) {
-				fs.mkdirSync(
-					'./uploads/benefactor/' + prize.benefactor + '/prizes',
-					{recursive: true}
-				)
-			}
+    Prize.findByIdAndUpdate(req.params.id, prize, {new: true})
+        .then(prize => {
+            if (
+                prize.image &&
+                !fs.existsSync('./uploads/benefactor/' + prize.benefactor)
+            ) {
+                fs.mkdirSync(
+                    './uploads/benefactor/' + prize.benefactor + '/prizes',
+                    {recursive: true}
+                )
+            }
 
-			if (!prize) {
-				return res.status(500).json({
-					type: 'error',
-					message: 'prize not found'
-				});
-			}
+            if (!prize) {
+                return res.status(500).json({
+                    type: 'error',
+                    message: 'prize not found'
+                });
+            }
 
-			return res.status(200).json({
-				type: 'success',
-				message: prize._id + " was updated successfully."
-			});
-		})
-		.catch(error => {
-			return res.status(500).json({
-				type: 'error',
-				message: error
-			})
-		})
+            return res.status(200).json({
+                type: 'success',
+                message: prize._id + " was updated successfully."
+            });
+        })
+        .catch(error => {
+            return res.status(500).json({
+                type: 'error',
+                message: error
+            })
+        })
 }
+
 /**
  * Deletes a prize, receives the prize id via the url.
- * 
+ *
  * This function deletes a prize, if it exists.
  *
  * @param {Object} req - The request object.
@@ -192,37 +193,37 @@ function editPrize(req, res, next) {
  * router.delete('/:id', storeController.deletePrize);
  */
 function deletePrize(req, res, next) {
-	Prize.findByIdAndDelete(req.params.id, {new: true})
-		.then(prize => {
-			if (!prize) {
-				return res.status(500).json({
-					type: 'error',
-					message: 'prize not found'
-				})
-			}
+    Prize.findByIdAndDelete(req.params.id, {new: true})
+        .then(prize => {
+            if (!prize) {
+                return res.status(500).json({
+                    type: 'error',
+                    message: 'prize not found'
+                })
+            }
 
-			if (prize.image) {
-				try {
-					return fs.unlinkSync('./uploads/' + prize.image);
-				} catch (err) {
-					res.status(500).json({
-						type: 'error',
-						message: err
-					})
-				}
-			}
+            if (prize.image) {
+                try {
+                    return fs.unlinkSync('./uploads/' + prize.image);
+                } catch (err) {
+                    res.status(500).json({
+                        type: 'error',
+                        message: err
+                    })
+                }
+            }
 
-			return res.status(200).json({
-				type: 'success',
-				message: 'prize was deleted successfully.'
-			});
-		})
-		.catch(error => {
-			return res.status(500).json({
-				type: 'error',
-				message: error
-			})
-		});
+            return res.status(200).json({
+                type: 'success',
+                message: 'prize was deleted successfully.'
+            });
+        })
+        .catch(error => {
+            return res.status(500).json({
+                type: 'error',
+                message: error
+            })
+        });
 }
 
 /**
@@ -238,23 +239,23 @@ function deletePrize(req, res, next) {
  * router.get('/:id', storeController.getPrize);
  */
 function getPrize(req, res, next) {
-	Prize.findById({benefactor: req.params.id})
-		.then(prize => {
-			if (!prize) {
-				return res.status(500).json({
-					type: 'error',
-					message: 'prize not found'
-				});
-			}
+    Prize.findById({benefactor: req.params.id})
+        .then(prize => {
+            if (!prize) {
+                return res.status(500).json({
+                    type: 'error',
+                    message: 'prize not found'
+                });
+            }
 
-			res.status(200).json(user);
-		})
-		.catch(err => {
-			res.status(500).json({
-				type: 'error',
-				message: err
-			});
-		});
+            res.status(200).json(user);
+        })
+        .catch(err => {
+            res.status(500).json({
+                type: 'error',
+                message: err
+            });
+        });
 }
 
 /**
@@ -269,25 +270,25 @@ function getPrize(req, res, next) {
  * router.get('benefactor/:id', storeController.getBenefactorPrizes);
  */
 function getBenefactorPrizes(req, res, next) {
-	Prize.find({
-				benefactor: req.params.id
-})
-		.then(users => {
-			if (!users) {
-				return res.status(500).json({
-					type: 'error',
-					message: 'no prize found'
-				});
-			}
+    Prize.find({
+        benefactor: req.params.id
+    })
+        .then(users => {
+            if (!users) {
+                return res.status(500).json({
+                    type: 'error',
+                    message: 'no prize found'
+                });
+            }
 
-			res.status(200).json(users);
-		})
-		.catch(error => {
-			res.status(500).json({
-				type: 'error',
-				message: error
-			});
-		});
+            res.status(200).json(users);
+        })
+        .catch(error => {
+            res.status(500).json({
+                type: 'error',
+                message: error
+            });
+        });
 }
 
 /**
@@ -302,32 +303,32 @@ function getBenefactorPrizes(req, res, next) {
  * router.get('all/:n/:p', storeController.getAllPrizes);
  */
 async function getAllPrizes(req, res, next) {
-	try {
-		const elementsPerPage = parseInt(req.params.n);
-		const pageNumber = parseInt(req.params.p);
+    try {
+        const elementsPerPage = parseInt(req.params.n);
+        const pageNumber = parseInt(req.params.p);
 
-		if (isNaN(elementsPerPage) || isNaN(pageNumber) || elementsPerPage <= 0 || pageNumber < 0) {
-			return res.status(400).json({error: 'Invalid parameters'});
-		}
+        if (isNaN(elementsPerPage) || isNaN(pageNumber) || elementsPerPage <= 0 || pageNumber < 0) {
+            return res.status(400).json({error: 'Invalid parameters'});
+        }
 
-		const skip = pageNumber * elementsPerPage;
+        const skip = pageNumber * elementsPerPage;
 
-		const prizes = await Prize.find()
-			.limit(elementsPerPage)
-			.skip(skip);
+        const prizes = await Prize.find()
+            .limit(elementsPerPage)
+            .skip(skip);
 
-		res.status(200).json(prizes);
-	} catch (error) {
-		next(error);
-	}
+        res.status(200).json(prizes);
+    } catch (error) {
+        next(error);
+    }
 }
 
 module.exports = {
-	getAllPrizes,
-	getBenefactorPrizes,
-	getPrize,
-	addPrize,
-	editPrize,
-	deletePrize,
-	redeemPrize
+    getAllPrizes,
+    getBenefactorPrizes,
+    getPrize,
+    addPrize,
+    editPrize,
+    deletePrize,
+    redeemPrize
 }
