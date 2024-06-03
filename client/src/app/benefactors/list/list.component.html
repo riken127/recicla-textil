@@ -6,7 +6,7 @@
     <div class="search-container">
       <mat-form-field appearance="outline" class="search-field">
         <mat-label>Search...</mat-label>
-        <input matInput placeholder="Search..."/>
+        <input matInput placeholder="Search..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchTermChange()"/>
         <button mat-icon-button matSuffix>
           <mat-icon>search</mat-icon>
         </button>
@@ -14,8 +14,7 @@
     </div>
   </div>
 
-  @if (benefactors.length > 0) {
-
+  <ng-container *ngIf="benefactors.length > 0; else noBenefactors">
     <mat-grid-list cols="3" rowHeight="350px">
       <mat-grid-tile *ngFor="let benefactor of benefactors">
         <mat-card>
@@ -55,13 +54,12 @@
         </mat-card>
       </mat-grid-tile>
     </mat-grid-list>
+  </ng-container>
 
-  } @else {
-
+  <ng-template #noBenefactors>
     <div class="empty-container">
       <h2>No benefactors found</h2>
     </div>
-
-  }
-
+  </ng-template>
 </div>
+

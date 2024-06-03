@@ -19,23 +19,28 @@ export class BenefactorsService {
   constructor(private http: HttpClient) {
   }
 
-  public getAllBenefactors(): Observable<Benefactor[]> | null {
-    return this.http.post<Benefactor[]>(`${BenefactorsService.apiUrl}` + '/all', {rest: true}, {
-      observe: 'response',
-      withCredentials: true
-    })
+  getAllBenefactors(draw: number, start: number, length: number, searchValue: string, orderBy: string, columnIndex: number, status?: string): Observable<any> {
+    const body = {
+      draw,
+      start,
+      length,
+      'search[value]': searchValue,
+      'order[0][dir]': orderBy,
+      'order[0][column]': columnIndex,
+      status
+    };
+
+    return this.http.post<{ data: Benefactor[], draw: number, recordsTotal: number, recordsFiltered: number }>(`${BenefactorsService.apiUrl}/all`, body, {withCredentials: true, observe: 'response'})
       .pipe(
-        map((response: HttpResponse<any>) => {
-          if (response.status === 200) {
-            return response.body.data;
-          } else {
-            throw new Error('Error fetching benefactors');
-          }
-        }),
-        catchError(error => {
-          return throwError(error);
+        map((response: HttpResponse<any>)=> {
+          return {
+            benefactors: response.body.data,
+            draw: response.body.draw,
+            recordsTotal: response.body.recordsTotal,
+            recordsFiltered: response.body.recordsFiltered
+          };
         })
-      )
+      );
   }
 
   public getBenefactor(id: string): Observable<Benefactor> | null {

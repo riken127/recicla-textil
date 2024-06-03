@@ -20,27 +20,32 @@ const mailController = require("../controllers/MailController");
  * router.get('/all', benefactorController.renderBenefactorsTable);
  */
 function renderBenefactorsTable(req, res, next) {
-    const page = req.body.page || 1;
+    const page = parseInt(req.query.page) || 1;
+    const searchTerm = req.query.search || '';
+    const limit = 10;
 
-    Benefactor.find()
-        .skip((page - 1) * 10)
-        .limit(10)
+    const query = searchTerm
+        ? { name: { $regex: searchTerm, $options: 'i' } }
+        : {};
+
+    Benefactor.find(query)
+        .skip((page - 1) * limit)
+        .limit(limit)
         .exec()
-        .then((benefactors) => {
-            res.render("benefactors/table", {
+        .then(benefactors => {
+            res.json({
                 benefactors: benefactors,
-                currentRoute: "/benefactors/all",
-                username: req.user.username,
-                pfp: req.user.image,
+                currentPage: page
             });
         })
-        .catch((err) => {
-            res.json({
+        .catch(err => {
+            res.status(500).json({
                 message: err.message,
-                type: "danger",
+                type: 'danger'
             });
         });
 }
+
 
 /**
  * Retrieves all benefactors with DataTables parameters.
@@ -94,7 +99,7 @@ async function getAllBenefactors(req, res, next) {
         .sort({[column]: order})
         .exec()
         .then((benefactors) => {
-            res.json({
+            return res.json({
                 draw: parseInt(draw),
                 recordsTotal: totalRecords,
                 recordsFiltered: totalRecords,
@@ -102,7 +107,7 @@ async function getAllBenefactors(req, res, next) {
             });
         })
         .catch((err) => {
-            res.status(500).json({
+            return res.status(500).json({
                 error: err.message,
             });
         });
