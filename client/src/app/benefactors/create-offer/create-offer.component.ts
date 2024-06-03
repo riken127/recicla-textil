@@ -80,7 +80,8 @@ export class CreateOfferComponent implements OnInit {
         endDate: [new Date(Date.now()), Validators.required],
         benefactor: [params.get('id')],
         title: ['', [Validators.required, Validators.minLength(6)]],
-        description: ['']
+        description: [''],
+        points: ['']
       }, {
         validators: this.MustBeGreater('endDate', 'startDate')
       });
@@ -102,6 +103,7 @@ export class CreateOfferComponent implements OnInit {
       this.f['title'].value,
       this.f['description'].value,
       this.fileToUpload ? 'y' : '',
+      this.f['points'].value,
       true
     );
 

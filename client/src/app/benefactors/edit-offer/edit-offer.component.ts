@@ -81,7 +81,8 @@ export class EditOfferComponent implements OnInit {
         endDate: ['', Validators.required],
         benefactor: [params.get('benefactor')],
         title: ['', [Validators.required, Validators.minLength(6)]],
-        description: ['']
+        description: [''],
+        points: ['']
       }, {
         validators: this.MustBeGreater('endDate', 'startDate')
       });
@@ -98,7 +99,8 @@ export class EditOfferComponent implements OnInit {
                 endDate: new Date(matchingOffer!.endDate).toISOString().slice(0, 10),
                 benefactor: params.get('benefactor'),
                 title: matchingOffer!.title || '',
-                description: matchingOffer!.description || ''
+                description: matchingOffer!.description || '',
+                points: matchingOffer!.points || 0,
               });
             }
           },
@@ -126,6 +128,7 @@ export class EditOfferComponent implements OnInit {
       this.f['title'].value,
       this.f['description'].value,
       this.fileToUpload ? 'y' : '',
+      this.f['points'].value,
       true
     );
 

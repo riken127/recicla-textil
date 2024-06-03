@@ -7,6 +7,7 @@ export class Offer {
     public title: string,
     public description: string,
     public image: string,
+    public points: number,
     public active: boolean
   ) {
   }

@@ -12,6 +12,7 @@ const OfferSchema = new mongoose.Schema({
     title: {type: String, required: true},
     description: {type: String, required: true},
     image: {type: String},
+    points: {type: Number, required: true},
     active: {type: Boolean, default: true}
 });
 

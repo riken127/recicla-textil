@@ -154,6 +154,7 @@ function addBenefactorOffer(req, res, next) {
         title: offerData.title,
         description: offerData.description,
         image: offerData.image || '',
+        points: offerData.points,
         active: true
     });
 
@@ -176,7 +177,7 @@ function addBenefactorOffer(req, res, next) {
         .catch(error => {
             return res.status(500).json({
                 type: 'error',
-                result: 'olha eu a falhar:' + error,
+                result: error,
             });
         });
 }
@@ -205,6 +206,7 @@ function editBenefactorOffer(req, res, next) {
         title: offerData.title,
         description: offerData.description,
         image: offerData.image || '',
+        points: offerData.points || 0,
         active: offerData.active
     };
 
