@@ -66,6 +66,6 @@ export class ListItemsComponent implements OnInit {
   }
 
   finalize() {
-    this.router.navigate(['/list-donations']);
+    this.router.navigate(['/benefactors']);
   }
 }

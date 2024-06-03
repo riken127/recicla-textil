@@ -22,6 +22,7 @@ import {AllPostsComponent} from "./benefactors/all-posts/all-posts.component";
 import {CreatePickpointComponent} from "./benefactors/create-pickpoint/create-pickpoint.component";
 import {EditPickpointComponent} from "./benefactors/edit-pickpoint/edit-pickpoint.component";
 import {DisablePickpointComponent} from "./benefactors/disable-pickpoint/disable-pickpoint.component";
+import {UserProfileComponent} from './users/user-profile/user-profile.component';
 
 export const routes: Routes = [
   {
@@ -114,6 +115,10 @@ export const routes: Routes = [
     path: ':benefactor/:offer/disable-offer',
     component: DisableOfferComponent,
     canActivate: [authGuard]
+  },
+  {
+    path: 'user-profile',
+    component: UserProfileComponent
   },
   {
     path: ':id/create-pickpoint',

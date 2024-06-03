@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import {MatCardModule} from '@angular/material/card';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatButtonModule} from '@angular/material/button';
@@ -12,7 +13,6 @@ import {AuthenticationService} from '../../services/authentication.service';
 import {Donation} from '../../models/donation';
 import {Benefactor} from '../../models/benefactor';
 import {Pickpoint} from '../../models/pickpoint';
-import {ActivatedRoute, Router} from '@angular/router';
 import {format} from 'date-fns';
 import {MatSnackBar} from '@angular/material/snack-bar';
 

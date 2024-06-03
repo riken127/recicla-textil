@@ -49,3 +49,11 @@
 [data-status="delivered"]::before {
   content: "✅ ";
 }
+mat-card-content {
+  padding: 20px;
+}
+mat-card {
+  margin-bottom: 20px;
+  border-radius: 0%;
+  background-color: #525252;
+}

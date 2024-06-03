@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams, HttpResponse} from '@angular/common/http';
-import {catchError, Observable, throwError} from 'rxjs';
-import {map} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface EntityAuthData {
   username: string;
@@ -15,11 +15,14 @@ export class AuthenticationService {
   private apiUrl = 'http://localhost:3000/auth';
   private loginRoute = '/login';
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   public isAuthenticated(): Observable<boolean> {
-    return this.http.get<any>(`${this.apiUrl}/check`, {observe: 'response', withCredentials: true})
+    return this.http
+      .get<any>(`${this.apiUrl}/check`, {
+        observe: 'response',
+        withCredentials: true,
+      })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status == 200) {
@@ -28,24 +31,29 @@ export class AuthenticationService {
 
           return false;
         }),
-        catchError(error => {
+        catchError((error) => {
           return throwError(error);
         })
-      )
+      );
   }
 
   public authenticateUser(user: {
     password: string | null | undefined;
-    username: string | null | undefined
+    username: string | null | undefined;
   }): Observable<{
     token: string | null;
-    statusCode: number
+    statusCode: number;
   }> {
-    return this.http.post(`${this.apiUrl}${this.loginRoute}`, {
-      username: user.username,
-      password: user.password,
-      rest: true
-    }, {observe: 'response', withCredentials: true})
+    return this.http
+      .post(
+        `${this.apiUrl}${this.loginRoute}`,
+        {
+          username: user.username,
+          password: user.password,
+          rest: true,
+        },
+        { observe: 'response', withCredentials: true }
+      )
       .pipe(
         map((response: HttpResponse<any>) => {
           const token = this.extractToken(response);
@@ -64,17 +72,22 @@ export class AuthenticationService {
 
   public authenticateBenefactor(user: {
     password: string | null | undefined;
-    username: string | null | undefined
+    username: string | null | undefined;
   }): Observable<{
     token: string | null;
-    statusCode: number
+    statusCode: number;
   }> {
-    return this.http.post(`${this.apiUrl}${this.loginRoute}`, {
-      username: user.username,
-      password: user.password,
-      rest: true,
-      benefactor: true
-    }, {observe: 'response', withCredentials: true})
+    return this.http
+      .post(
+        `${this.apiUrl}${this.loginRoute}`,
+        {
+          username: user.username,
+          password: user.password,
+          rest: true,
+          benefactor: true,
+        },
+        { observe: 'response', withCredentials: true }
+      )
       .pipe(
         map((response: HttpResponse<any>) => {
           const token = this.extractToken(response);
@@ -82,10 +95,10 @@ export class AuthenticationService {
 
           return {
             token: token,
-            statusCode: statusCode
+            statusCode: statusCode,
           };
         }),
-        catchError(error => {
+        catchError((error) => {
           return throwError(error);
         })
       );
@@ -111,7 +124,7 @@ export class AuthenticationService {
     }
 
     return this.http
-      .get(`${this.apiUrl}/getToken`, {params, withCredentials: true})
+      .get(`${this.apiUrl}/getToken`, { params, withCredentials: true })
       .pipe(
         map((response: any) => response),
         catchError((error) => {
@@ -132,7 +145,7 @@ export class AuthenticationService {
     }
 
     return this.http
-      .get(`${this.apiUrl}/getToken`, {params, withCredentials: true})
+      .get(`${this.apiUrl}/getToken`, { params, withCredentials: true })
       .pipe(
         map((response: any) => response),
         catchError((error) => {
@@ -156,5 +169,44 @@ export class AuthenticationService {
     }
 
     return tokenCookie.split('=')[1];
+  }
+  public logout(): Observable<boolean> {
+    return this.http
+      .post(
+        `${this.apiUrl}/logout`,
+        {},
+        { observe: 'response', responseType: 'text', withCredentials: true }
+      )
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return true;
+          }
+          return false;
+        }),
+        catchError((error) => {
+          return throwError(error);
+        })
+      );
+  }
+  
+  public isLoggedIn(): Observable<boolean> {
+    return this.http
+      .get<any>(`${this.apiUrl}/isLoggedIn`, {
+        observe: 'response',
+        withCredentials: true,
+      })
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status == 200) {
+            return true;
+          }
+
+          return false;
+        }),
+        catchError((error) => {
+          return throwError(error);
+        })
+      );
   }
 }

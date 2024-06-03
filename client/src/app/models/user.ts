@@ -1,7 +1,7 @@
 import {Address} from "./address";
 
 export class User {
-  constructor(public id: string,
+  constructor(public _id: string,
               public lastName: string,
               public firstName: string,
               public username: string,

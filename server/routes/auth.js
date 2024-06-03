@@ -108,4 +108,6 @@ router.get("/getToken", authController.getDecodedToken);
 
 router.get('/check', authController.checkAuth);
 
+router.get('/isLoggedIn', authController.isLoggedIn);
+
 module.exports = router;

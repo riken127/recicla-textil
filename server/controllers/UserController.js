@@ -326,24 +326,21 @@ function updateUser(req, res, next) {
         updateData.password = bcrypt.hashSync(updateData.password, 10);
     }
 
-    if (req.body.hasOwnProperty("leafs") && req.body["leafs"] !== undefined) {
-        User.findById(userId)
-            .then((user) => {
+    const findAndUpdateUser = async () => {
+        try {
+            if (req.body.hasOwnProperty("leafs") && req.body["leafs"] !== undefined) {
+                const user = await User.findById(userId);
                 user.leafs += req.body["leafs"];
                 updateData.leafs = user.leafs;
-            })
-            .catch((err) => {
-                res.json({message: err.message, type: "danger"});
-            });
-    }
+            }
 
-    User.findOne({
-        $and: [
-            {_id: {$ne: userId}},
-            {$or: [{email: updateData.email}, {phone: updateData.phone}]},
-        ],
-    })
-        .then((existingUser) => {
+            const existingUser = await User.findOne({
+                $and: [
+                    { _id: { $ne: userId } },
+                    { $or: [{ email: updateData.email }, { phone: updateData.phone }] },
+                ],
+            });
+
             if (existingUser) {
                 let errorMessage = "";
 
@@ -353,7 +350,7 @@ function updateUser(req, res, next) {
                     errorMessage = "Phone number already linked to another user account.";
                 }
 
-                return res.status(400).json({message: errorMessage, type: "danger"});
+                return res.status(400).json({ message: errorMessage, type: "danger" });
             } else {
                 if (req.body.address) {
                     const addressUpdates = {};
@@ -366,81 +363,49 @@ function updateUser(req, res, next) {
                     updateData.address = addressUpdates;
                 }
 
-                User.findByIdAndUpdate(userId, updateData, {new: true})
-                    .then(async (updatedUser) => {
-                        if (
-                            req.body.image &&
-                            !fs.existsSync("./uploads/users/" + updatedUser._id)
-                        ) {
-                            fs.mkdirSync("./uploads/users/" + updatedUser._id, {
-                                recursive: true,
-                            });
-                        }
+                const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
 
-                        if (!updatedUser) {
-                            return res.json({
-                                message: "User not found",
-                                type: "danger",
-                            });
-                        }
-
-                        const email = mailController.createEmail("updateEmail", {
-                            to: req.user.email,
-                            subject: "User Update",
-                            text:
-                                "Dear " +
-                                req.user.firstName +
-                                ",\n\n" +
-                                "We'd like to inform you that the account for the user has been successfully updated. Here are the details for the updated account:\n\n" +
-                                "- Username: " +
-                                updatedUser.username +
-                                "\n" +
-                                "- Email: " +
-                                updatedUser.email +
-                                "\n\n" +
-                                "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
-                                "If you need any further information, we are at your disposal.\n\n" +
-                                "Best regards,\n\n" +
-                                "Recicla-Textil Team",
-                        });
-
-                        await email.send();
-
-                        res.json({
-                            type: "success",
-                            message: updatedUser.firstName + " was updated successfully.",
-                        });
-                    })
-                    .catch(async (err) => {
-                        const email = mailController.createEmail("errorEmail", {
-                            to: req.user.email,
-                            subject: "User Update Error",
-                            text:
-                                "Dear " +
-                                req.user.firstName +
-                                ",\n\n" +
-                                "An error occurred while updating the user account. Please review and take necessary actions.\n\n" +
-                                "Error Details:\n" +
-                                "- Error Code: " +
-                                err.code +
-                                "\n" +
-                                "- Error Message: " +
-                                err.message +
-                                "\n\n" +
-                                "If you need any further assistance, please don't hesitate to contact us.\n\n" +
-                                "Best regards,\n\n" +
-                                "Recicla-Textil Team",
-                        });
-
-                        await email.send();
-                        res.json({message: err.message, type: "danger"});
+                if (!updatedUser) {
+                    return res.status(404).json({
+                        message: "User not found",
+                        type: "danger",
                     });
+                }
+
+                if (req.body.image && !fs.existsSync(`./uploads/users/${updatedUser._id}`)) {
+                    fs.mkdirSync(`./uploads/users/${updatedUser._id}`, {
+                        recursive: true,
+                    });
+                }
+
+                const email = mailController.createEmail("updateEmail", {
+                    to: req.user.email,
+                    subject: "User Update",
+                    text: `Dear ${req.user.firstName},\n\nWe'd like to inform you that the account for the user has been successfully updated. Here are the details for the updated account:\n\n- Username: ${updatedUser.username}\n- Email: ${updatedUser.email}\n\nThis is an automated email. Please do not reply to this email as responses will not be received or read.\n\nIf you need any further information, we are at your disposal.\n\nBest regards,\n\nRecicla-Textil Team`,
+                });
+
+                await email.send();
+
+                return res.json({
+                    type: "success",
+                    message: `${updatedUser.firstName} was updated successfully.`,
+                });
             }
-        })
-        .catch((err) => {
-            res.json({message: err.message, type: "danger"});
-        });
+        } catch (err) {
+            const email = mailController.createEmail("errorEmail", {
+                to: req.user.email,
+                subject: "User Update Error",
+                text: `Dear ${req.user.firstName},\n\nAn error occurred while updating the user account. Please review and take necessary actions.\n\nError Details:\n- Error Code: ${err.code}\n- Error Message: ${err.message}\n\nIf you need any further assistance, please don't hesitate to contact us.\n\nBest regards,\n\nRecicla-Textil Team`,
+            });
+
+            await email.send();
+            return res.status(500).json({ message: err.message, type: "danger" });
+        }
+    };
+
+    findAndUpdateUser();
 }
+
 
 /**
  * Deletes a user or sets the user to inactive if they have donations.

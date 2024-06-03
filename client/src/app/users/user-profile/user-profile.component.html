@@ -1,0 +1,93 @@
+@if (user != undefined) {
+
+<div class="container">
+  <mat-card class="profile-card">
+    <mat-card-header
+      id="banner-header"
+      [ngStyle]="{
+        'background-image': user.image
+          ? 'url(' + user.image + ')'
+          : 'url(https://api.dicebear.com/8.x/shapes/svg?seed=' +
+            user.phone +
+            ')'
+      }"
+      class="banner-header"
+    >
+    </mat-card-header>
+    <mat-card-content>
+      <div
+        aria-colindex="1"
+        mat-card-avatar
+        [ngStyle]="{
+          'background-image': user.image
+            ? 'url(' + user.image + ')'
+            : 'url(https://api.dicebear.com/8.x/shapes/svg?seed=' +
+              user.email +
+              ')'
+        }"
+        class="avatar"
+      ></div>
+      <div class="title-button-container">
+        <mat-card-title id="name"
+          >{{ user.firstName }} {{ user.lastName }}
+          <span id="username">( {{ user.username }} )</span>
+        </mat-card-title>
+        <div style="margin-top: 20px;">
+            <button
+                id="editProfile"
+                mat-raised-button
+                (click)="editProfile(user._id)"
+            >
+                <mat-icon>edit</mat-icon>
+                Edit Profile
+            </button>
+        </div>
+      </div>
+      <mat-card-subtitle id="address"
+        >{{
+          user.address.street +
+            ", " +
+            user.address.city +
+            ", " +
+            user.address.country +
+            ", " +
+            user.address.postalCode
+        }}
+      </mat-card-subtitle>
+    </mat-card-content>
+  </mat-card>
+</div>
+<div class="container">
+    <mat-card class="profile-card">
+    </mat-card>
+    <mat-card class="dashboard-card">
+        <mat-card-content>
+            <div class="leafs-display leafs-icon">
+                <h2>{{ user.leafs }}</h2>
+                <mat-icon>eco</mat-icon>            
+            </div>
+            <mat-divider></mat-divider>
+        </mat-card-content>
+        <mat-card-actions>
+            <button class="action-button" mat-raised-button color="primary" (click)="earnLeafs()">
+                <mat-icon>add</mat-icon>
+                Earn more Leafs
+            </button>
+            <button class="action-button" mat-raised-button color="accent" (click)="spendLeafs()">
+                <mat-icon>shopping_cart</mat-icon>
+                Spend Leafs
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</div>
+<app-list></app-list>
+
+} @else {
+
+<div class="error-container">
+  <div class="error-message">
+    <h2>Error</h2>
+    <p>Error loading Profile</p>
+  </div>
+</div>
+}

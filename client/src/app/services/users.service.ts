@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpResponse} from '@angular/common/http';
-import {catchError, Observable, throwError} from 'rxjs';
-import {User} from '../models/user';
-import {map} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
+import { User } from '../models/user';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -10,15 +10,14 @@ import {map} from 'rxjs/operators';
 export class UsersService {
   private static apiUrl = 'http://localhost:3000/users';
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   public getAllUsers(): Observable<User[]> | null {
     return this.http
       .post<User[]>(
         `${UsersService.apiUrl}` + '/all',
         {},
-        {observe: 'response', withCredentials: true}
+        { observe: 'response', withCredentials: true }
       )
       .pipe(
         map((response: HttpResponse<any>) => {
@@ -34,7 +33,7 @@ export class UsersService {
       );
   }
 
-  public getUser(id: string): Observable<User> | null {
+  public getUser(id: string): Observable<User> {
     return this.http
       .get<User>(`${UsersService.apiUrl}/${id}`, {
         observe: 'response',
@@ -42,10 +41,10 @@ export class UsersService {
       })
       .pipe(
         map((response) => {
-          if (response instanceof User) {
-            return response;
+          if (response.body) {
+            return response.body;
           } else {
-            throw new Error('Error getting specified user');
+            throw new Error('User not found');
           }
         }),
         catchError((error) => {
@@ -55,47 +54,58 @@ export class UsersService {
   }
 
   public addUser(user: User): Observable<boolean> | null {
-    return this.http.post<any>(`${UsersService.apiUrl}/`, user, {})
-      .pipe(
-        map((response) => {
-          if (response.statusCode === 200) {
-            return true;
-          }
-          return false;
-        })
-      )
+    return this.http.post<any>(`${UsersService.apiUrl}/`, user, {}).pipe(
+      map((response) => {
+        if (response.statusCode === 200) {
+          return true;
+        }
+        return false;
+      })
+    );
   }
 
   public updateUser(user: User): Observable<boolean> | null {
-    return this.http.put<any>(`${UsersService.apiUrl}/`, user, {})
+    return this.http
+      .put<any>(`${UsersService.apiUrl}/${user._id}`, user, {
+        observe: 'response',
+        withCredentials: true,
+      })
       .pipe(
-        map(response => {
-          if (response.statusCode === 200) {
+        map((response) => {
+          if (response.status === 200) {
             return true;
           }
           return false;
         })
-      )
+      );
   }
 
   public deleteUser(id: string): Observable<boolean> | null {
-    return this.http.delete<any>(`${UsersService.apiUrl}/${id}`, {})
+    return this.http
+      .delete<any>(`${UsersService.apiUrl}/${id}`, {
+        observe: 'response',
+        withCredentials: true,
+      })
       .pipe(
-        map(response => {
-          if (response.statusCode === 200) {
+        map((response) => {
+          if (response.status === 200) {
             return true;
           }
           return false;
         })
-      )
+      );
   }
 
   public redeemPrize(prizeId: string): Observable<any> {
-    return this.http.post<any>("http://localhost:3000/benefactors/store/redeem/" + prizeId, {})
+    return this.http
+      .post<any>(
+        'http://localhost:3000/benefactors/store/redeem/' + prizeId,
+        {}
+      )
       .pipe(
         map((response: HttpResponse<any>) => {
-          return response
+          return response;
         })
-      )
+      );
   }
 }
