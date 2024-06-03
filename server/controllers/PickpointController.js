@@ -1,5 +1,6 @@
 const Benefactor = require("../models/benefactor/Benefactor");
 const Donation = require("../models/user/UserActivity");
+const {Types} = require("mongoose");
 
 /**
  * Renders the table of pickpoints.
@@ -191,22 +192,25 @@ function getPickpoint(req, res, next) {
  */
 function addPickpoint(req, res) {
     const benefactorId = req.params.id;
-    const pickpointData = req.body;
-    pickpointData.active = true;
+    const {pickpoint} = req.body;
+
+    pickpoint.active = true;
+    pickpoint._id = new Types.ObjectId();
 
     Benefactor.findByIdAndUpdate(
         benefactorId,
-        {$push: {pickpoints: pickpointData}},
+        {$push: {pickpoints: pickpoint}},
         {new: true, runValidators: true}
     )
         .then((updatedBenefactor) => {
-            res.json({
+            return res.json({
                 message: "Pickpoint added successfully",
                 benefactor: updatedBenefactor,
             });
         })
         .catch((err) => {
-            res.status(500).json({message: err.message});
+            console.log(err)
+            return res.status(500).json({message: err.message});
         });
 }
 

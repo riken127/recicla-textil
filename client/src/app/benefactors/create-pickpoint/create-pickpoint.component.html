@@ -1,0 +1,36 @@
+<mat-card class="create-pickpoint-card" xmlns="http://www.w3.org/1999/html">
+  <mat-card-title class="card-title">
+    <span class="title-text">Create a Pickpoint</span>
+  </mat-card-title>
+  <mat-card-content>
+    <form (ngSubmit)="onSubmit()" [formGroup]="form">
+      <div class="form-row">
+        <div class="form-field form-paired-field">
+          <mat-form-field appearance="outline">
+            <input formControlName="street" matInput type="text" placeholder="street">
+            <mat-error *ngIf="f['street'].errors?.['required'] && submitted">Field is required</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <input formControlName="city" matInput type="text" placeholder="city">
+            <mat-error *ngIf="f['city'].errors?.['required'] && submitted">Field is required</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field form-paired-field">
+          <mat-form-field appearance="outline">
+            <input formControlName="postalCode" matInput type="text" placeholder="postal code">
+            <mat-error *ngIf="f['postalCode'].errors?.['required'] && submitted">Field is required</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <input formControlName="country" matInput type="text" placeholder="country">
+            <mat-error *ngIf="f['country'].errors?.['required'] && submitted">Field is required</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <button [disabled]="!form.valid" class="create-pickpoint-button" color="primary" mat-raised-button type="submit">
+        Submit
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>

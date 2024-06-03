@@ -134,10 +134,10 @@ export class BenefactorsService {
   }
 
   public addPickpoint(benefactorId: string, pickpoint: Pickpoint): Observable<boolean> | null {
-    return this.http.post<any>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/`, pickpoint, {})
+    return this.http.post<any>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/`, {pickpoint, rest: true}, {withCredentials: true, observe: 'response'})
       .pipe(
         map((response) => {
-          if (response.statusCode === 200) {
+          if (response.status === 200) {
             return true;
           }
           return false;
@@ -161,7 +161,7 @@ export class BenefactorsService {
     return this.http.delete<any>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/${pickpointId}`, {})
       .pipe(
         map(response => {
-          if (response.statusCode === 200) {
+          if (response.type === 'success') {
             return true;
           }
           return false;

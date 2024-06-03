@@ -1,0 +1,26 @@
+.form-paired-field {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-column-gap: 20px;
+}
+
+.form-single-field {
+  display: grid;
+  grid-column-gap: 20px;
+}
+
+.mat-form-field {
+  width: auto;
+}
+
+.card-title {
+  display: flex;
+  justify-content: center;
+  padding: 15px 15px 15px 15px;
+}
+
+.title-text {
+  font-size: 30px;
+  font-weight: bold;
+  color: #ffffff;
+}

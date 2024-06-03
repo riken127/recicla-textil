@@ -74,7 +74,7 @@ export class CreatePrizeComponent implements OnInit {
       this.f['description'].value,
       this.fileToUpload ? 'y' : '',
       this.fileToUpload ? 'y' : '',
-      this.f['benefactor'].value))
+    ))
       .subscribe(
         result => {
           const prizeId: string = result.result;
