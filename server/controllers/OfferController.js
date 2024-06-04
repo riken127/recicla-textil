@@ -16,8 +16,9 @@ const fs = require('fs');
  * router.get('all/:n/:p', offerController.getAllOffers);
  */
 function allOffers(req, res, next) {
-    let numberOfOffers = parseInt(req.params.n, 10);
-    let pageNumber = parseInt(req.params.p, 10);
+    const numberOfOffers = parseInt(req.query.pageSize, 10);
+    const pageNumber = parseInt(req.query.pageNumber, 10);
+    const searchQuery = req.query.search || '';
 
     if (isNaN(numberOfOffers) || isNaN(pageNumber)) {
         return res.status(400).send({
@@ -26,10 +27,20 @@ function allOffers(req, res, next) {
         });
     }
 
-    let skip = (pageNumber - 1) * numberOfOffers;
+    const skip = pageNumber * numberOfOffers;
+    let searchFilter = {};
 
-    Post.find({})
-        .sort({createdAt: -1})
+    if (searchQuery) {
+        searchFilter = {
+            $or: [
+                { title: { $regex: searchQuery, $options: 'i' } },
+                { description: { $regex: searchQuery, $options: 'i' } }
+            ]
+        };
+    }
+
+    Offer.find(searchFilter)
+        .sort({ createdAt: -1 })
         .skip(skip)
         .limit(numberOfOffers)
         .then(offers => {

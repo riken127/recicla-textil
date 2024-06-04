@@ -17,11 +17,17 @@ import {CreateOfferComponent} from "./benefactors/create-offer/create-offer.comp
 import {EditOfferComponent} from "./benefactors/edit-offer/edit-offer.component";
 import {DisableOfferComponent} from "./benefactors/disable-offer/disable-offer.component";
 import {ProfileComponent} from './benefactors/profile/profile.component';
+import {AllOffersComponent} from "./benefactors/all-offers/all-offers.component";
 
 export const routes: Routes = [
   {
     path: 'benefactors',
     component: ListComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'offers',
+    component: AllOffersComponent,
     canActivate: [authGuard]
   },
   {

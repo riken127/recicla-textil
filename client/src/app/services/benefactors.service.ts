@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpResponse} from "@angular/common/http";
+import {HttpClient, HttpParams, HttpResponse} from "@angular/common/http";
 import {catchError, Observable, of, throwError} from "rxjs";
 import {Benefactor} from "../models/benefactor";
 import {map} from "rxjs/operators";
@@ -274,11 +274,13 @@ export class BenefactorsService {
       )
   }
 
-  public getLastOffers(limit: number, page: number): Observable<Offer[]> | null {
-    return this.http.get<Offer[]>(`${BenefactorsService.apiUrl}/offers/all/${limit}/${page}}`, {
-      observe: 'response',
-      withCredentials: true
-    })
+  public getLastOffers(pageNumber: number, pageSize: number, searchQuery: string): Observable<Offer[]> | null {
+    const params = new HttpParams()
+      .set('pageSize', pageSize.toString())
+      .set('pageNumber', pageNumber.toString())
+      .set('search', searchQuery);
+
+    return this.http.get<Offer[]>(`${BenefactorsService.apiUrl}/offers/all`, { params, observe: 'response', withCredentials: true })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -292,6 +294,7 @@ export class BenefactorsService {
         })
       );
   }
+
 
 
   public addOffer(benefactor: string, offer: Offer | null): Observable<boolean> {

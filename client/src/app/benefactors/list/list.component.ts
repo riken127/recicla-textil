@@ -31,7 +31,6 @@ export class ListComponent {
   benefactors: Benefactor[] = [];
 
   constructor(
-    private authenticationService: AuthenticationService,
     private benefactorsService: BenefactorsService,
     private router: Router,
     private snackBar: MatSnackBar,

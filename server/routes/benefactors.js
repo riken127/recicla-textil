@@ -1311,7 +1311,7 @@ router.put("/posts/:postId/links/:linkId", auth.isAuthenticated, linkController.
 router.delete("/posts/:postId/links/:linkId", auth.isAuthenticated, linkController.deleteLink);
 
 // Returns the latest offers.
-router.get('/offers/all/:n/:p', offerController.allOffers);
+router.get('/offers/all', offerController.allOffers);
 
 // Returns all offers of the specified benefactor.
 router.get('/offers/:id', offerController.getBenefactorOffers);
