@@ -1325,6 +1325,7 @@ router.put('/offers/:id', offerController.editBenefactorOffer);
 // Disables an offer of a specified benefactor.
 router.delete('/offers/:id', offerController.disableBenefactorOffer);
 
+router.post('/offers/image/upload', upload.single("offer"), offerController.upload);
 
 router.post("/store/redeem/:prize", storeController.redeemPrize);
 

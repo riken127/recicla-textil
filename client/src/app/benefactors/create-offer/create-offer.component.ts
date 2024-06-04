@@ -1,16 +1,18 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {BenefactorsService} from '../../services/benefactors.service';
-import {MatCardModule} from '@angular/material/card';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {MatButtonModule} from '@angular/material/button';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {Offer} from '../../models/offer';
-import {ActivatedRoute, Router} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { BenefactorsService } from '../../services/benefactors.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Offer } from '../../models/offer';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FileUploadService } from "../../services/file-upload.service";
+import {MatIconModule} from "@angular/material/icon";
 
 @Component({
   selector: 'app-create-offer',
@@ -24,6 +26,7 @@ import {ActivatedRoute, Router} from '@angular/router';
     ReactiveFormsModule,
     MatGridListModule,
     MatDatepickerModule,
+    MatIconModule
   ],
   templateUrl: './create-offer.component.html',
   styleUrls: ['./create-offer.component.css']
@@ -32,6 +35,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 export class CreateOfferComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
+  fileToUpload: File | null = null;
 
   constructor(
     private benefactorsService: BenefactorsService,
@@ -39,8 +43,8 @@ export class CreateOfferComponent implements OnInit {
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
-  ) {
-  }
+    private fileUploadService: FileUploadService,
+  ) { }
 
   get f() {
     return this.form.controls;
@@ -60,7 +64,7 @@ export class CreateOfferComponent implements OnInit {
       }
 
       if (greater.value <= smaller.value) {
-        greater.setErrors({mustBeGreater: true});
+        greater.setErrors({ mustBeGreater: true });
       } else {
         greater.setErrors(null);
       }
@@ -90,32 +94,64 @@ export class CreateOfferComponent implements OnInit {
       return;
     }
 
-    this.benefactorsService.addOffer(this.f['benefactor'].value, new Offer('',
+    const newOffer = new Offer(
+      '',
       this.f['startDate'].value,
       this.f['endDate'].value,
       this.f['benefactor'].value,
       this.f['title'].value,
       this.f['description'].value,
-      '',
-      true))
+      this.fileToUpload ? 'y' : '',
+      true
+    );
+
+    this.benefactorsService.addOffer(this.f['benefactor'].value, newOffer)
       .subscribe(
         result => {
-          this.snackBar.open('Offer has been created!', 'Close', {
-            duration: 3000,
-          }).afterDismissed().subscribe(() => {
-            this.router.navigate(['/']);
-          });
+          const offerId = result.result;
+
+          if (offerId && this.fileToUpload) {
+            this.fileUploadService.uploadOfferImage(this.fileToUpload, this.f['benefactor'].value, offerId)
+              .subscribe(
+                uploadResult => {
+                  this.snackBar.open('Offer and image have been created!', 'Close', {
+                    duration: 3000,
+                  }).afterDismissed().subscribe(() => {
+                    this.router.navigate(['/']);
+                  });
+                },
+                uploadError => {
+                  this.snackBar.open('Offer created, but image upload failed.', 'Close', {
+                    duration: 3000
+                  });
+                }
+              );
+          } else {
+            this.snackBar.open('Offer has been created!', 'Close', {
+              duration: 3000,
+            }).afterDismissed().subscribe(() => {
+              this.router.navigate(['/']);
+            });
+          }
         },
         error => {
           this.snackBar.open(error.error.message, 'Close', {
             duration: 3000
           });
-        });
+        }
+      );
     this.onReset();
   }
 
   onReset() {
-    this.submitted = false;
-    this.form.reset();
+    this.route.paramMap.subscribe((params) => {
+      this.submitted = false;
+      this.form.reset();
+      this.form.patchValue({ benefactor: params.get('id') });
+    });
+  }
+
+  onFileSelected(event: any) {
+    this.fileToUpload = event.target.files[0];
   }
 }

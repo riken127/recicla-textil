@@ -295,7 +295,7 @@ export class BenefactorsService {
 
 
 
-  public addOffer(benefactor: string, offer: Offer | null): Observable<boolean> {
+  public addOffer(benefactor: string, offer: Offer | null): Observable<any> {
     if (offer === null) {
       return of(false);
     }
@@ -303,10 +303,7 @@ export class BenefactorsService {
     return this.http.post<any>(`${BenefactorsService.apiUrl}/offers/` + benefactor, offer, {})
       .pipe(
         map(response => {
-          if (response.type === 'success') {
-            return true;
-          }
-          return false;
+          return response
         })
       );
   }

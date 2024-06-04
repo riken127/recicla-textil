@@ -11,6 +11,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Offer} from '../../models/offer';
 import {ActivatedRoute, Router} from '@angular/router';
+import {FileUploadService} from "../../services/file-upload.service";
 
 @Component({
   selector: 'app-edit-offer',
@@ -33,13 +34,15 @@ export class EditOfferComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
   current: string = '';
+  fileToUpload: File | null = null;
 
   constructor(
     private benefactorsService: BenefactorsService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private fileUploadService: FileUploadService
     ) {
 
   }
@@ -122,7 +125,7 @@ export class EditOfferComponent implements OnInit {
       this.f['benefactor'].value,
       this.f['title'].value,
       this.f['description'].value,
-      '',
+      this.fileToUpload ? 'y' : '',
       true
     );
 
@@ -133,11 +136,29 @@ export class EditOfferComponent implements OnInit {
     )
       .subscribe(
         result => {
-          this.snackBar.open('Offer has been updated!', 'Close', {
-            duration: 3000,
-          }).afterDismissed().subscribe(() => {
-            this.router.navigate(['/']);
-          });
+          if (this.fileToUpload) {
+            this.fileUploadService.uploadOfferImage(this.fileToUpload, this.f['benefactor'].value, this.current)
+              .subscribe(
+                uploadResult => {
+                  this.snackBar.open('Offer has been updated!', 'Close', {
+                    duration: 3000
+                  }).afterDismissed().subscribe(() => {
+                    this.router.navigate(['/']);
+                  });
+                },
+                uploadError => {
+                  this.snackBar.open('Offer has been updated, but image upload failed.', 'Close', {
+                    duration: 3000
+                  });
+                }
+              );
+          } else {
+            this.snackBar.open('Offer has been updated!', 'Close', {
+              duration: 3000,
+            }).afterDismissed().subscribe(() => {
+              this.router.navigate(['/']);
+            });
+          }
         },
         error => {
           this.snackBar.open(error.error.message, 'Close', {
@@ -149,8 +170,15 @@ export class EditOfferComponent implements OnInit {
   }
 
   onReset() {
-    this.submitted = false;
-    this.form.reset();
+    this.route.paramMap.subscribe(params => {
+      this.submitted = false;
+      this.form.reset();
+      this.form.patchValue({benefactor: params.get('benefactor')});
+    });
+  }
+
+  onFileSelected(event: any) {
+    this.fileToUpload = event.target.files[0];
   }
 }
 

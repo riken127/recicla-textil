@@ -1,0 +1,39 @@
+import { Injectable } from '@angular/core';
+import {HttpClient, HttpResponse} from "@angular/common/http";
+import {Observable, throwError} from "rxjs";
+import {catchError, map} from "rxjs/operators";
+
+@Injectable({
+  providedIn: 'root'
+})
+export class FileUploadService {
+  private baseUrl = 'http://localhost:3000';
+  constructor(
+    private http: HttpClient
+  ) { }
+
+  uploadOfferImage(file: File, benefactorId: string, offerId: string): Observable<any> {
+    let formData = new FormData();
+    formData.append("entityType", "benefactor");
+    formData.append("entitySubType", "offer");
+    formData.append("entityId", benefactorId);
+    formData.append("offerId", offerId);
+    formData.append("offer", file, `${offerId}-offer.jpg`);
+    return this.http.post<any>(this.baseUrl + '/benefactors/offers/image/upload', formData, {
+      observe: 'response',
+      withCredentials: true
+    })
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body;
+          } else {
+            throw new Error(response.body!.message);
+          }
+        }),
+        catchError(error => {
+          return throwError(error);
+        })
+      )
+  }
+}

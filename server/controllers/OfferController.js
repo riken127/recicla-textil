@@ -98,38 +98,35 @@ function getBenefactorOffers(req, res, next) {
  * @param {Object} res - The response object is used to send the response back to the client.
  * @returns {void}
  */
-function upload(req, res) {
+function upload(req, res, next) {
     try {
-        const originalname = req.file.originalname;
-        const benefactorId = req.params.benefactorId;
+        const originalFilename = req.file.originalname;
         const imageUrl = path.join(
-            './uploads/benefactors/',
-            benefactorId,
-            '/offers/',
-            originalname
+            "./uploads/benefactors",
+            "/" + req.body.entityId,
+            "/offers/",
+            originalFilename
         );
 
-        Offer.findByIdAndUpdate(
-            req.body.offerId,
-            {image: imageUrl},
-            {new: true}
-        )
-            .then(post => {
-                return res.status(200).json({
-                    type: 'success',
-                    message: 'updated successfully',
+        Offer.findByIdAndUpdate(req.body.offerId, {
+            image: imageUrl
+        })
+            .then((updatedBenefactor) => {
+                return res.json({
+                    message: "Offer image uploaded successfully.",
+                    type: "success",
                 });
             })
-            .catch(error => {
+            .catch((error) => {
                 return res.status(500).json({
                     type: 'error',
-                    message: 'failted to upload',
-                })
+                    message: "Failed to upload offer image.",
+                });
             });
     } catch (error) {
-        return res.status(500).json({
+        res.status(500).json({
             type: 'error',
-            message: error,
+            message: "Failed to upload offer image.",
         });
     }
 }
@@ -156,16 +153,17 @@ function addBenefactorOffer(req, res, next) {
         benefactor: id,
         title: offerData.title,
         description: offerData.description,
-        image: offerData.image
+        image: offerData.image || '',
+        active: true
     });
 
     offer.save()
         .then(offer => {
             if (offerData.image &&
-                !fs.existsSync('./uploads/benefactor/' + id)
+                !fs.existsSync('./uploads/benefactors/' + id + '/offers')
             ) {
                 fs.mkdirSync(
-                    './uploads/benefactor/' + id + '/offers',
+                    './uploads/benefactors/' + id + '/offers',
                     {recursive: true}
                 );
             }
@@ -178,7 +176,7 @@ function addBenefactorOffer(req, res, next) {
         .catch(error => {
             return res.status(500).json({
                 type: 'error',
-                result: error,
+                result: 'olha eu a falhar:' + error,
             });
         });
 }
@@ -209,16 +207,20 @@ function editBenefactorOffer(req, res, next) {
         image: offerData.image || '',
         active: offerData.active
     };
+
     Offer.findByIdAndUpdate(offerData._id, offer, {new: true})
         .then(offer => {
             if (
                 offerData.image &&
-                !fs.existsSync('./uploads/benefactor/' + benefactorId)
+                !fs.existsSync('./uploads/benefactors/' + benefactorId + '/offers')
             ) {
-                fs.existsSync(
-                    './uploads/benefactor/' + benefactorId + '/offers',
+                fs.mkdirSync(
+                    './uploads/benefactors/' + benefactorId + '/offers',
                     {recursive: true}
                 );
+            }else if (fs.existsSync('./uploads/benefactors/' + benefactorId + '/offers/' + offerData._id + '.jpg') &&
+                       offerData.image) {
+                fs.unlinkSync('./uploads/benefactors/' + benefactorId + '/offers/' + offerData._id + '.jpg');
             }
 
             if (!offer) {
@@ -234,7 +236,6 @@ function editBenefactorOffer(req, res, next) {
             });
         })
         .catch(error => {
-            console.log(error);
             return res.status(500).json({
                 type: 'error',
                 result: error,
@@ -286,4 +287,5 @@ module.exports = {
     editBenefactorOffer,
     getBenefactorOffers,
     disableBenefactorOffer,
+    upload
 };

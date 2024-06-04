@@ -37,6 +37,11 @@
           </mat-form-field>
         </div>
       </div>
+      <div class="form-row">
+        <div class="form-field form-single-field">
+          <input type="file" (change)="onFileSelected($event)">
+        </div>
+      </div>
       <button [disabled]="!form.valid" class="create-offer-button" color="primary" mat-raised-button type="submit">
         Submit
       </button>
