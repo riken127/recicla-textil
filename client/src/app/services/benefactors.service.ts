@@ -219,11 +219,9 @@ export class BenefactorsService {
       );
   }
 
-  public getLastPosts(limit: number, page: number): Observable<Post[]> | null {
-    return this.http.post<Post[]>(`${BenefactorsService.apiUrl}/posts/all`, {
-      limit: limit,
-      page: page
-    }, {observe: 'response', withCredentials: true})
+  public getLastPosts(pageNumber: number, pageSize: number): Observable<Post[]> | null {
+    return this.http.get<Post[]>(`${BenefactorsService.apiUrl}/posts/all/${pageSize}/${pageNumber}`,
+ {observe: 'response', withCredentials: true})
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {

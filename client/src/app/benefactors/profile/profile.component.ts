@@ -12,7 +12,6 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatDialog} from '@angular/material/dialog';
 import {PostComponent} from '../post/post.component';
 import {MatIconModule} from '@angular/material/icon';
-
 @Component({
   selector: 'app-profile',
   standalone: true,

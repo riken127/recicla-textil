@@ -188,7 +188,7 @@ function isAuthenticated(req, res, next) {
 }
 function checkAuth(req, res, next) {
     const encryptedToken = req.cookies.token;
-    console.log(req.cookies)
+
     if (!encryptedToken) {
         return res.status(401).json({
             message: "Unauthorized",

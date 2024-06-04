@@ -254,15 +254,24 @@ function uploadImage(req, res) {
  * @returns {void}
  * @example
  * // Usage:
- * router.get('/posts/all', auth.isAuthenticated, postController.getLastPosts);
+ * router.get('/posts/all/:n/:p', auth.isAuthenticated, postController.getLastPosts);
  */
 function getLastPosts(req, res) {
-    let {page = 1, limit = 10} = req.body;
+    const numberOfPosts = parseInt(req.params.n);
+    const pageNumber = parseInt(req.params.p);
+
+    if (isNaN(numberOfPosts) || isNaN(numberOfPosts)) {
+        return res.status(500).send({
+            type: 'error',
+            message: 'Bad request'
+        })
+    }
+    const skip = pageNumber * numberOfPosts;
 
     Post.find()
         .sort({createdAt: -1})
-        .skip((page - 1) * limit)
-        .limit(limit)
+        .skip(skip)
+        .limit(numberOfPosts)
         .then((posts) => {
             res.json(posts);
         })

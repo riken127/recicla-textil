@@ -18,6 +18,7 @@ import {EditOfferComponent} from "./benefactors/edit-offer/edit-offer.component"
 import {DisableOfferComponent} from "./benefactors/disable-offer/disable-offer.component";
 import {ProfileComponent} from './benefactors/profile/profile.component';
 import {AllOffersComponent} from "./benefactors/all-offers/all-offers.component";
+import {AllPostsComponent} from "./benefactors/all-posts/all-posts.component";
 
 export const routes: Routes = [
   {
@@ -28,6 +29,11 @@ export const routes: Routes = [
   {
     path: 'offers',
     component: AllOffersComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'posts',
+    component: AllPostsComponent,
     canActivate: [authGuard]
   },
   {

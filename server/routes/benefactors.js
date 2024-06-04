@@ -1124,7 +1124,7 @@ router.get(
  *                   type: string
  *                   example: error
  */
-router.post("/posts/all", auth.isAuthenticated, postController.getLastPosts);
+router.get("/posts/all/:n/:p", auth.isAuthenticated, postController.getLastPosts);
 
 /**
  * @swagger
