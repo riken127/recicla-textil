@@ -1327,6 +1327,10 @@ router.delete('/offers/:id', offerController.disableBenefactorOffer);
 
 router.post('/offers/image/upload', upload.single("offer"), offerController.upload);
 
+router.post('/prizes/image/upload', upload.single("prize"), storeController.upload);
+
+router.post('/prizes/image/upload', upload.single("prize"), storeController.upload);
+
 router.post("/store/redeem/:prize", storeController.redeemPrize);
 
 router.post("/store/", storeController.addPrize);

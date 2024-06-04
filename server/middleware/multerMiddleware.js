@@ -16,6 +16,8 @@ const storage = multer.diskStorage({
                     destinationFolder = path.join('uploads', 'benefactors', req.body.entityId, 'posts', req.body.postId);
                 } else if (req.body.entitySubType === 'offer') {
                     destinationFolder = path.join('uploads', 'benefactors', req.body.entityId, 'offers');
+                } else if (req.body.entitySubType === 'prize'){
+                    destinationFolder = path.join('uploads', 'benefactors', req.body.entityId, 'prizes');
                 }
                 break;
             case 'user':

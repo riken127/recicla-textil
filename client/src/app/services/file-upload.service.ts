@@ -19,6 +19,7 @@ export class FileUploadService {
     formData.append("entityId", benefactorId);
     formData.append("offerId", offerId);
     formData.append("offer", file, `${offerId}-offer.jpg`);
+
     return this.http.post<any>(this.baseUrl + '/benefactors/offers/image/upload', formData, {
       observe: 'response',
       withCredentials: true
@@ -29,6 +30,32 @@ export class FileUploadService {
             return response.body;
           } else {
             throw new Error(response.body!.message);
+          }
+        }),
+        catchError(error => {
+          return throwError(error);
+        })
+      )
+  }
+
+  uploadPrizeImage(file: File, benefactorId: string, prizeId: string): Observable<any> {
+    let formData = new FormData();
+    formData.append("entityType", "benefactor");
+    formData.append("entitySubType", "prize");
+    formData.append("entityId", benefactorId)
+    formData.append("prizeId", prizeId)
+    formData.append("prize", file, `${prizeId}-prize.jpg`);
+
+    return this.http.post<any>(this.baseUrl + '/benefactors/prizes/image/upload', formData, {
+      observe: 'response',
+      withCredentials: true
+    })
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body;
+          } else {
+            throw new Error(response.body!.message)
           }
         }),
         catchError(error => {

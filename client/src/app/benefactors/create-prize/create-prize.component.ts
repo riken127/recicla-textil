@@ -11,6 +11,7 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Prize} from "../../models/prize";
 import {ActivatedRoute, Router} from "@angular/router";
+import {FileUploadService} from "../../services/file-upload.service";
 
 @Component({
   selector: 'app-create-prize',
@@ -31,6 +32,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 export class CreatePrizeComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
+  fileToUpload: File | null = null;
 
   constructor(
     private benefactorsService: BenefactorsService,
@@ -38,6 +40,7 @@ export class CreatePrizeComponent implements OnInit {
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
+    private fileUploadService: FileUploadService
   ) {
   }
 
@@ -64,19 +67,44 @@ export class CreatePrizeComponent implements OnInit {
       return;
     }
 
-    this.benefactorsService.addPrize(new Prize('',
+    this.benefactorsService.addPrize(new Prize(
+      '',
       this.f['price'].value,
       this.f['title'].value,
       this.f['description'].value,
-      '',
+      this.fileToUpload ? 'y' : '',
+      this.fileToUpload ? 'y' : '',
       this.f['benefactor'].value))
       .subscribe(
         result => {
-          this.snackBar.open('Prize has been created', 'Close', {
-            duration: 3000,
-          }).afterDismissed().subscribe(() => {
-            this.router.navigate(['/']);
-          })
+          const prizeId: string = result.result;
+          
+          if (prizeId && this.fileToUpload) {
+            this.fileUploadService.uploadPrizeImage(
+              this.fileToUpload,
+              this.f['benefactor'].value,
+              prizeId)
+              .subscribe(
+                uploadResult => {
+                  this.snackBar.open('Prize and image have been created!', 'Close', {
+                    duration: 3000,
+                  }).afterDismissed().subscribe(() => {
+                    this.router.navigate(['/']);
+                  })
+                },
+                uploadError => {
+                  this.snackBar.open('Prize created, but image upload failed.', 'Close', {
+                    duration: 3000
+                  })
+                }
+              );
+          } else {
+            this.snackBar.open('Prize has been created', 'Close', {
+              duration: 3000,
+            }).afterDismissed().subscribe(() => {
+              this.router.navigate(['/']);
+            });
+          }
         },
         error => {
           this.snackBar.open(error.message, 'Close', {
@@ -87,7 +115,16 @@ export class CreatePrizeComponent implements OnInit {
   }
 
   onReset() {
-    this.submitted = false;
-    this.form.reset();
+    this.route.paramMap.subscribe((params) => {
+      this.submitted = false;
+      this.form.reset();
+      this.form.patchValue({
+        benefactor: params.get('id'),
+      })
+    });
+  }
+
+  onFileSelected(event: any) {
+    this.fileToUpload = event.target.files[0];
   }
 }

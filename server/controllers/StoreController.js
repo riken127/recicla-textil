@@ -112,17 +112,17 @@ function addPrize(req, res, next) {
         .then(prize => {
             if (
                 prize.image &&
-                !fs.existsSync('./uploads/benefactor/' + prize.benefactor)
+                !fs.existsSync('./uploads/benefactors/' + prize.benefactor + "/prizes")
             ) {
                 fs.mkdirSync(
-                    './uploads/benefactor/' + prize.benefactor + '/prizes',
+                    './uploads/benefactors/' + prize.benefactor + '/prizes',
                     {recursive: true}
                 );
             }
 
             return res.status(200).json({
                 type: 'success',
-                message: 'prize was created successfully'
+                result: prize._id
             });
         })
         .catch(error => {
@@ -152,12 +152,16 @@ function editPrize(req, res, next) {
         .then(prize => {
             if (
                 prize.image &&
-                !fs.existsSync('./uploads/benefactor/' + prize.benefactor)
+                !fs.existsSync('./uploads/benefactors/' + prize.benefactor)
             ) {
                 fs.mkdirSync(
-                    './uploads/benefactor/' + prize.benefactor + '/prizes',
+                    './uploads/benefactors/' + prize.benefactor + '/prizes',
                     {recursive: true}
                 )
+            } else if (fs.existsSync(
+                    './uploads/benefactors/' + prize.benefactor + '/prizes'
+                + prize._id + '.jpg') && req.body.image) {
+                fs.unlinkSync('./uploads/benefactors/' + prize.benefactor + '/prizes/' + offer._id + '.jpg');
             }
 
             if (!prize) {
@@ -239,7 +243,7 @@ function deletePrize(req, res, next) {
  * router.get('/:id', storeController.getPrize);
  */
 function getPrize(req, res, next) {
-    Prize.findById({benefactor: req.params.id})
+    Prize.findById(req.params.id)
         .then(prize => {
             if (!prize) {
                 return res.status(500).json({
@@ -248,7 +252,7 @@ function getPrize(req, res, next) {
                 });
             }
 
-            res.status(200).json(user);
+            res.status(200).json(prize);
         })
         .catch(err => {
             res.status(500).json({
@@ -323,6 +327,38 @@ async function getAllPrizes(req, res, next) {
     }
 }
 
+function upload(req, res, next) {
+    try {
+        const originalFilename = req.file.originalname;
+        const imageUrl = path.join(
+            "./uploads/benefactors",
+            "/" + req.body.entityId,
+            "/prizes/",
+            originalFilename
+        );
+
+        Prize.findByIdAndUpdate(req.body.prizeId, {
+            image: imageUrl
+        })
+            .then(updatedPrize => {
+                return res.status(200).json({
+                    message: 'Prize image uploaded sucessfully',
+                    type: 'sucess',
+                });
+            })
+            .catch (error => {
+                return res.status(500).json({
+                    type: 'error',
+                    message: 'Failed to upload prize image.'
+                })
+            });
+    } catch(error) {
+        res.status(500).json({
+            type: 'error',
+            message: 'Failed to upload prize image.'
+        });
+    }
+}
 module.exports = {
     getAllPrizes,
     getBenefactorPrizes,
@@ -330,5 +366,6 @@ module.exports = {
     addPrize,
     editPrize,
     deletePrize,
-    redeemPrize
+    redeemPrize,
+    upload
 }

@@ -346,15 +346,11 @@ export class BenefactorsService {
       );
   }
 
-  public addPrize(prize: Prize): Observable<boolean> {
+  public addPrize(prize: Prize): Observable<any> {
     return this.http.post<any>(`${BenefactorsService.apiUrl}/store/`, prize)
       .pipe(
         map(response => {
-          if (response.status === 200) {
-            return true;
-          }
-
-          return false;
+          return response
         })
       );
   }
@@ -389,7 +385,7 @@ export class BenefactorsService {
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
-            return response;
+            return response.body;
           } else {
             throw new Error(response.body!.message)
           }

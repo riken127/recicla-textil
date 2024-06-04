@@ -11,6 +11,7 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Prize} from "../../models/prize";
 import {ActivatedRoute, Router} from "@angular/router";
+import {FileUploadService} from "../../services/file-upload.service";
 
 @Component({
   selector: 'app-edit-prize',
@@ -31,13 +32,15 @@ import {ActivatedRoute, Router} from "@angular/router";
 export class EditPrizeComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
+  fileToUpload: File | null = null;
 
   constructor(
     private benefactorsService: BenefactorsService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private fileUploadService: FileUploadService
   ) {
 
   }
@@ -56,12 +59,13 @@ export class EditPrizeComponent implements OnInit {
       });
       this.benefactorsService.getPrize(params.get('prize') || ' ')
         ?.subscribe(result => {
+          console.log(result)
             if (result) {
               this.form.setValue({
-                price: result!.price,
-                title: result!.title,
-                benefactor: result!.benefactor,
-                description: result!.description
+                price: result.price,
+                title: result.title,
+                benefactor: result.benefactor,
+                description: result.description
               });
             }
           },
@@ -98,11 +102,33 @@ export class EditPrizeComponent implements OnInit {
     )
       .subscribe(
         result => {
-          this.snackBar.open('Prize has been updated', 'Close', {
-            duration: 3000,
-          }).afterDismissed().subscribe(() => {
-            this.router.navigate(['/']);
-          });
+          if (this.fileToUpload) {
+            this.fileUploadService.uploadPrizeImage(
+              this.fileToUpload,
+              params.get('benefactor') || '',
+              updatedPrize._id
+            )
+              .subscribe(
+                uploadResult => {
+                  this.snackBar.open('Prize and image have been updated', 'Close', {
+                    duration: 3000
+                  }).afterDismissed().subscribe(() => {
+                    this.router.navigate(['/']);
+                  })
+                },
+                uploadError => {
+                  this.snackBar.open('Prize created, but image upload failed.', 'Close', {
+                    duration: 3000
+                  })
+                }
+              );
+          } else {
+            this.snackBar.open('Prize has been updated', 'Close', {
+              duration: 3000,
+            }).afterDismissed().subscribe(() => {
+              this.router.navigate(['/']);
+            });
+          }
         },
         error => {
           this.snackBar.open(error?.message || 'An error occurred', 'Close', {
@@ -115,7 +141,16 @@ export class EditPrizeComponent implements OnInit {
   }
 
   onReset() {
-    this.submitted = false;
-    this.form.reset();
+    this.route.paramMap.subscribe(params => {
+      this.submitted = false;
+      this.form.reset();
+      this.form.patchValue({
+        benefactor: params.get('id'),
+      })
+    })
+  }
+
+  onFileSelected(event: any) {
+    this.fileToUpload = event.target.files[0];
   }
 }
