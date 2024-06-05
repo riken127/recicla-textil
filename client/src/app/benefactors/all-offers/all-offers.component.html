@@ -19,9 +19,7 @@
         <mat-card>
           <mat-card-header
             [ngStyle]="{
-              'background-image': offer.image
-                ? 'url(' + offer.image + ')'
-                : 'url(https://api.dicebear.com/8.x/shapes/svg?seed=' + offer._id + ')'
+              'background-image': getImageUrl(offer)
             }"
             class="banner-header"
           ></mat-card-header>

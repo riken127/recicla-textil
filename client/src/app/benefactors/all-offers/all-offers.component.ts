@@ -109,4 +109,14 @@ export class AllOffersComponent implements OnInit {
       duration: 5000,
     });
   }
+
+  getImageUrl(offer: Offer): string {
+    return offer.image
+      ? this.parseImageUrl(offer.image)
+      : `url(https://api.dicebear.com/8.x/shapes/svg?seed=${offer.image})`;
+  }
+
+  parseImageUrl(url: string): string {
+    return `url(http://localhost:3000/${url.replace(/\\/g, '/')})`;
+  }
 }
