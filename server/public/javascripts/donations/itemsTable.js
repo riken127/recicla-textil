@@ -108,7 +108,6 @@ $(document).ready(function () {
                                 $("#itemsModal").modal("show");
                                 $("#itemsTable").DataTable().ajax.reload();
                                 $("donationsTable").DataTable().ajax.reload();
-                                addPointsToUser(donation.userId, pointsToAdd);
                             },
                             error: function (error) {
                                 console.error("Error creating Item:", error);

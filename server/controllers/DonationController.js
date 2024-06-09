@@ -386,6 +386,13 @@ async function updateDonation(req, res, next) {
     };
     const editableProperties = ["userId"];
 
+    if (oldDonation.status === 'Delivered') {
+        return res.status(304).json({
+            type: 'error',
+            message: 'Cannot change an already delivered donation.'
+        })
+    }
+
     for (const prop of editableProperties) {
         if (req.body.hasOwnProperty(prop) && req.body[prop] !== undefined) {
             updateData[prop] = req.body[prop];
@@ -440,6 +447,16 @@ async function updateDonation(req, res, next) {
                 message: "Donation not found",
                 type: "danger",
             });
+        }
+
+        if (updatedDonation.status === "Delivered") {
+            const user = await User.findById(updatedDonation.userId);
+
+            if (user) {
+                user.totalPoints += updatedDonation.totalPoints;
+                user.bonusPoints += updatedDonation.bonusPoints;
+                await user.save();
+            }
         }
 
         const benefactor = await Benefactor.findById(
@@ -526,6 +543,7 @@ async function updateDonation(req, res, next) {
 
             await email.send();
         }
+
         req.session.message = {
             type: "success",
             message: updatedDonation._id + " was updated successfully.",
