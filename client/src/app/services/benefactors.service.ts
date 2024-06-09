@@ -103,7 +103,7 @@ export class BenefactorsService {
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
-            return response.body;
+            return response.body.data;
           } else {
             throw new Error('Error fetching pickpoints for benefactor with id ' + benefactorId + '.');
           }

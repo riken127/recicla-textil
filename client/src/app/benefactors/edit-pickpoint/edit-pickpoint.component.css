@@ -15,14 +15,26 @@
 
 .card-title {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   padding: 15px 15px 15px 15px;
 }
 
 .title-text {
-  font-size: 30px;
-  font-weight: bold;
-  color: #ffffff;
+  margin-right: 10px;
+  color: white;
+}
+
+.delete-button {
+  margin-left: 10px;
+  color: rgb(174, 58, 58);
+}
+
+.card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 15px 15px 15px;
 }
 
 .edit-pickpoint-button {

@@ -17,6 +17,7 @@ import { CreatePostComponent } from '../create-post/create-post.component';
 import { EditPostComponent } from '../edit-post/edit-post.component';
 import { ListWaitingDonationsComponent } from '../../donations/list-waiting-donations/list-waiting-donations.component';
 import { CreateDonationComponent } from '../../donations/create-donation/create-donation.component';
+import { ListPickpointsComponent } from '../list-pickpoints/list-pickpoints.component';
 
 @Component({
   selector: 'app-profile',
@@ -27,7 +28,8 @@ import { CreateDonationComponent } from '../../donations/create-donation/create-
     MatButtonModule,
     MatGridListModule,
     MatIconModule,
-    ListWaitingDonationsComponent
+    ListWaitingDonationsComponent,
+    ListPickpointsComponent
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']

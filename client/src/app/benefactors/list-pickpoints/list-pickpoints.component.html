@@ -1,0 +1,38 @@
+<mat-card>
+  <mat-card-content>
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="pickpoints" class="mat-elevation-z8">
+        <ng-container  matColumnDef="street">
+          <th mat-header-cell class="center-cell" *matHeaderCellDef>Street</th>
+          <td mat-cell class="center-cell" *matCellDef="let pickpoint">{{ pickpoint.street }}</td>
+        </ng-container>
+        <ng-container matColumnDef="city">
+          <th mat-header-cell class="center-cell" *matHeaderCellDef>City</th>
+          <td mat-cell class="center-cell" *matCellDef="let pickpoint">{{ pickpoint.city }}</td>
+        </ng-container>
+        <ng-container matColumnDef="country">
+          <th mat-header-cell class="center-cell" *matHeaderCellDef>Country</th>
+          <td mat-cell class="center-cell" *matCellDef="let pickpoint">{{ pickpoint.country }}</td>
+        </ng-container>
+        <ng-container matColumnDef="postalCode">
+          <th mat-header-cell class="center-cell" *matHeaderCellDef>Postal Code</th>
+          <td mat-cell class="center-cell" *matCellDef="let pickpoint">
+            {{ pickpoint.postalCode }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell class="center-cell" *matHeaderCellDef>
+                <button mat-button (click)="addPickpoint()">
+                    <mat-icon>add</mat-icon> Pickpoint
+                  </button>
+            </th>
+            <td mat-cell class="center-cell" class="center-cell" *matCellDef="let pickpoint">
+              <button mat-button (click)="editPickpoint(pickpoint)"><mat-icon>edit</mat-icon>Edit</button>
+            </td>
+          </ng-container>
+          <tr mat-header-row  *matHeaderRowDef="['street', 'city', 'country', 'postalCode', 'actions']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['street', 'city', 'country', 'postalCode', 'actions']"></tr>
+        </table>
+    </div>
+  </mat-card-content>
+</mat-card>

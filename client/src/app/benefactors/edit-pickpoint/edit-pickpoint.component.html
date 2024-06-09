@@ -1,16 +1,21 @@
 <mat-card class="edit-pickpoint-card" xmlns="http://www.w3.org/1999/html">
   <mat-card-title class="card-title">
-    <span class="title-text">Edit a Pickpoint</span>
+    <span class='title-text'>Edit a Pickpoint</span>
+    <button mat-icon-button (click)="onDelete()" aria-label="Delete" class="delete-button">
+      <mat-icon>delete</mat-icon>
+    </button>
   </mat-card-title>
   <mat-card-content>
     <form (ngSubmit)="onSubmit()" [formGroup]="form">
       <div class="form-row">
-        <div class="form-field form-paired-field">
-          <mat-form-field appearance="outline">
+        <div class="form-field form-paired-field" >
+          <mat-form-field appearance="outline" >
+            <mat-label>Street</mat-label>
             <input formControlName="street" matInput type="text" placeholder="street">
             <mat-error *ngIf="f['street'].errors?.['required'] && submitted">Field is required</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline">
+            <mat-label>City</mat-label>
             <input formControlName="city" matInput type="text" placeholder="city">
             <mat-error *ngIf="f['city'].errors?.['required'] && submitted">Field is required</mat-error>
           </mat-form-field>
@@ -19,10 +24,12 @@
       <div class="form-row">
         <div class="form-field form-paired-field">
           <mat-form-field appearance="outline">
+            <mat-label>Postal Code</mat-label>
             <input formControlName="postalCode" matInput type="text" placeholder="postal code">
             <mat-error *ngIf="f['postalCode'].errors?.['required'] && submitted">Field is required</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline">
+            <mat-label>Country</mat-label>
             <input formControlName="country" matInput type="text" placeholder="country">
             <mat-error *ngIf="f['country'].errors?.['required'] && submitted">Field is required</mat-error>
           </mat-form-field>

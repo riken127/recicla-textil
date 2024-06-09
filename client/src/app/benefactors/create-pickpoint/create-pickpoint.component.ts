@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Inject} from '@angular/core';
 import {MatCard, MatCardContent, MatCardModule, MatCardTitle} from "@angular/material/card";
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatError, MatFormField, MatFormFieldModule} from "@angular/material/form-field";
@@ -10,6 +10,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Pickpoint} from "../../models/pickpoint";
 import {MatInputModule} from "@angular/material/input";
 import {MatGridListModule} from "@angular/material/grid-list";
+import { Benefactor } from '../../models/benefactor';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-create-pickpoint',
@@ -29,6 +31,7 @@ import {MatGridListModule} from "@angular/material/grid-list";
 export class CreatePickpointComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
+  benefactorId: string;
 
   constructor(
     private benefactorsService: BenefactorsService,
@@ -36,20 +39,22 @@ export class CreatePickpointComponent implements OnInit {
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
-  ) { }
+    public dialogRef: MatDialogRef<CreatePickpointComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.benefactorId = data.benefactorId;
+ } 
 
   get f() {
     return this.form.controls;
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params) => {
       this.form = this.formBuilder.group({
         street: ["", Validators.required],
         city: ["", Validators.required],
         country: ["", Validators.required],
         postalCode: ["", Validators.required],
-      });
     });
   }
 
@@ -60,8 +65,7 @@ export class CreatePickpointComponent implements OnInit {
       return;
     }
 
-    this.route.paramMap.subscribe((params) => {
-      this.benefactorsService.addPickpoint(<string>params!.get('id'), new Pickpoint(
+      this.benefactorsService.addPickpoint(this.benefactorId, new Pickpoint(
         '',
         this.f['street'].value,
         this.f['city'].value,
@@ -70,18 +74,14 @@ export class CreatePickpointComponent implements OnInit {
         true
       ))
         ?.subscribe(result => {
-          this.snackBar.open('Pickpoint has been created!', 'Close', {
-            duration: 3000,
-          }).afterDismissed().subscribe(() => {
-            this.router.navigate(['/']);
-          });
+          this.dialogRef.close();
         },
           error => {
           this.snackBar.open(error.error.message, 'Close', {
             duration: 3000
           });
         });
-    });
+    
     this.onReset();
   }
 
@@ -89,4 +89,6 @@ export class CreatePickpointComponent implements OnInit {
     this.submitted = false;
     this.form.reset();
   }
+
+
 }

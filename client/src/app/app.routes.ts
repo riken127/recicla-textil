@@ -102,19 +102,4 @@ export const routes: Routes = [
     path: 'user-profile',
     component: UserProfileComponent
   },
-  {
-    path: ':id/create-pickpoint',
-    component: CreatePickpointComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path:':benefactor/:pickpoint/edit-pickpoint',
-    component: EditPickpointComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: ':benefactor/:pickpoint/delete-pickpoint',
-    component: DisablePickpointComponent,
-    canActivate: [authGuard]
-  }
 ];
