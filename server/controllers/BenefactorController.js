@@ -28,7 +28,7 @@ function renderBenefactorsTable(req, res, next) {
 
     if (searchTerm) {
         query = {
-            $text: { $search: searchTerm }
+            $text: { $search: searchTerm },
         };
     }
 
@@ -36,21 +36,19 @@ function renderBenefactorsTable(req, res, next) {
         .skip((page - 1) * limit)
         .limit(limit)
         .exec()
-        .then(benefactors => {
+        .then((benefactors) => {
             res.json({
                 benefactors: benefactors,
-                currentPage: page
+                currentPage: page,
             });
         })
-        .catch(err => {
+        .catch((err) => {
             res.status(500).json({
                 message: err.message,
-                type: 'danger'
+                type: "danger",
             });
         });
 }
-
-
 
 /**
  * Retrieves all benefactors with DataTables parameters.
@@ -77,7 +75,7 @@ async function getAllBenefactors(req, res, next) {
     }
 
     const totalRecords = await getTotalCount(query);
-    const {draw, start, length} = req.body;
+    const { draw, start, length } = req.body;
     const search_value = req.body["search[value]"];
     const orderBy = req.body["order[0][dir]"];
     const columnIndex = req.body["order[0][column]"];
@@ -92,21 +90,21 @@ async function getAllBenefactors(req, res, next) {
 
     if (search_value) {
         query["$or"] = [
-            {name: {$regex: search_value, $options: "i"}},
-            {username: {$regex: search_value, $options: "i"}},
-            {email: {$regex: search_value, $options: "i"}},
-            {'address.country': {$regex: search_value, $options: "i"}},
-            {'address.city': {$regex: search_value, $options: "i"}},
-            {'address.street': {$regex: search_value, $options: "i"}},
-            {'address.postalCode': {$regex: search_value, $options: "i"}},
-            {description: {$regex: search_value, $options: "i"}},
+            { name: { $regex: search_value, $options: "i" } },
+            { username: { $regex: search_value, $options: "i" } },
+            { email: { $regex: search_value, $options: "i" } },
+            { "address.country": { $regex: search_value, $options: "i" } },
+            { "address.city": { $regex: search_value, $options: "i" } },
+            { "address.street": { $regex: search_value, $options: "i" } },
+            { "address.postalCode": { $regex: search_value, $options: "i" } },
+            { description: { $regex: search_value, $options: "i" } },
         ];
     }
 
     Benefactor.find(query)
         .skip(parseInt(start))
         .limit(parseInt(length))
-        .sort({[column]: order})
+        .sort({ [column]: order })
         .exec()
         .then((benefactors) => {
             return res.json({
@@ -163,14 +161,16 @@ function getBenefactor(req, res, next) {
     Benefactor.findById(benefactorId)
         .then((benefactor) => {
             if (!benefactor) {
-                return res.status(404).json({message: "Benefactor not found"});
+                return res
+                    .status(404)
+                    .json({ message: "Benefactor not found" });
             }
 
             res.json(benefactor);
         })
         .catch((err) => {
             console.error("Error retrieving benefactor:", err);
-            res.status(500).json({message: "Internal Server Error"});
+            res.status(500).json({ message: "Internal Server Error" });
         });
 }
 
@@ -196,9 +196,9 @@ async function addBenefactor(req, res, next) {
 
     Benefactor.findOne({
         $or: [
-            {username: benefactorData.username},
-            {email: benefactorData.email},
-            {phone: benefactorData.phone},
+            { username: benefactorData.username },
+            { email: benefactorData.email },
+            { phone: benefactorData.phone },
         ],
     })
         .then((existingBenefactor) => {
@@ -213,13 +213,16 @@ async function addBenefactor(req, res, next) {
                     errorMessage = "Phone number already exists.";
                 }
 
-                return res.status(400).json({message: errorMessage, type: "danger"});
+                return res
+                    .status(400)
+                    .json({ message: errorMessage, type: "danger" });
             } else {
                 let benefactor = new Benefactor({
                     name: benefactorData.name || "",
                     address: benefactorData.address || {},
                     username: benefactorData.username || "",
-                    password: bcrypt.hashSync(benefactorData.password, 10) || "",
+                    password:
+                        bcrypt.hashSync(benefactorData.password, 10) || "",
                     email: benefactorData.email || "",
                     description: benefactorData.description || "",
                     phone: benefactorData.phone || "",
@@ -235,33 +238,40 @@ async function addBenefactor(req, res, next) {
                     .then(async (savedBenefactor) => {
                         if (
                             (benefactorData.banner || benefactorData.logo) &&
-                            !fs.existsSync("./uploads/benefactors/" + savedBenefactor._id)
+                            !fs.existsSync(
+                                "./uploads/benefactors/" + savedBenefactor._id
+                            )
                         ) {
                             fs.mkdirSync(
-                                "./uploads/benefactors/" + savedBenefactor._id + "/profile/",
-                                {recursive: true}
+                                "./uploads/benefactors/" +
+                                    savedBenefactor._id +
+                                    "/profile/",
+                                { recursive: true }
                             );
                         }
 
-                        const email = mailController.createEmail("successEmail", {
-                            to: savedBenefactor.email,
-                            subject: "Benefactor Registration",
-                            text:
-                                "Dear " +
-                                savedBenefactor.name +
-                                ",\n\n" +
-                                "We'd like to inform you that the account for the benefactor has been successfully created. Here are the details for the new account:\n\n" +
-                                "- Username: " +
-                                savedBenefactor.username +
-                                "\n" +
-                                "- Email: " +
-                                savedBenefactor.email +
-                                "\n\n" +
-                                "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
-                                "If you need any further information, we are at your disposal.\n\n" +
-                                "Best regards,\n\n" +
-                                "Recicla-Textil Team",
-                        });
+                        const email = mailController.createEmail(
+                            "successEmail",
+                            {
+                                to: savedBenefactor.email,
+                                subject: "Benefactor Registration",
+                                text:
+                                    "Dear " +
+                                    savedBenefactor.name +
+                                    ",\n\n" +
+                                    "We'd like to inform you that the account for the benefactor has been successfully created. Here are the details for the new account:\n\n" +
+                                    "- Username: " +
+                                    savedBenefactor.username +
+                                    "\n" +
+                                    "- Email: " +
+                                    savedBenefactor.email +
+                                    "\n\n" +
+                                    "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
+                                    "If you need any further information, we are at your disposal.\n\n" +
+                                    "Best regards,\n\n" +
+                                    "Recicla-Textil Team",
+                            }
+                        );
 
                         await email.send();
 
@@ -323,7 +333,9 @@ async function addBenefactor(req, res, next) {
 
             await email.send();
 
-            return res.status(500).json({message: err.message, type: "danger"});
+            return res
+                .status(500)
+                .json({ message: err.message, type: "danger" });
         });
 }
 
@@ -377,8 +389,8 @@ async function updateBenefactor(req, res, next) {
 
     Benefactor.findOne({
         $and: [
-            {_id: {$ne: benefactorId}},
-            {$or: [{email: updateData.email}, {phone: updateData.phone}]},
+            { _id: { $ne: benefactorId } },
+            { $or: [{ email: updateData.email }, { phone: updateData.phone }] },
         ],
     })
         .then((existingBenefactor) => {
@@ -393,14 +405,15 @@ async function updateBenefactor(req, res, next) {
                     errorMessage = "Phone number already exists.";
                 }
 
-                res.status(400).json({message: errorMessage, type: "danger"});
+                res.status(400).json({ message: errorMessage, type: "danger" });
             } else {
                 if (req.body.address) {
                     const addressUpdates = {};
 
                     for (const addressProp in req.body.address) {
                         if (req.body.address.hasOwnProperty(addressProp)) {
-                            addressUpdates[addressProp] = req.body.address[addressProp];
+                            addressUpdates[addressProp] =
+                                req.body.address[addressProp];
                         }
                     }
 
@@ -414,12 +427,16 @@ async function updateBenefactor(req, res, next) {
                         if (
                             req.body.image &&
                             !fs.existsSync(
-                                "./uploads/benefactors/" + benefactorId + "/profile"
+                                "./uploads/benefactors/" +
+                                    benefactorId +
+                                    "/profile"
                             )
                         ) {
                             fs.mkdirSync(
-                                "./uploads/benefactors/" + benefactorId + "/profile/",
-                                {recursive: true}
+                                "./uploads/benefactors/" +
+                                    benefactorId +
+                                    "/profile/",
+                                { recursive: true }
                             );
                         }
 
@@ -430,40 +447,56 @@ async function updateBenefactor(req, res, next) {
                             });
                         }
 
-                        const email = mailController.createEmail("updateEmail", {
-                            to: req.user.email,
-                            subject: "Benefactor Update",
-                            text:
-                                "Dear " +
-                                req.user.firstName +
-                                ",\n\n" +
-                                "We'd like to inform you that the account for the benefactor has been successfully updated. Here are the details for the updated account:\n\n" +
-                                "- Username: " +
-                                updatedBenefactor.username +
-                                "\n" +
-                                "- Email: " +
-                                updatedBenefactor.email +
-                                "\n\n" +
-                                "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
-                                "If you need any further information, we are at your disposal.\n\n" +
-                                "Best regards,\n\n" +
-                                "Recicla-Textil Team",
-                        });
+                        let recipientEmail;
+                        let name;
+
+                        if (req.user) {
+                            recipientEmail = req.user.email;
+                            name = req.user.firstName;
+                        } else if (req.benefactor) {
+                            recipientEmail = req.benefactor.email;
+                            name = req.benefactor.name;
+                        }
+
+                        const email = mailController.createEmail(
+                            "updateEmail",
+                            {
+                                to: recipientEmail,
+                                subject: "Benefactor Update",
+                                text:
+                                    "Dear " +
+                                    name +
+                                    ",\n\n" +
+                                    "We'd like to inform you that the account for the benefactor has been successfully updated. Here are the details for the updated account:\n\n" +
+                                    "- Username: " +
+                                    updatedBenefactor.username +
+                                    "\n" +
+                                    "- Email: " +
+                                    updatedBenefactor.email +
+                                    "\n\n" +
+                                    "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
+                                    "If you need any further information, we are at your disposal.\n\n" +
+                                    "Best regards,\n\n" +
+                                    "Recicla-Textil Team",
+                            }
+                        );
 
                         await email.send();
 
                         res.json({
                             type: "success",
-                            message: updateBenefactor.name + " was updated successfully.",
+                            message:
+                                updateBenefactor.name +
+                                " was updated successfully.",
                         });
                     })
                     .catch(async (err) => {
                         const email = mailController.createEmail("errorEmail", {
-                            to: req.user.email,
+                            to: recipientEmail,
                             subject: "Benefactor Update Error",
                             text:
                                 "Dear " +
-                                req.user.firstName +
+                                name +
                                 ",\n\n" +
                                 "An error occurred while updating the benefactor account. Please review and take necessary actions.\n\n" +
                                 "Error Details:\n" +
@@ -480,17 +513,17 @@ async function updateBenefactor(req, res, next) {
 
                         await email.send();
 
-                        res.json({message: err.message, type: "danger"});
+                        res.json({ message: err.message, type: "danger" });
                     });
             }
         })
         .catch(async (err) => {
             const email = mailController.createEmail("errorEmail", {
-                to: req.user.email,
+                to: recipientEmail.email,
                 subject: "Benefactor Update Error",
                 text:
                     "Dear " +
-                    req.user.firstName +
+                    name +
                     ",\n\n" +
                     "An error occurred while updating the benefactor account. Please review and take necessary actions.\n\n" +
                     "Error Details:\n" +
@@ -507,7 +540,7 @@ async function updateBenefactor(req, res, next) {
 
             await email.send();
 
-            res.json({message: err.message, type: "danger"});
+            res.json({ message: err.message, type: "danger" });
         });
 }
 
@@ -541,8 +574,10 @@ async function deleteBenefactor(req, res, next) {
         const donations = await Donation.find(donationQuery);
 
         if (donations.length == 0) {
-            const result = await Benefactor.findByIdAndDelete(id, {new: true});
-            const {logo, banner} = result;
+            const result = await Benefactor.findByIdAndDelete(id, {
+                new: true,
+            });
+            const { logo, banner } = result;
 
             if (logo) {
                 try {
@@ -560,19 +595,30 @@ async function deleteBenefactor(req, res, next) {
                 }
             }
 
+            let recipientEmail;
+            let name;
+
+            if (req.user) {
+                recipientEmail = req.user.email;
+                name = req.user.firstName;
+            } else if (req.benefactor) {
+                recipientEmail = req.benefactor.email;
+                name = req.benefactor.name;
+            }
+            
             const email = mailController.createEmail("sucessEmail", {
-                to: req.user.email,
+                to: recipientEmail.email,
                 subject: "Benefactor deletion",
                 text:
                     "Dear " +
-                    req.user.firstName +
+                    name +
                     ",\n\n" +
                     "We'd like to inform you that the account for the benefactor has been successfully deleted. Here are the details for the deleted account:\n\n" +
                     "- Username: " +
-                    req.user.username +
+                    result.username +
                     "\n" +
                     "- Email: " +
-                    req.user.email +
+                    result.email +
                     "\n\n" +
                     "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
                     "If you need any further information, we are at your disposal.\n\n" +
@@ -587,8 +633,7 @@ async function deleteBenefactor(req, res, next) {
                 type: "success",
             });
         } else {
-            console.log("idkmakdkd: "+id);
-            const inactiveData = {status: "inactive"};
+            const inactiveData = { status: "inactive" };
 
             Benefactor.findByIdAndUpdate(id, inactiveData)
                 .then(async (benefactor) => {
@@ -600,18 +645,18 @@ async function deleteBenefactor(req, res, next) {
                     }
 
                     const email = mailController.createEmail("sucessEmail", {
-                        to: req.user.email,
+                        to: recipientEmail,
                         subject: "Benefactor deletion",
                         text:
                             "Dear " +
-                            req.user.firstName +
+                            name +
                             ",\n\n" +
                             "We'd like to inform you that the account for the benefactor has been successfully deleted. Here are the details for the deleted account:\n\n" +
                             "- Username: " +
-                            req.user.username +
+                            result.username +
                             "\n" +
                             "- Email: " +
-                            req.user.email +
+                            result.email +
                             "\n\n" +
                             "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
                             "If you need any further information, we are at your disposal.\n\n" +
@@ -628,11 +673,11 @@ async function deleteBenefactor(req, res, next) {
                 })
                 .catch(async (err) => {
                     const email = mailController.createEmail("errorEmail", {
-                        to: req.user.email,
+                        to: recipientEmail,
                         subject: "Benefactor deletion",
                         text:
                             "Dear " +
-                            req.user.firstName +
+                            name +
                             ",\n\n" +
                             "An error occurred while deleting the benefactor account. Please review and take necessary actions.\n\n" +
                             "Error Details:\n" +
@@ -708,24 +753,26 @@ function uploadBanner(req, res, next) {
             "/profile/",
             originalFilename
         );
-        console.log(bannerUrl)
+        console.log(bannerUrl);
         Benefactor.findByIdAndUpdate(req.body.entityId, {
             banner: bannerUrl,
         })
             .then((updatedBenefactor) => {
-                console.log("banner:" + updatedBenefactor)
+                console.log("banner:" + updatedBenefactor);
                 return res.status(200).json({
                     message: "Banner uploaded successfully.",
                     type: "success",
                 });
             })
             .catch((error) => {
-                console.log(error)
-                return res.status(500).json({error: "Failed to upload banner."});
+                console.log(error);
+                return res
+                    .status(500)
+                    .json({ error: "Failed to upload banner." });
             });
     } catch (error) {
         console.error("Error uploading image", error);
-        return res.status(500).json({error: "Failed to upload banner."});
+        return res.status(500).json({ error: "Failed to upload banner." });
     }
 }
 
@@ -745,7 +792,7 @@ function uploadBanner(req, res, next) {
  */
 function uploadLogo(req, res, next) {
     try {
-        console.log(req)
+        console.log(req);
         const originalFilename = req.file.originalname;
         const logoUrl = path.join(
             "./uploads/benefactors",
@@ -753,24 +800,26 @@ function uploadLogo(req, res, next) {
             "/profile/",
             originalFilename
         );
-        console.log(logoUrl)
+        console.log(logoUrl);
         Benefactor.findByIdAndUpdate(req.body.entityId, {
             logo: logoUrl,
         })
             .then((updatedBenefactor) => {
-                console.log("logo:" + updatedBenefactor)
+                console.log("logo:" + updatedBenefactor);
                 return res.status(200).json({
                     message: "Logo uploaded successfully.",
                     type: "success",
                 });
             })
             .catch((error) => {
-                console.log(error)
-                return res.status(500).json({error: "Failed to upload logo."});
+                console.log(error);
+                return res
+                    .status(500)
+                    .json({ error: "Failed to upload logo." });
             });
     } catch (error) {
         console.error("Error uploading image", error);
-        return res.status(500).json({error: "Failed to upload logo."});
+        return res.status(500).json({ error: "Failed to upload logo." });
     }
 }
 
