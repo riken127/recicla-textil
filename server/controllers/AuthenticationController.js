@@ -182,7 +182,11 @@ function isAuthenticated(req, res, next) {
                 message: "Unauthorized",
             });
         }
-        req.user = decoded.user;
+        if(decoded.user) {
+            req.user = decoded.user;
+        } else {
+            req.benefactor = decoded.benefactor;
+        }
         next();
     });
 }

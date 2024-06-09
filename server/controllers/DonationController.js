@@ -1,7 +1,7 @@
 const Donation = require("../models/user/UserActivity");
 const User = require("../models/user/User");
 const Benefactor = require("../models/benefactor/Benefactor");
-const Offer = require('../models/benefactor/Offer');
+const Offer = require("../models/benefactor/Offer");
 const fs = require("fs");
 const mailController = require("../controllers/MailController");
 
@@ -20,31 +20,31 @@ const mailController = require("../controllers/MailController");
  * router.get('/all', userController.renderUsersTable);
  */
 function renderDonationsTable(req, res, next) {
-    const page = req.body.page || 1;
+  const page = req.body.page || 1;
 
-    Donation.find({activityType: "donation"})
-        .skip((page - 1) * 10)
-        .limit(10)
-        .exec()
-        .then(async (donations) => {
-            const users = await User.find();
-            const benefactors = await Benefactor.find();
+  Donation.find({ activityType: "donation" })
+    .skip((page - 1) * 10)
+    .limit(10)
+    .exec()
+    .then(async (donations) => {
+      const users = await User.find();
+      const benefactors = await Benefactor.find();
 
-            res.render("donations/table", {
-                donations: donations,
-                users: users,
-                benefactors: benefactors,
-                currentRoute: "/donations/all",
-                username: req.user.username,
-                pfp: req.user.image,
-            });
-        })
-        .catch((err) => {
-            res.json({
-                message: err.message,
-                type: "danger",
-            });
-        });
+      res.render("donations/table", {
+        donations: donations,
+        users: users,
+        benefactors: benefactors,
+        currentRoute: "/donations/all",
+        username: req.user.username,
+        pfp: req.user.image,
+      });
+    })
+    .catch((err) => {
+      res.json({
+        message: err.message,
+        type: "danger",
+      });
+    });
 }
 
 /**
@@ -63,42 +63,42 @@ function renderDonationsTable(req, res, next) {
  * router.post('/add', userController.addUser)
  */
 async function getAllDonations(req, res, next) {
-    const totalRecords = await getTotalCount({});
-    const {draw, start, length} = req.body;
-    const search_value = req.body["search[value]"];
-    const query = {activityType: "donation"};
-    const orderBy = req.body["order[0][dir]"];
-    const columnIndex = req.body["order[0][column]"];
-    const order = orderBy === "asc" ? 1 : -1;
-    const columnMapping = {
-        0: "timestamp",
-        1: "userId",
-        2: "details.benefactorId",
-    };
-    const column = columnMapping[columnIndex];
+  const totalRecords = await getTotalCount({});
+  const { draw, start, length } = req.body;
+  const search_value = req.body["search[value]"];
+  const query = { activityType: "donation" };
+  const orderBy = req.body["order[0][dir]"];
+  const columnIndex = req.body["order[0][column]"];
+  const order = orderBy === "asc" ? 1 : -1;
+  const columnMapping = {
+    0: "timestamp",
+    1: "userId",
+    2: "details.benefactorId",
+  };
+  const column = columnMapping[columnIndex];
 
-    if (search_value) {
-        query["$text"] = {$search: search_value};
-    }
+  if (search_value) {
+    query["$text"] = { $search: search_value };
+  }
 
-    Donation.find(query)
-        .skip(parseInt(start))
-        .limit(parseInt(length))
-        .sort({[column]: order})
-        .exec()
-        .then((donations) => {
-            res.json({
-                draw: parseInt(draw),
-                recordsTotal: totalRecords,
-                recordsFiltered: totalRecords,
-                data: donations,
-            });
-        })
-        .catch((err) => {
-            res.status(500).json({
-                error: err.message,
-            });
-        });
+  Donation.find(query)
+    .skip(parseInt(start))
+    .limit(parseInt(length))
+    .sort({ [column]: order })
+    .exec()
+    .then((donations) => {
+      res.json({
+        draw: parseInt(draw),
+        recordsTotal: totalRecords,
+        recordsFiltered: totalRecords,
+        data: donations,
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        error: err.message,
+      });
+    });
 }
 
 /**
@@ -111,13 +111,13 @@ async function getAllDonations(req, res, next) {
  * @returns {Promise<number>} The total count of users.
  */
 async function getTotalCount(query) {
-    try {
-        const count = await Donation.countDocuments(query);
+  try {
+    const count = await Donation.countDocuments(query);
 
-        return count;
-    } catch (err) {
-        throw err;
-    }
+    return count;
+  } catch (err) {
+    throw err;
+  }
 }
 
 /**
@@ -138,92 +138,92 @@ async function getTotalCount(query) {
  * router.post('/add', auth.isAuthenticated, userController.addUser);
  */
 async function addDonation(req, res, next) {
-    const donationData = req.body;
-    let donation = new Donation({
-        userId: donationData.userId,
-        activityType: donationData.activityType,
-        timestamp: donationData.timestamp,
-        details: donationData.details,
-        ip: req.headers["x-forwarded-for"] || req.connection.remoteAddress,
-        status: donationData.status,
+  const donationData = req.body;
+  let donation = new Donation({
+    userId: donationData.userId,
+    activityType: donationData.activityType,
+    timestamp: donationData.timestamp,
+    details: donationData.details,
+    ip: req.headers["x-forwarded-for"] || req.connection.remoteAddress,
+    status: donationData.status,
+  });
+
+  donation
+    .save()
+    .then(async (savedDonation) => {
+      const benefactor = await Benefactor.findById(
+        savedDonation.details.benefactorId
+      );
+      const user = await User.findById(savedDonation.userId);
+      const userName = user ? `${user.firstName} ${user.lastName}` : "Unknown";
+
+      const benefactorName = benefactor ? benefactor.name : "Unknown";
+
+      const pickpoint = benefactor.pickpoints.id(
+        savedDonation.details.pickpointId
+      );
+      const pickpointAddress = pickpoint
+        ? `${pickpoint.street}, ${pickpoint.city}, ${pickpoint.postalCode}, ${pickpoint.country}`
+        : "Unknown";
+
+      const email = mailController.createEmail("successEmail", {
+        to: req.user.email,
+        subject: "Donation Registration",
+        text:
+          "Dear " +
+          req.user.firstName +
+          ",\n\n" +
+          "We'd like to inform you that the donation has been successfully created. Here are the details for the new donation:\n\n" +
+          "- User: " +
+          userName +
+          "\n" +
+          "- Benefactor: " +
+          benefactorName +
+          "\n" +
+          "- Pickpoint Address: " +
+          pickpointAddress +
+          "\n\n" +
+          "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
+          "If you need any further information, we are at your disposal.\n\n" +
+          "Best regards,\n\n" +
+          "Recicla-Textil Team",
+      });
+
+      await email.send();
+
+      res.status(200).json({
+        type: "success",
+        result: savedDonation._id,
+      });
+    })
+    .catch(async (err) => {
+      const email = mailController.createEmail("errorEmail", {
+        to: req.user.email,
+        subject: "Donation Registration Error",
+        text:
+          "Dear " +
+          req.user.firstName +
+          ",\n\n" +
+          "An error occurred while creating the donation. Please review and take necessary actions.\n\n" +
+          "Error Details:\n" +
+          "- Error Code: " +
+          err.code +
+          "\n" +
+          "- Error Message: " +
+          err.message +
+          "\n\n" +
+          "If you need any further assistance, please don't hesitate to contact us.\n\n" +
+          "Best regards,\n\n" +
+          "Recicla-Textil Team",
+      });
+
+      await email.send();
+
+      res.json({
+        message: err.message,
+        type: "danger",
+      });
     });
-
-    donation
-        .save()
-        .then(async (savedDonation) => {
-            const benefactor = await Benefactor.findById(
-                savedDonation.details.benefactorId
-            );
-            const user = await User.findById(savedDonation.userId);
-            const userName = user ? `${user.firstName} ${user.lastName}` : "Unknown";
-
-            const benefactorName = benefactor ? benefactor.name : "Unknown";
-
-            const pickpoint = benefactor.pickpoints.id(
-                savedDonation.details.pickpointId
-            );
-            const pickpointAddress = pickpoint
-                ? `${pickpoint.street}, ${pickpoint.city}, ${pickpoint.postalCode}, ${pickpoint.country}`
-                : "Unknown";
-
-            const email = mailController.createEmail("successEmail", {
-                to: req.user.email,
-                subject: "Donation Registration",
-                text:
-                    "Dear " +
-                    req.user.firstName +
-                    ",\n\n" +
-                    "We'd like to inform you that the donation has been successfully created. Here are the details for the new donation:\n\n" +
-                    "- User: " +
-                    userName +
-                    "\n" +
-                    "- Benefactor: " +
-                    benefactorName +
-                    "\n" +
-                    "- Pickpoint Address: " +
-                    pickpointAddress +
-                    "\n\n" +
-                    "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
-                    "If you need any further information, we are at your disposal.\n\n" +
-                    "Best regards,\n\n" +
-                    "Recicla-Textil Team",
-            });
-
-            await email.send();
-
-            res.status(200).json({
-                type: "success",
-                result: savedDonation._id,
-            });
-        })
-        .catch(async (err) => {
-            const email = mailController.createEmail("errorEmail", {
-                to: req.user.email,
-                subject: "Donation Registration Error",
-                text:
-                    "Dear " +
-                    req.user.firstName +
-                    ",\n\n" +
-                    "An error occurred while creating the donation. Please review and take necessary actions.\n\n" +
-                    "Error Details:\n" +
-                    "- Error Code: " +
-                    err.code +
-                    "\n" +
-                    "- Error Message: " +
-                    err.message +
-                    "\n\n" +
-                    "If you need any further assistance, please don't hesitate to contact us.\n\n" +
-                    "Best regards,\n\n" +
-                    "Recicla-Textil Team",
-            });
-
-            await email.send();
-
-            res.json({
-                message: err.message,
-                type: "danger",
-            });
-        });
 }
 
 /**
@@ -245,85 +245,85 @@ async function addDonation(req, res, next) {
  * router.delete('/:id', auth.isAuthenticated, donationController.deleteDonation);
  */
 async function deleteDonation(req, res, next) {
-    try {
-        const id = req.params.id;
-        const result = await Donation.findByIdAndDelete(id);
+  try {
+    const id = req.params.id;
+    const result = await Donation.findByIdAndDelete(id);
 
-        if (result && result.image) {
-            try {
-                fs.unlinkSync("./uploads/" + result.image);
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        const benefactor = await Benefactor.findById(result.details.benefactorId);
-        const user = await User.findById(result.userId);
-        const userName = user ? `${user.firstName} ${user.lastName}` : "Unknown";
-
-        const benefactorName = benefactor ? benefactor.name : "Unknown";
-
-        const pickpoint = benefactor.pickpoints.id(result.details.pickpointId);
-        const pickpointAddress = pickpoint
-            ? `${pickpoint.street}, ${pickpoint.city}, ${pickpoint.postalCode}, ${pickpoint.country}`
-            : "Unknown";
-
-        const email = mailController.createEmail("successEmail", {
-            to: req.user.email,
-            subject: "Donation Deletion",
-            text:
-                "Dear " +
-                req.user.firstName +
-                ",\n\n" +
-                "We'd like to inform you that the donation has been successfully deleted. Here are the details for the deleted donation:\n\n" +
-                "- User: " +
-                userName +
-                "\n" +
-                "- Benefactor: " +
-                benefactorName +
-                "\n" +
-                "- Pickpoint Address: " +
-                pickpointAddress +
-                "\n\n" +
-                "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
-                "If you need any further information, we are at your disposal.\n\n" +
-                "Best regards,\n\n" +
-                "Recicla-Textil Team",
-        });
-
-        await email.send();
-
-        res.status(200).json({
-            message: "Donation deleted successfully",
-            type: "success",
-        });
-    } catch (err) {
-        const email = mailController.createEmail("errorEmail", {
-            to: req.user.email,
-            subject: "Donation Deletion Error",
-            text:
-                "Dear " +
-                req.user.firstName +
-                ",\n\n" +
-                "An error occurred while deleting the donation. Please review and take necessary actions.\n\n" +
-                "Error Details:\n" +
-                "- Error Code: " +
-                err.code +
-                "\n" +
-                "- Error Message: " +
-                err.message +
-                "\n\n" +
-                "If you need any further assistance, please don't hesitate to contact us.\n\n" +
-                "Best regards,\n\n" +
-                "Recicla-Textil Team",
-        });
-
-        await email.send();
-        res.status(500).json({
-            message: err.message,
-            type: "danger",
-        });
+    if (result && result.image) {
+      try {
+        fs.unlinkSync("./uploads/" + result.image);
+      } catch (err) {
+        console.error(err);
+      }
     }
+
+    const benefactor = await Benefactor.findById(result.details.benefactorId);
+    const user = await User.findById(result.userId);
+    const userName = user ? `${user.firstName} ${user.lastName}` : "Unknown";
+
+    const benefactorName = benefactor ? benefactor.name : "Unknown";
+
+    const pickpoint = benefactor.pickpoints.id(result.details.pickpointId);
+    const pickpointAddress = pickpoint
+      ? `${pickpoint.street}, ${pickpoint.city}, ${pickpoint.postalCode}, ${pickpoint.country}`
+      : "Unknown";
+
+    const email = mailController.createEmail("successEmail", {
+      to: req.user.email,
+      subject: "Donation Deletion",
+      text:
+        "Dear " +
+        req.user.firstName +
+        ",\n\n" +
+        "We'd like to inform you that the donation has been successfully deleted. Here are the details for the deleted donation:\n\n" +
+        "- User: " +
+        userName +
+        "\n" +
+        "- Benefactor: " +
+        benefactorName +
+        "\n" +
+        "- Pickpoint Address: " +
+        pickpointAddress +
+        "\n\n" +
+        "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
+        "If you need any further information, we are at your disposal.\n\n" +
+        "Best regards,\n\n" +
+        "Recicla-Textil Team",
+    });
+
+    await email.send();
+
+    res.status(200).json({
+      message: "Donation deleted successfully",
+      type: "success",
+    });
+  } catch (err) {
+    const email = mailController.createEmail("errorEmail", {
+      to: req.user.email,
+      subject: "Donation Deletion Error",
+      text:
+        "Dear " +
+        req.user.firstName +
+        ",\n\n" +
+        "An error occurred while deleting the donation. Please review and take necessary actions.\n\n" +
+        "Error Details:\n" +
+        "- Error Code: " +
+        err.code +
+        "\n" +
+        "- Error Message: " +
+        err.message +
+        "\n\n" +
+        "If you need any further assistance, please don't hesitate to contact us.\n\n" +
+        "Best regards,\n\n" +
+        "Recicla-Textil Team",
+    });
+
+    await email.send();
+    res.status(500).json({
+      message: err.message,
+      type: "danger",
+    });
+  }
 }
 
 /**
@@ -344,20 +344,20 @@ async function deleteDonation(req, res, next) {
  * router.get('/:id', donationController.getDonation);
  */
 function getDonation(req, res, next) {
-    const donationId = req.params.id;
+  const donationId = req.params.id;
 
-    Donation.findById(donationId)
-        .then((donation) => {
-            if (!donation) {
-                return res.status(404).json({message: "Donation not found"});
-            }
+  Donation.findById(donationId)
+    .then((donation) => {
+      if (!donation) {
+        return res.status(404).json({ message: "Donation not found" });
+      }
 
-            res.json(donation);
-        })
-        .catch((err) => {
-            console.error("Error retrieving donation:", err);
-            res.status(500).json({message: "Internal Server Error"});
-        });
+      res.json(donation);
+    })
+    .catch((err) => {
+      console.error("Error retrieving donation:", err);
+      res.status(500).json({ message: "Internal Server Error" });
+    });
 }
 
 /**
@@ -378,208 +378,215 @@ function getDonation(req, res, next) {
  * router.put('/:id', auth.isAuthenticated, donationController.updateDonation);
  */
 async function updateDonation(req, res, next) {
-    const donationId = req.params.id;
-    const oldDonation = await Donation.findById(donationId);
-    const updateData = {
-        ...req.body,
-        status: req.body.status,
+  const donationId = req.params.id;
+  const oldDonation = await Donation.findById(donationId);
+  const updateData = {
+    ...req.body,
+    status: req.body.status,
+  };
+  const editableProperties = ["userId"];
+
+  let recipientEmail;
+  if (req.user) {
+    recipientEmail = req.user;
+  } else if (req.benefactor) {
+    recipientEmail = req.benefactor;
+  }
+
+  if (oldDonation.status === "Delivered") {
+    return res.status(304).json({
+      type: "error",
+      message: "Cannot change an already delivered donation.",
+    });
+  }
+
+  for (const prop of editableProperties) {
+    if (req.body.hasOwnProperty(prop) && req.body[prop] !== undefined) {
+      updateData[prop] = req.body[prop];
+    }
+  }
+
+  if (req.body.details) {
+    const detailsUpdates = ["benefactorId", "pickpointId"];
+
+    if (!updateData.details) {
+      updateData.details = {};
+    }
+
+    for (const detailProp of detailsUpdates) {
+      if (
+        req.body.details.hasOwnProperty(detailProp) &&
+        req.body.details[detailProp] !== undefined
+      ) {
+        updateData.details[detailProp] = req.body.details[detailProp];
+      }
+    }
+  }
+
+  try {
+    const offers = [];
+    let totalAdditionalPoints = 0;
+    const benefactorOffers = await Offer.find({
+      benefactor: req.params.id,
+      active: true,
+      startDate: { $lte: new Date() },
+      endDate: { $gte: new Date() },
+    });
+
+    if (benefactorOffers.length > 0) {
+      benefactorOffers.forEach((offer) => {
+        offers.push({ offerId: offer._id, additionalPoints: offer.points });
+        totalAdditionalPoints += offer.points;
+      });
+    }
+
+    updateData.offers = offers;
+    updateData.totalAdditionalPoints = totalAdditionalPoints;
+
+    const updatedDonation = await Donation.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateData },
+      { new: true }
+    );
+
+    if (!updatedDonation) {
+      return res.json({
+        message: "Donation not found",
+        type: "danger",
+      });
+    }
+
+    if (updatedDonation.status === "Delivered") {
+      const user = await User.findById(updatedDonation.userId);
+
+      if (user) {
+        user.totalPoints += updatedDonation.totalPoints;
+        user.bonusPoints += updatedDonation.bonusPoints;
+        await user.save();
+      }
+    }
+
+    const benefactor = await Benefactor.findById(
+      updatedDonation.details.benefactorId
+    );
+    const user = await User.findById(updatedDonation.userId);
+    const userName = user ? `${user.firstName} ${user.lastName}` : "Unknown";
+
+    const benefactorName = benefactor ? benefactor.name : "Unknown";
+
+    const pickpoint = benefactor.pickpoints.id(
+      updatedDonation.details.pickpointId
+    );
+    const pickpointAddress = pickpoint
+      ? `${pickpoint.street}, ${pickpoint.city}, ${pickpoint.postalCode}, ${pickpoint.country}`
+      : "Unknown";
+
+    const email = mailController.createEmail("successEmail", {
+      to: recipientEmail.email,
+      subject: "Donation Update",
+      text:
+        "Dear " +
+        recipientEmail.firstName +
+        ",\n\n" +
+        "We'd like to inform you that the donation has been successfully updated. Here are the details for the updated donation:\n\n" +
+        "- User: " +
+        userName +
+        "\n" +
+        "- Benefactor: " +
+        benefactorName +
+        "\n" +
+        "- Pickpoint Address: " +
+        pickpointAddress +
+        "\n\n" +
+        "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
+        "If you need any further information, we are at your disposal.\n\n" +
+        "Best regards,\n\n" +
+        "Recicla-Textil Team",
+    });
+
+    await email.send();
+
+    if (oldDonation.status !== updatedDonation.status && recipientEmail.email) {
+      const benefactor = await Benefactor.findById(
+        updatedDonation.details.benefactorId
+      );
+      const user = await User.findById(updatedDonation.userId);
+      const userName = user ? `${user.firstName} ${user.lastName}` : "Unknown";
+
+      const benefactorName = benefactor ? benefactor.name : "Unknown";
+
+      const pickpoint = benefactor.pickpoints.id(
+        updatedDonation.details.pickpointId
+      );
+      const pickpointAddress = pickpoint
+        ? `${pickpoint.street}, ${pickpoint.city}, ${pickpoint.postalCode}, ${pickpoint.country}`
+        : "Unknown";
+
+      const email = mailController.createEmail("successEmail", {
+        to: recipientEmail.email,
+        subject: "Donation Update",
+        text:
+          "Dear " +
+          recipientEmail.firstName +
+          ",\n\n" +
+          "We'd like to inform you that the donation status has been updated. Here are the details for the updated donation:\n\n" +
+          "- User: " +
+          userName +
+          "\n" +
+          "- Benefactor: " +
+          benefactorName +
+          "\n" +
+          "- Pickpoint Address: " +
+          pickpointAddress +
+          "\n" +
+          "- New Status: " +
+          updatedDonation.status +
+          "\n\n" +
+          "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
+          "If you need any further information, we are at your disposal.\n\n" +
+          "Best regards,\n\n" +
+          "Recicla-Textil Team",
+      });
+
+      await email.send();
+    }
+
+    req.session.message = {
+      type: "success",
+      message: updatedDonation._id + " was updated successfully.",
     };
-    const editableProperties = ["userId"];
+  } catch (err) {
+    const email = mailController.createEmail("errorEmail", {
+      to: recipientEmail.email,
+      subject: "Donation Update Error",
+      text:
+        "Dear " +
+        recipientEmail.firstName +
+        ",\n\n" +
+        "An error occurred while updating the donation. Please review and take necessary actions.\n\n" +
+        "Error Details:\n" +
+        "- Error Code: " +
+        err.code +
+        "\n" +
+        "- Error Message: " +
+        err.message +
+        "\n\n" +
+        "If you need any further assistance, please don't hesitate to contact us.\n\n" +
+        "Best regards,\n\n" +
+        "Recicla-Textil Team",
+    });
 
-    if (oldDonation.status === 'Delivered') {
-        return res.status(304).json({
-            type: 'error',
-            message: 'Cannot change an already delivered donation.'
-        })
-    }
+    await email.send();
 
-    for (const prop of editableProperties) {
-        if (req.body.hasOwnProperty(prop) && req.body[prop] !== undefined) {
-            updateData[prop] = req.body[prop];
-        }
-    }
-
-    if (req.body.details) {
-        const detailsUpdates = ["benefactorId", "pickpointId"];
-
-        if (!updateData.details) {
-            updateData.details = {};
-        }
-
-        for (const detailProp of detailsUpdates) {
-            if (
-                req.body.details.hasOwnProperty(detailProp) &&
-                req.body.details[detailProp] !== undefined
-            ) {
-                updateData.details[detailProp] = req.body.details[detailProp];
-            }
-        }
-    }
-
-    try {
-        const offers =  [];
-        let totalAdditionalPoints = 0;
-        const benefactorOffers = await Offer.find({
-            benefactor: req.params.id,
-            active: true,
-            startDate: {$lte: new Date()},
-            endDate: {$gte: new Date}
-        });
-
-        if (benefactorOffers.length > 0) {
-            benefactorOffers.forEach(offer => {
-                offers.push({ offerId: offer._id, additionalPoints: offer.points });
-                totalAdditionalPoints += offer.points;
-            });
-        }
-
-        updateData.offers = offers;
-        updateData.totalAdditionalPoints = totalAdditionalPoints;
-
-        const updatedDonation = await Donation.findByIdAndUpdate(
-            req.params.id,
-            {$set: updateData},
-            {new: true}
-        );
-
-        if (!updatedDonation) {
-            return res.json({
-                message: "Donation not found",
-                type: "danger",
-            });
-        }
-
-        if (updatedDonation.status === "Delivered") {
-            const user = await User.findById(updatedDonation.userId);
-
-            if (user) {
-                user.totalPoints += updatedDonation.totalPoints;
-                user.bonusPoints += updatedDonation.bonusPoints;
-                await user.save();
-            }
-        }
-
-        const benefactor = await Benefactor.findById(
-            updatedDonation.details.benefactorId
-        );
-        const user = await User.findById(updatedDonation.userId);
-        const userName = user ? `${user.firstName} ${user.lastName}` : "Unknown";
-
-        const benefactorName = benefactor ? benefactor.name : "Unknown";
-
-        const pickpoint = benefactor.pickpoints.id(
-            updatedDonation.details.pickpointId
-        );
-        const pickpointAddress = pickpoint
-            ? `${pickpoint.street}, ${pickpoint.city}, ${pickpoint.postalCode}, ${pickpoint.country}`
-            : "Unknown";
-
-        const email = mailController.createEmail("successEmail", {
-            to: req.user.email,
-            subject: "Donation Update",
-            text:
-                "Dear " +
-                req.user.firstName +
-                ",\n\n" +
-                "We'd like to inform you that the donation has been successfully updated. Here are the details for the updated donation:\n\n" +
-                "- User: " +
-                userName +
-                "\n" +
-                "- Benefactor: " +
-                benefactorName +
-                "\n" +
-                "- Pickpoint Address: " +
-                pickpointAddress +
-                "\n\n" +
-                "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
-                "If you need any further information, we are at your disposal.\n\n" +
-                "Best regards,\n\n" +
-                "Recicla-Textil Team",
-        });
-
-        await email.send();
-
-        if (oldDonation.status !== updatedDonation.status && req.user.email) {
-            const benefactor = await Benefactor.findById(
-                updatedDonation.details.benefactorId
-            );
-            const user = await User.findById(updatedDonation.userId);
-            const userName = user ? `${user.firstName} ${user.lastName}` : "Unknown";
-
-            const benefactorName = benefactor ? benefactor.name : "Unknown";
-
-            const pickpoint = benefactor.pickpoints.id(
-                updatedDonation.details.pickpointId
-            );
-            const pickpointAddress = pickpoint
-                ? `${pickpoint.street}, ${pickpoint.city}, ${pickpoint.postalCode}, ${pickpoint.country}`
-                : "Unknown";
-
-            const email = mailController.createEmail("successEmail", {
-                to: req.user.email,
-                subject: "Donation Update",
-                text:
-                    "Dear " +
-                    req.user.firstName +
-                    ",\n\n" +
-                    "We'd like to inform you that the donation status has been updated. Here are the details for the updated donation:\n\n" +
-                    "- User: " +
-                    userName +
-                    "\n" +
-                    "- Benefactor: " +
-                    benefactorName +
-                    "\n" +
-                    "- Pickpoint Address: " +
-                    pickpointAddress +
-                    "\n" +
-                    "- New Status: " +
-                    updatedDonation.status +
-                    "\n\n" +
-                    "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
-                    "If you need any further information, we are at your disposal.\n\n" +
-                    "Best regards,\n\n" +
-                    "Recicla-Textil Team",
-            });
-
-            await email.send();
-        }
-
-        req.session.message = {
-            type: "success",
-            message: updatedDonation._id + " was updated successfully.",
-        };
-    } catch (err) {
-        const email = mailController.createEmail("errorEmail", {
-            to: req.user.email,
-            subject: "Donation Update Error",
-            text:
-                "Dear " +
-                req.user.firstName +
-                ",\n\n" +
-                "An error occurred while updating the donation. Please review and take necessary actions.\n\n" +
-                "Error Details:\n" +
-                "- Error Code: " +
-                err.code +
-                "\n" +
-                "- Error Message: " +
-                err.message +
-                "\n\n" +
-                "If you need any further assistance, please don't hesitate to contact us.\n\n" +
-                "Best regards,\n\n" +
-                "Recicla-Textil Team",
-        });
-
-        await email.send();
-
-        res.json({message: err.message, type: "danger"});
-    }
+    res.json({ message: err.message, type: "danger" });
+  }
 }
 
 module.exports = {
-    renderDonationsTable: renderDonationsTable,
-    getAllDonations: getAllDonations,
-    addDonation: addDonation,
-    deleteDonation: deleteDonation,
-    getDonation: getDonation,
-    updateDonation: updateDonation,
+  renderDonationsTable: renderDonationsTable,
+  getAllDonations: getAllDonations,
+  addDonation: addDonation,
+  deleteDonation: deleteDonation,
+  getDonation: getDonation,
+  updateDonation: updateDonation,
 };

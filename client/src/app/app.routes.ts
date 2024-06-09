@@ -4,10 +4,8 @@ import {UserRegisterComponent} from "./users/user-register/user-register.compone
 import {BenefactorLoginComponent} from "./benefactors/benefactor-login/benefactor-login.component";
 import {BenefactorRegisterComponent} from "./benefactors/benefactor-register/benefactor-register.component";
 import {authGuard} from "./auth.guard";
-import {ListDonationsComponent} from './donations/list/list-donations.component';
 import {ListComponent} from './benefactors/list/list.component';
 import {ListItemsComponent} from './donations/list-items/list-items.component';
-import {ListWaitingDonationsComponent} from './donations/list-waiting-donations/list-waiting-donations.component';
 import {CreatePrizeComponent} from "./benefactors/create-prize/create-prize.component";
 import {EditPrizeComponent} from "./benefactors/edit-prize/edit-prize.component";
 import {DisablePrizeComponent} from "./benefactors/disable-prize/disable-prize.component";
@@ -22,7 +20,6 @@ import {EditPickpointComponent} from "./benefactors/edit-pickpoint/edit-pickpoin
 import {DisablePickpointComponent} from "./benefactors/disable-pickpoint/disable-pickpoint.component";
 import {AllPrizesComponent} from "./benefactors/all-prizes/all-prizes.component";
 import {UserProfileComponent} from './users/user-profile/user-profile.component';
-import {EditProfileComponent} from './benefactors/edit-profile/edit-profile.component';
 
 export const routes: Routes = [
   {
@@ -51,11 +48,6 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'list-user-donations',
-    component: ListDonationsComponent,
-    canActivate: [authGuard]
-  },
-  {
     path: 'users/login',
     component: UserLoginComponent,
   },
@@ -70,11 +62,6 @@ export const routes: Routes = [
   {
     path: 'benefactors/register',
     component: BenefactorRegisterComponent,
-  },
-  {
-    path: ':id/list-benefactor-donations',
-    component: ListWaitingDonationsComponent,
-    canActivate: [authGuard]
   },
   {
     path: ':id/list-items',
