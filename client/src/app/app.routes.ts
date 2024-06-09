@@ -22,6 +22,7 @@ import {AllPostsComponent} from "./benefactors/all-posts/all-posts.component";
 import {CreatePickpointComponent} from "./benefactors/create-pickpoint/create-pickpoint.component";
 import {EditPickpointComponent} from "./benefactors/edit-pickpoint/edit-pickpoint.component";
 import {DisablePickpointComponent} from "./benefactors/disable-pickpoint/disable-pickpoint.component";
+import {AllPrizesComponent} from "./benefactors/all-prizes/all-prizes.component";
 import {UserProfileComponent} from './users/user-profile/user-profile.component';
 import {EditProfileComponent} from './benefactors/edit-profile/edit-profile.component';
 
@@ -29,6 +30,11 @@ export const routes: Routes = [
   {
     path: 'benefactors',
     component: ListComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'prizes',
+    component: AllPrizesComponent,
     canActivate: [authGuard]
   },
   {

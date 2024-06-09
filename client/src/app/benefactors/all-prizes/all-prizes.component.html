@@ -1,0 +1,43 @@
+<div>
+  <div class="header-container">
+    <div class="title-container">
+      <h1 class="title">Prizes</h1>
+    </div>
+    <div class="search-container">
+      <mat-form-field appearance="outline" class="search-field">
+        <input matInput placeholder="Search..." [(ngModel)]="searchQuery" (keyup)="onSearch()" />
+        <button mat-icon-button matSuffix (click)="onSearch()">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </div>
+  <div *ngIf="prizes.length > 0">
+    <mat-grid-list cols="3" rowHeight="350px">
+      <mat-grid-tile *ngFor="let prize of prizes">
+        <mat-card>
+          <mat-card-header
+            [ngStyle]="{
+              'background-image': getImageUrl(prize) }"
+            class="banner-header">
+          </mat-card-header>
+          <mat-card-content>
+            <mat-card-title id="title">{{ prize.title }}</mat-card-title>
+            <mat-card-subtitle id="description">
+              {{ prize.description }}
+            </mat-card-subtitle>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-button (click)="onClick(prize.benefactor)">Donate</button>
+          </mat-card-actions>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+  <div *ngIf="prizes.length === 0 && !loading" class="empty-container">
+    <h2>No prizes found.</h2>
+  </div>
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>

@@ -304,27 +304,46 @@ function getBenefactorPrizes(req, res, next) {
  * @param {Object} res - The response object.
  * @example
  * // Usage:
- * router.get('all/:n/:p', storeController.getAllPrizes);
+ * router.get('all/', storeController.getAllPrizes);
  */
-async function getAllPrizes(req, res, next) {
-    try {
-        const elementsPerPage = parseInt(req.params.n);
-        const pageNumber = parseInt(req.params.p);
+function getAllPrizes(req, res, next) {
+        const numberOfPrizes = parseInt(req.query.pageSize, 10);
+        const pageNumber = parseInt(req.query.pageNumber, 10);
+        const searchQuery = req.query.search || '';
 
-        if (isNaN(elementsPerPage) || isNaN(pageNumber) || elementsPerPage <= 0 || pageNumber < 0) {
-            return res.status(400).json({error: 'Invalid parameters'});
+        if (isNaN(numberOfPrizes) || isNaN(pageNumber)) {
+            return res.status(400).json({
+                type: 'error',
+                message: 'Invalid parameters'
+            }
+            );
         }
 
-        const skip = pageNumber * elementsPerPage;
+        const skip = pageNumber * numberOfPrizes;
+        let searchFilter = {};
 
-        const prizes = await Prize.find()
-            .limit(elementsPerPage)
-            .skip(skip);
+        if (searchQuery) {
+            searchFilter = {
+                $or: [
+                    { title: {$regex: searchQuery, $options: 'i' } },
+                    { description: { $regex: searchQuery, $options: 'i' } },
+                ]
+            };
+        }
 
-        res.status(200).json(prizes);
-    } catch (error) {
-        next(error);
-    }
+        Prize.find(searchFilter)
+            .limit(numberOfPrizes)
+            .skip(skip)
+            .then(prizes => {
+                return res.status(200).json(prizes);
+            })
+            .catch(err => {
+                return res.status(500).json({
+                    type: 'error',
+                    message: err
+                })
+            });
+
 }
 
 function upload(req, res, next) {

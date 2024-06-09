@@ -13,7 +13,7 @@ const fs = require('fs');
  * @return {void}
  * @example
  * // Usage:
- * router.get('all/:n/:p', offerController.getAllOffers);
+ * router.get('all/', offerController.getAllOffers);
  */
 function allOffers(req, res, next) {
     const numberOfOffers = parseInt(req.query.pageSize, 10);

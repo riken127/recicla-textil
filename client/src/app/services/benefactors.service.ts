@@ -420,23 +420,26 @@ export class BenefactorsService {
       )
   }
 
-  public getAllPrizes(prizeNumber: number, page: number): Observable<Prize[]> {
-    return this.http.get<Prize[]>(`${BenefactorsService.apiUrl}/store/all/${prizeNumber}/${page}`, {
-      observe: 'response',
-      withCredentials: true
-    })
+  public getAllPrizes(pageNumber: number, pageSize: number, searchQuery: string): Observable<Prize[]> | null {
+    const params = new HttpParams()
+      .set('pageSize', pageSize.toString())
+      .set('pageNumber', pageNumber.toString())
+      .set('search', searchQuery)
+
+    return this.http.get<Prize[]>(`${BenefactorsService.apiUrl}/prizes/all`,
+      {params, observe: 'response', withCredentials: true})
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
             return response.body;
           } else {
-            throw new Error(response.body!.message)
+            throw new Error('Error getting offers.')
           }
         }),
         catchError(error => {
-          return throwError(error);
+          return throwError(error)
         })
-      )
+      );
   }
 
 }

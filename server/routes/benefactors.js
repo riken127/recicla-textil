@@ -1343,6 +1343,6 @@ router.get("/store/:id", storeController.getPrize);
 
 router.get("/store/benefactor/:id", storeController.getBenefactorPrizes);
 
-router.get("/store/all/:n/:p", storeController.getAllPrizes);
+router.get('/prizes/all', storeController.getAllPrizes);
 
 module.exports = router;
