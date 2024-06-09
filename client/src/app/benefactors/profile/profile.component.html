@@ -23,7 +23,7 @@
           <mat-card-title id="name">{{ benefactor.name }}</mat-card-title>
           <div>
 
-            @if (benefactorId == benefactorId) { <!--MUDAR AQUI ATENCAO-->
+            @if (benefactorId == benefactor._id) { 
 
               <button class="benefactor-button" mat-raised-button (click)="openAddPost(benefactor)">
                 <mat-icon>add</mat-icon>
@@ -93,7 +93,7 @@
                   </mat-card-subtitle>
                   <mat-card-actions>
 
-                     @if (benefactorId == benefactorId) {
+                     @if (benefactorId == benefactor._id) {
 
                     <button
                     class="benefactor-button"

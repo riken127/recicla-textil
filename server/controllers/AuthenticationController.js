@@ -274,6 +274,7 @@ function logout(req, res) {
 function getDecodedToken(req, res) {
     try {
         let id = req.query.id;
+        let name = req.query.name;
         let fName = req.query.fName;
         let lName = req.query.lName;
 
@@ -282,22 +283,35 @@ function getDecodedToken(req, res) {
         const decodedToken = jwt.decode(decryptedToken);
         const result = {};
 
-        if (id !== undefined) {
-            result.id = decodedToken.user._id;
+        if (decodedToken.user !== undefined) {
+            if (id !== undefined) {
+                result.id = decodedToken.user._id;
+            }
+
+            if (fName !== undefined) {
+                result.fName = decodedToken.user.firstName;
+            }
+
+            if (lName !== undefined) {
+                result.lName = decodedToken.user.lastName;
+            }
         }
 
-        if (fName !== undefined) {
-            result.fName = decodedToken.user.firstName;
-        }
+        if (decodedToken.benefactor !== undefined) {
+            if (id !== undefined) {
+                result.id = decodedToken.benefactor._id;
+            }
 
-        if (lName !== undefined) {
-            result.lName = decodedToken.user.lastName;
+            if (name !== undefined) {
+                result.fName = decodedToken.benefactor.name;
+            }
         }
 
         if (
             result.id === undefined &&
             result.fName === undefined &&
-            result.lName === undefined
+            result.lName === undefined &&
+            result.name === undefined
         ) {
             return res.status(500).json({
                 type: "error",

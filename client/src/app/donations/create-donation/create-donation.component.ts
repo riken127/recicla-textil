@@ -137,7 +137,9 @@ export class CreateDonationComponent implements OnInit {
       itemContainer,
       '',
       0,
-      'Waiting Approval'
+      'Waiting Approval',
+      [],
+      0
     );
 
     this.donationsService.addDonation(donation)?.subscribe(
