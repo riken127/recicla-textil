@@ -1,5 +1,10 @@
 import {Item} from "./item";
 
+interface AdditionalOffer {
+  offerId: string,
+  additionalPoints: number
+}
+
 export class Donation {
   constructor(
     public _id: string,
@@ -9,7 +14,9 @@ export class Donation {
     public details: ItemContainer,
     public ip: string,
     public __v: number,
-    public status: string
+    public status: string,
+    public offers: AdditionalOffer[],
+    public totalAdditionalPoints: number
   ) {
   }
 }

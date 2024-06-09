@@ -1,6 +1,7 @@
 const Donation = require("../models/user/UserActivity");
 const User = require("../models/user/User");
 const Benefactor = require("../models/benefactor/Benefactor");
+const Offer = require('../models/benefactor/Offer');
 const fs = require("fs");
 const mailController = require("../controllers/MailController");
 
@@ -407,7 +408,27 @@ async function updateDonation(req, res, next) {
             }
         }
     }
+
     try {
+        const offers =  [];
+        let totalAdditionalPoints = 0;
+        const benefactorOffers = await Offer.find({
+            benefactor: req.params.id,
+            active: true,
+            startDate: {$lte: new Date()},
+            endDate: {$gte: new Date}
+        });
+
+        if (benefactorOffers.length > 0) {
+            benefactorOffers.forEach(offer => {
+                offers.push({ offerId: offer._id, additionalPoints: offer.points });
+                totalAdditionalPoints += offer.points;
+            });
+        }
+
+        updateData.offers = offers;
+        updateData.totalAdditionalPoints = totalAdditionalPoints;
+
         const updatedDonation = await Donation.findByIdAndUpdate(
             req.params.id,
             {$set: updateData},
