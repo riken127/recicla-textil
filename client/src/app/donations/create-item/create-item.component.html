@@ -1,35 +1,44 @@
-<form (ngSubmit)="onSubmit()" [formGroup]="itemForm" class="form-container">
-  <div class="form-row">
-    <div class="form-field form-single-field">
-  <mat-form-field appearance="fill">
-    <mat-label>Brand</mat-label>
-    <input formControlName="brand" matInput>
-  </mat-form-field>
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-field form-paired-field">
-  <mat-form-field appearance="fill">
-    <mat-label>Weight Value</mat-label>
-    <input formControlName="weightValue" matInput>
-  </mat-form-field>
-  <mat-form-field appearance="fill">
-    <mat-label>Weight Unit</mat-label>
-    <input formControlName="weightUnit" matInput>
-  </mat-form-field>
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-field form-paired-field">
-  <mat-form-field appearance="fill">
-    <mat-label>Size</mat-label>
-    <input formControlName="size" matInput>
-  </mat-form-field>
-  <mat-form-field appearance="fill">
-    <mat-label>Type</mat-label>
-    <input formControlName="type" matInput>
-  </mat-form-field>
-    </div>
-  </div>
-  <button type="submit" mat-raised-button class="create-item-button" mat-button color="primary">Create Item</button>
-</form>
+<mat-card class="edit-item-card">
+  <mat-card-title class="card-title">
+    <span class="title-text">Create Item</span>
+  </mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="itemForm" (ngSubmit)="onSubmit()">
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Item Details </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-single-field">
+              <mat-label>Brand</mat-label>
+              <input matInput formControlName="brand" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="form-single-field">
+              <mat-label>Weight Value</mat-label>
+              <input matInput type="number" formControlName="weightValue" />
+              <mat-error *ngIf="itemForm.get('weightValue')?.hasError('min')">
+                Weight value must be greater than 0
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="form-single-field">
+              <mat-label>Weight Unit</mat-label>
+              <input matInput formControlName="weightUnit" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="form-single-field">
+              <mat-label>Size</mat-label>
+              <input matInput formControlName="size" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="form-single-field">
+              <mat-label>Type</mat-label>
+              <input matInput formControlName="type" />
+            </mat-form-field>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <div class="form-row">
+        <button [disabled]="!itemForm.valid" class="edit-item-button" color="primary" mat-raised-button type="submit">Create Item</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

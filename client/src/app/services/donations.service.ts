@@ -1,9 +1,9 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpResponse} from '@angular/common/http';
-import {catchError, Observable, throwError} from 'rxjs';
-import {Donation} from '../models/donation';
-import {map} from 'rxjs/operators';
-import {Item} from '../models/item';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
+import { Donation } from '../models/donation';
+import { map } from 'rxjs/operators';
+import { Item } from '../models/item';
 
 @Injectable({
   providedIn: 'root',
@@ -11,15 +11,14 @@ import {Item} from '../models/item';
 export class DonationsService {
   private static apiUrl = 'http://localhost:3000/donations';
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   public getAllDonations(): Observable<Donation[]> | null {
     return this.http
       .post<Donation[]>(
         `${DonationsService.apiUrl}` + '/all',
         {},
-        {observe: 'response', withCredentials: true}
+        { observe: 'response', withCredentials: true }
       )
       .pipe(
         map((response: HttpResponse<any>) => {
@@ -107,7 +106,7 @@ export class DonationsService {
       .post<Item[]>(
         `${DonationsService.apiUrl}/${donationId}/items/all`,
         {},
-        {observe: 'response', withCredentials: true}
+        { observe: 'response', withCredentials: true }
       )
       .pipe(
         map((response: HttpResponse<any>) => {
@@ -169,11 +168,11 @@ export class DonationsService {
       .put<any>(
         `${DonationsService.apiUrl}/${donationId}/items/${itemId}`,
         item,
-        {}
+        { observe: 'response' }
       )
       .pipe(
         map((response) => {
-          if (response.statusCode === 200) {
+          if (response.status === 200) {
             return true;
           }
           return false;
@@ -186,13 +185,12 @@ export class DonationsService {
     itemId: string
   ): Observable<boolean> | null {
     return this.http
-      .delete<any>(
-        `${DonationsService.apiUrl}/${donationId}/items/${itemId}`,
-        {}
-      )
+      .delete<any>(`${DonationsService.apiUrl}/${donationId}/items/${itemId}`, {
+        observe: 'response',
+      })
       .pipe(
         map((response) => {
-          if (response.statusCode === 200) {
+          if (response.status === 200 || response.status === 204) {
             return true;
           }
           return false;

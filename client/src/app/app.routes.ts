@@ -7,8 +7,6 @@ import {authGuard} from "./auth.guard";
 import {ListDonationsComponent} from './donations/list/list-donations.component';
 import {ListComponent} from './benefactors/list/list.component';
 import {ListItemsComponent} from './donations/list-items/list-items.component';
-import {CreateDonationComponent} from './donations/create-donation/create-donation.component';
-import {CreateItemComponent} from './donations/create-item/create-item.component';
 import {ListWaitingDonationsComponent} from './donations/list-waiting-donations/list-waiting-donations.component';
 import {CreatePrizeComponent} from "./benefactors/create-prize/create-prize.component";
 import {EditPrizeComponent} from "./benefactors/edit-prize/edit-prize.component";
@@ -76,16 +74,6 @@ export const routes: Routes = [
   {
     path: ':id/list-benefactor-donations',
     component: ListWaitingDonationsComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: ':id/create-donation',
-    component: CreateDonationComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: ':id/create-item',
-    component: CreateItemComponent,
     canActivate: [authGuard]
   },
   {

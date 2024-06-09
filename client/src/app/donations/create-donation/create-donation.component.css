@@ -1,3 +1,62 @@
+.edit-item-card {
+    margin: 20px auto;
+    padding: 20px;
+    width: 100%;
+  }
+
+  .card-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+  }
+
+  .title-text {
+    margin-right: 10px;
+    color: white;
+  }
+
+  .delete-button {
+    margin-left: 10px;
+    color: rgb(174, 58, 58);
+  }
+
+  .mat-expansion-panel {
+    margin-bottom: 10px;
+    box-shadow: inset;
+  }
+
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .form-single-field {
+    flex: 1 1 100%;
+    margin: 5px 0;
+  }
+
+  .form-field {
+    flex: 1;
+    margin: 5px 0;
+  }
+
+  .form-paired-field {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .edit-item-button {
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .mat-form-field {
+    margin-right: 10px;
+  }
 .form-container {
   display: flex;
   flex-direction: column;

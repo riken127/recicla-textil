@@ -1,0 +1,44 @@
+<mat-card class="edit-item-card">
+    <mat-card-title class="card-title">
+        <span class="title-text">Edit Item</span>
+        <button mat-icon-button (click)="onDelete()" aria-label="Delete" class="delete-button">
+            <mat-icon>delete</mat-icon>
+        </button>
+    </mat-card-title>
+    <mat-card-content>
+        <form [formGroup]="itemForm" (ngSubmit)="onSave()">
+            <mat-accordion>
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title> Item Details </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="form-row">
+                        <mat-form-field appearance="outline" class="form-single-field">
+                            <mat-label>Brand</mat-label>
+                            <input matInput formControlName="brand" />
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="form-single-field">
+                            <mat-label>Weight Value</mat-label>
+                            <input matInput formControlName="weightValue" />
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="form-single-field">
+                            <mat-label>Weight Unit</mat-label>
+                            <input matInput formControlName="weightUnit" />
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="form-single-field">
+                            <mat-label>Size</mat-label>
+                            <input matInput formControlName="size" />
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="form-single-field">
+                            <mat-label>Type</mat-label>
+                            <input matInput formControlName="type" />
+                        </mat-form-field>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+            <div class="form-row">
+                <button [disabled]="!itemForm.valid" class="edit-item-button" color="primary" mat-raised-button type="submit">Save</button>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>

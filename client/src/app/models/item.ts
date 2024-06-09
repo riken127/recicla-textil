@@ -1,6 +1,6 @@
 export class Item {
   constructor(
-    public id: number | undefined,
+    public _id: string,
     public brand: string,
     public weight: Weight,
     public size: string,
