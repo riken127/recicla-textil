@@ -21,12 +21,16 @@ const mailController = require("../controllers/MailController");
  */
 function renderBenefactorsTable(req, res, next) {
     const page = parseInt(req.query.page) || 1;
-    const searchTerm = req.query.search || '';
+    const searchTerm = req.query.search;
     const limit = 10;
 
-    const query = searchTerm
-        ? { name: { $regex: searchTerm, $options: 'i' } }
-        : {};
+    let query = {};
+
+    if (searchTerm) {
+        query = {
+            $text: { $search: searchTerm }
+        };
+    }
 
     Benefactor.find(query)
         .skip((page - 1) * limit)
@@ -45,6 +49,7 @@ function renderBenefactorsTable(req, res, next) {
             });
         });
 }
+
 
 
 /**
@@ -90,6 +95,11 @@ async function getAllBenefactors(req, res, next) {
             {name: {$regex: search_value, $options: "i"}},
             {username: {$regex: search_value, $options: "i"}},
             {email: {$regex: search_value, $options: "i"}},
+            {'address.country': {$regex: search_value, $options: "i"}},
+            {'address.city': {$regex: search_value, $options: "i"}},
+            {'address.street': {$regex: search_value, $options: "i"}},
+            {'address.postalCode': {$regex: search_value, $options: "i"}},
+            {description: {$regex: search_value, $options: "i"}},
         ];
     }
 
