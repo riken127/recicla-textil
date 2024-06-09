@@ -5,11 +5,14 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Item, Weight} from '../../models/item';
 import {DonationsService} from '../../services/donations.service';
+import {MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatInput} from "@angular/material/input";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-create-item',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatButton],
   templateUrl: './create-item.component.html',
   styleUrl: './create-item.component.css',
 })

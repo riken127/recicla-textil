@@ -1,23 +1,35 @@
-<form (ngSubmit)="onSubmit()" [formGroup]="itemForm">
-  <label>
-    Brand:
-    <input formControlName="brand" type="text"><br>
-  </label>
-  <label>
-    Weight Value:
-    <input formControlName="weightValue" type="text"><br>
-  </label>
-  <label>
-    Weight Unit:
-    <input formControlName="weightUnit" type="text"><br>
-  </label>
-  <label>
-    Size:
-    <input formControlName="size" type="text"><br>
-  </label>
-  <label>
-    Type:
-    <input formControlName="type" type="text"><br>
-  </label>
-  <input type="submit" value="Create Item">
+<form (ngSubmit)="onSubmit()" [formGroup]="itemForm" class="form-container">
+  <div class="form-row">
+    <div class="form-field form-single-field">
+  <mat-form-field appearance="fill">
+    <mat-label>Brand</mat-label>
+    <input formControlName="brand" matInput>
+  </mat-form-field>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-field form-paired-field">
+  <mat-form-field appearance="fill">
+    <mat-label>Weight Value</mat-label>
+    <input formControlName="weightValue" matInput>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Weight Unit</mat-label>
+    <input formControlName="weightUnit" matInput>
+  </mat-form-field>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-field form-paired-field">
+  <mat-form-field appearance="fill">
+    <mat-label>Size</mat-label>
+    <input formControlName="size" matInput>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Type</mat-label>
+    <input formControlName="type" matInput>
+  </mat-form-field>
+    </div>
+  </div>
+  <button type="submit" mat-raised-button class="create-item-button" mat-button color="primary">Create Item</button>
 </form>

@@ -9,11 +9,14 @@ import {Donation, ItemContainer} from '../../models/donation';
 import {AuthenticationService} from '../../services/authentication.service';
 import {DonationsService} from '../../services/donations.service';
 import {BenefactorsService} from '../../services/benefactors.service';
+import {MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatOption, MatSelect} from "@angular/material/select";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-create-donation',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatFormField, MatSelect, MatOption, MatLabel, MatButton],
   templateUrl: './create-donation.component.html',
   styleUrls: ['./create-donation.component.css'],
 })
