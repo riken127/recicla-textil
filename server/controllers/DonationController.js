@@ -378,6 +378,7 @@ function getDonation(req, res, next) {
  */
 async function updateDonation(req, res, next) {
     const donationId = req.params.id;
+    const oldDonation = await Donation.findById(donationId);
     const updateData = {
         ...req.body,
         status: req.body.status,
@@ -460,6 +461,50 @@ async function updateDonation(req, res, next) {
 
         await email.send();
 
+        if (oldDonation.status !== updatedDonation.status && req.user.email) {
+            const benefactor = await Benefactor.findById(
+                updatedDonation.details.benefactorId
+            );
+            const user = await User.findById(updatedDonation.userId);
+            const userName = user ? `${user.firstName} ${user.lastName}` : "Unknown";
+
+            const benefactorName = benefactor ? benefactor.name : "Unknown";
+
+            const pickpoint = benefactor.pickpoints.id(
+                updatedDonation.details.pickpointId
+            );
+            const pickpointAddress = pickpoint
+                ? `${pickpoint.street}, ${pickpoint.city}, ${pickpoint.postalCode}, ${pickpoint.country}`
+                : "Unknown";
+
+            const email = mailController.createEmail("successEmail", {
+                to: req.user.email,
+                subject: "Donation Update",
+                text:
+                    "Dear " +
+                    req.user.firstName +
+                    ",\n\n" +
+                    "We'd like to inform you that the donation status has been updated. Here are the details for the updated donation:\n\n" +
+                    "- User: " +
+                    userName +
+                    "\n" +
+                    "- Benefactor: " +
+                    benefactorName +
+                    "\n" +
+                    "- Pickpoint Address: " +
+                    pickpointAddress +
+                    "\n" +
+                    "- New Status: " +
+                    updatedDonation.status +
+                    "\n\n" +
+                    "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
+                    "If you need any further information, we are at your disposal.\n\n" +
+                    "Best regards,\n\n" +
+                    "Recicla-Textil Team",
+            });
+
+            await email.send();
+        }
         req.session.message = {
             type: "success",
             message: updatedDonation._id + " was updated successfully.",
