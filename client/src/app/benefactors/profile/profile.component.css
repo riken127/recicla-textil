@@ -1,7 +1,6 @@
 .container {
   padding: 1vw;
-  border-radius: 10px;
-  background-color: #f8f9fa;
+  background-color: #525252;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -19,9 +18,9 @@
   margin-top: 1vw;
 }
 
-#editProfile {
-  margin-right: 1vw;
-  background-color: #525252;
+.benefactor-button {
+  margin-right: 1vw !important;
+  background-color: #525252 !important;
 }
 
 .avatar {
@@ -60,6 +59,7 @@
 .posts-container {
   padding: 10px;
   gap: 20px;
+  background-color: #525252;
 }
 
 .post-tile {

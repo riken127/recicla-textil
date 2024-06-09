@@ -5,12 +5,8 @@
       <mat-card-header
         id="banner-header"
         [ngStyle]="{
-        'background-image': benefactor.banner
-          ? 'url(' + benefactor.banner + ')'
-          : 'url(https://api.dicebear.com/8.x/shapes/svg?seed=' +
-            benefactor.phone +
-            ')'
-      }"
+    'background-image': getBannerUrl()
+}"
         class="banner-header"
       >
       </mat-card-header>
@@ -19,25 +15,21 @@
           aria-colindex="1"
           mat-card-avatar
           [ngStyle]="{
-          'background-image': benefactor.logo
-            ? 'url(' + benefactor.logo + ')'
-            : 'url(https://api.dicebear.com/8.x/shapes/svg?seed=' +
-              benefactor.email +
-              ')'
-        }"
+    'background-image': getLogoUrl()
+}"
           class="avatar"
         ></div>
         <div class="title-button-container">
           <mat-card-title id="name">{{ benefactor.name }}</mat-card-title>
           <div>
 
-            @if (benefactorId == benefactor._id) {
+            @if (benefactorId == benefactorId) { <!--MUDAR AQUI ATENCAO-->
 
-              <button id="editProfile" mat-raised-button (click)="addPost(benefactor._id)">
+              <button class="benefactor-button" mat-raised-button (click)="openAddPost(benefactor)">
                 <mat-icon>add</mat-icon>
                 Add Post
               </button>
-              <button id="editProfile" mat-raised-button (click)="editProfile(benefactor._id)">
+              <button class="benefactor-button" mat-raised-button (click)="openEditProfile(benefactor)">
                 <mat-icon>edit</mat-icon>
                 Edit Profile
               </button>
@@ -100,10 +92,24 @@
                     }}
                   </mat-card-subtitle>
                   <mat-card-actions>
+
+                     @if (benefactorId == benefactorId) {
+
+                    <button
+                    class="benefactor-button"
+                      mat-raised-button
+                      (click)="openEditPost(post)"
+                    >
+                    <mat-icon>edit</mat-icon>
+                    Edit
+                    </button>
+
+                  }
+
                     <button
                       mat-raised-button
                       color="primary"
-                      (click)="openDialog(post)"
+                      (click)="openPost(post)"
                     >
                       VIEW
                     </button>
@@ -116,6 +122,10 @@
       </mat-grid-tile>
     </mat-grid-list>
   </div>
+
+  @if (benefactor._id == benefactorId){
+  <app-list-waiting-donations></app-list-waiting-donations>
+}
 
 } @else {
 

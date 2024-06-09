@@ -19,6 +19,7 @@ import {format} from 'date-fns';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {FormsModule} from '@angular/forms';
+import { MatCard } from '@angular/material/card';
 
 interface DecoratedDonation extends Donation {
   username: string;

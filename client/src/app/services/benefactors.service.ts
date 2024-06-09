@@ -60,10 +60,10 @@ export class BenefactorsService {
   }
 
   public addBenefactor(benefactor: Benefactor): Observable<boolean> | null {
-    return this.http.post<any>(`${BenefactorsService.apiUrl}/`, benefactor, {})
+    return this.http.post<any>(`${BenefactorsService.apiUrl}/`, benefactor, {observe: 'response', withCredentials: true})
       .pipe(
         map((response) => {
-          if (response.statusCode === 200) {
+          if (response.status === 200) {
             return true;
           }
           return false;
@@ -72,10 +72,10 @@ export class BenefactorsService {
   }
 
   public updateBenefactor(benefactor: Benefactor): Observable<boolean> | null {
-    return this.http.put<any>(`${BenefactorsService.apiUrl}/`, benefactor, {})
+    return this.http.put<any>(`${BenefactorsService.apiUrl +'/' + benefactor._id}/`, benefactor, {observe: 'response', withCredentials: true})
       .pipe(
         map(response => {
-          if (response.statusCode === 200) {
+          if (response.status === 200) {
             return true;
           }
           return false;
@@ -84,10 +84,10 @@ export class BenefactorsService {
   }
 
   public deleteBenefactor(id: string): Observable<boolean> | null {
-    return this.http.delete<any>(`${BenefactorsService.apiUrl}/${id}`, {})
+    return this.http.delete<any>(`${BenefactorsService.apiUrl}/${id}`, {observe: 'response', withCredentials: true})
       .pipe(
         map(response => {
-          if (response.statusCode === 200) {
+          if (response.status === 200) {
             return true;
           }
           return false;
@@ -146,10 +146,10 @@ export class BenefactorsService {
   }
 
   public updatePickpoint(benefactorId: string, pickpointId: string, pickpoint: Pickpoint): Observable<boolean> | null {
-    return this.http.put<any>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/${pickpointId}`, pickpoint, {})
+    return this.http.put<any>(`${BenefactorsService.apiUrl}/${benefactorId}/pickpoints/${pickpointId}`, pickpoint, {observe: 'response', withCredentials: true})
       .pipe(
         map(response => {
-          if (response.statusCode === 200) {
+          if (response.status === 200) {
             return true;
           }
           return false;
@@ -169,11 +169,11 @@ export class BenefactorsService {
       )
   }
 
-  public addPost(benefactorId: string, post: Post): Observable<boolean> | null {
-    return this.http.post<any>(`${BenefactorsService.apiUrl}/${benefactorId}/posts`, post, {})
+  public addPost( post: Post): Observable<boolean> | null {
+    return this.http.post<any>(`${BenefactorsService.apiUrl}/${post.benefactorId}/posts`, post, {observe: 'response', withCredentials: true})
       .pipe(
         map((response) => {
-          if (response.statusCode === 200) {
+          if (response.status === 200) {
             return true;
           }
           return false;
@@ -181,11 +181,11 @@ export class BenefactorsService {
       )
   }
 
-  public updatePost(benefactorId: string, postId: string, post: Post): Observable<boolean> | null {
-    return this.http.put<any>(`${BenefactorsService.apiUrl}/${benefactorId}/posts/${postId}`, post, {})
+  public updatePost( post: Post): Observable<boolean> | null {
+    return this.http.put<any>(`${BenefactorsService.apiUrl}/${post.benefactorId}/posts/${post._id}`, post, {observe: 'response', withCredentials: true})
       .pipe(
         map(response => {
-          if (response.statusCode === 200) {
+          if (response.status === 200) {
             return true;
           }
           return false;
@@ -193,11 +193,11 @@ export class BenefactorsService {
       )
   }
 
-  public deletePost(benefactorId: string, postId: string): Observable<boolean> | null {
-    return this.http.delete<any>(`${BenefactorsService.apiUrl}/${benefactorId}/posts/${postId}`, {})
+  public deletePost( post: Post): Observable<boolean> | null {
+    return this.http.delete<any>(`${BenefactorsService.apiUrl}/${post.benefactorId}/posts/${post._id}`, {observe: 'response', withCredentials: true})
       .pipe(
         map(response => {
-          if (response.statusCode === 200) {
+          if (response.status === 200) {
             return true;
           }
           return false;
@@ -242,10 +242,10 @@ export class BenefactorsService {
   }
 
   public addLink(postId: string, link: Link): Observable<boolean> | null {
-    return this.http.post<any>(`${BenefactorsService.apiUrl}/posts/${postId}/links`, link, {})
+    return this.http.post<any>(`${BenefactorsService.apiUrl}/posts/${postId}/links`, link, {observe: 'response', withCredentials: true})
       .pipe(
         map((response) => {
-          if (response.statusCode === 200) {
+          if (response.status === 200) {
             return true;
           }
           return false;
@@ -254,10 +254,10 @@ export class BenefactorsService {
   }
 
   public updateLink(postId: string, linkId: string, link: Link): Observable<boolean> | null {
-    return this.http.put<any>(`${BenefactorsService.apiUrl}/posts/${postId}/links/${linkId}`, link, {})
+    return this.http.put<any>(`${BenefactorsService.apiUrl}/posts/${postId}/links/${linkId}`, link, {observe: 'response', withCredentials: true})
       .pipe(
         map(response => {
-          if (response.statusCode === 200) {
+          if (response.status === 200) {
             return true;
           }
           return false;
@@ -266,10 +266,10 @@ export class BenefactorsService {
   }
 
   public deleteLink(postId: string, linkId: string): Observable<boolean> | null {
-    return this.http.delete<any>(`${BenefactorsService.apiUrl}/posts/${postId}/links/${linkId}`, {})
+    return this.http.delete<any>(`${BenefactorsService.apiUrl}/posts/${postId}/links/${linkId}`, {observe: 'response', withCredentials: true})
       .pipe(
         map(response => {
-          if (response.statusCode === 200) {
+          if (response.status === 200) {
             return true;
           }
           return false;

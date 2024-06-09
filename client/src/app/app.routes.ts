@@ -23,6 +23,7 @@ import {CreatePickpointComponent} from "./benefactors/create-pickpoint/create-pi
 import {EditPickpointComponent} from "./benefactors/edit-pickpoint/edit-pickpoint.component";
 import {DisablePickpointComponent} from "./benefactors/disable-pickpoint/disable-pickpoint.component";
 import {UserProfileComponent} from './users/user-profile/user-profile.component';
+import {EditProfileComponent} from './benefactors/edit-profile/edit-profile.component';
 
 export const routes: Routes = [
   {

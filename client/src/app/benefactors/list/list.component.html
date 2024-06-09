@@ -44,7 +44,7 @@
             ></div>
             <mat-card-title id="name">{{ benefactor.name }}</mat-card-title>
             <mat-card-subtitle id="description">{{
-                benefactor.description
+                truncateDescription(benefactor)
               }}
             </mat-card-subtitle>
           </mat-card-content>

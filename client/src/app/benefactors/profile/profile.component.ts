@@ -1,17 +1,22 @@
-import {Component, HostListener, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {ActivatedRoute, Router} from '@angular/router';
-import {BenefactorsService} from '../../services/benefactors.service';
-import {Benefactor} from '../../models/benefactor';
-import {Post} from '../../models/post';
-import {MatCardModule} from '@angular/material/card';
-import {AuthenticationService} from "../../services/authentication.service";
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {MatButtonModule} from '@angular/material/button';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {MatDialog} from '@angular/material/dialog';
-import {PostComponent} from '../post/post.component';
-import {MatIconModule} from '@angular/material/icon';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BenefactorsService } from '../../services/benefactors.service';
+import { Benefactor } from '../../models/benefactor';
+import { Post } from '../../models/post';
+import { MatCardModule } from '@angular/material/card';
+import { AuthenticationService } from "../../services/authentication.service";
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatDialog } from '@angular/material/dialog';
+import { PostComponent } from '../post/post.component';
+import { MatIconModule } from '@angular/material/icon';
+import { EditProfileComponent } from '../edit-profile/edit-profile.component';
+import { CreatePostComponent } from '../create-post/create-post.component';
+import { EditPostComponent } from '../edit-post/edit-post.component';
+import { ListWaitingDonationsComponent } from '../../donations/list-waiting-donations/list-waiting-donations.component';
+
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -20,7 +25,8 @@ import {MatIconModule} from '@angular/material/icon';
     MatCardModule,
     MatButtonModule,
     MatGridListModule,
-    MatIconModule
+    MatIconModule,
+    ListWaitingDonationsComponent
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
@@ -37,12 +43,11 @@ export class ProfileComponent implements OnInit {
     private service: BenefactorsService,
     private snackBar: MatSnackBar,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
   ) {
   }
 
   ngOnInit() {
-    this.profile();
     this.getToken();
     this.adjustGridCols(window.innerWidth);
   }
@@ -65,10 +70,12 @@ export class ProfileComponent implements OnInit {
   }
 
   profile() {
-    const id = this.route.snapshot.paramMap.get('id');
+  const id = this.route.snapshot.paramMap.get('id');
+
     if (id) {
       this.service.getBenefactor(id)?.subscribe(benefactor => {
         this.benefactor = benefactor;
+        this.benefactor.description= this.truncateDescription(this.benefactor);
         this.getAllPosts();
       });
     }
@@ -76,7 +83,8 @@ export class ProfileComponent implements OnInit {
 
   getToken() {
     this.authService.getBenefactorDecodedToken(true, false).subscribe(result => {
-      this.benefactorId = result.id;
+      this.benefactorId = result._id;
+      this.profile();
     });
   }
 
@@ -90,12 +98,20 @@ export class ProfileComponent implements OnInit {
     this.router.navigate([id + '/create-donation/']);
   }
 
-  addPost(id: string) {
-    this.router.navigate([id + '/create-post/']);
+  openAddPost(benefactor: Benefactor) {
+    this.dialog.open(CreatePostComponent, {
+      data: { benefactor: benefactor },
+    }).afterClosed().subscribe(result => {
+      location.reload();
+    });
   }
 
-  editProfile(id: string) {
-    this.router.navigate([id + '/edit-benefactor-profile/']);
+  openEditPost(post: Post) {
+    this.dialog.open(EditPostComponent, {
+      data: { post: post },
+    }).afterClosed().subscribe(result => {
+      location.reload();
+    });
   }
 
   getAllPosts() {
@@ -107,13 +123,42 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  openPost(post: Post) {
-    window.open(post.title, '_blank');
-  }
-
-  openDialog(post: Post) {
-    this.dialog.open(PostComponent, {
-      data: {post: post},
+  openEditProfile(benefactor: Benefactor) {
+    this.dialog.open(EditProfileComponent, {
+      data: { benefactor: benefactor },
+    }).afterClosed().subscribe(result => {
+      location.reload();
     });
   }
+
+   truncateDescription(benefactor: Benefactor): string {
+    const maxLength = 400;
+    if (benefactor.description.length > maxLength) {
+      return benefactor.description.substring(0, maxLength) + " ...";
+    }
+    return benefactor.description;
+  }
+
+  openPost(post: Post) {
+    this.dialog.open(PostComponent, {
+      data: { post: post },
+    });
+  }
+
+  getLogoUrl(): string {
+    return this.benefactor?.logo
+      ? this.parseImageUrl(this.benefactor.logo)
+      : `url(https://api.dicebear.com/8.x/shapes/svg?seed=${this.benefactor?.email})`;
+  }
+
+  getBannerUrl(): string {
+    return this.benefactor?.banner
+      ? this.parseImageUrl(this.benefactor.banner)
+      : `url(https://api.dicebear.com/8.x/shapes/svg?seed=${this.benefactor?.phone})`;
+  }
+
+  parseImageUrl(url: string): string {
+    return `url(http://localhost:3000/${url.replace(/\\/g, '/')})`;
+  }
+
 }

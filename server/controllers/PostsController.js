@@ -24,6 +24,7 @@ const path = require("path");
 function addPost(req, res) {
     let benefactorId = req.params.benefactorId;
     let postData = req.body;
+
     let post = new Post({
         benefactorId: benefactorId || "",
         title: postData.title || "",

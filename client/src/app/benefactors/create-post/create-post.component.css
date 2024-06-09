@@ -1,0 +1,25 @@
+.create-post-card {
+    max-width: 600px;
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .title-text {
+    margin: 20px;
+    color: white;
+  }
+
+  .mat-content {
+    margin-top: 20px;
+  }
+
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .create-post-button {
+    width: 100%;
+    margin-top: 10px;
+  }

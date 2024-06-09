@@ -1,0 +1,44 @@
+<mat-card class="edit-post-card">
+    <mat-card-title class="card-title">
+      <span class="title-text">Edit Post</span>
+      <button mat-icon-button (click)="onDelete()" aria-label="Delete" class="delete-button">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </mat-card-title>
+    <mat-card-content class="mat-content">
+      <form (ngSubmit)="onSubmit()" [formGroup]="form">
+        <div class="form-row">
+          <div class="form-field form-single-field">
+            <mat-form-field appearance="outline">
+              <mat-label>Title</mat-label>
+              <input formControlName="title" matInput type="text">
+              <mat-error *ngIf="f['title'].errors?.['required'] && submitted">Title is a required field.</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field form-single-field">
+            <mat-form-field appearance="outline">
+              <mat-label>Content</mat-label>
+              <textarea formControlName="content" matInput></textarea>
+              <mat-error *ngIf="f['content'].errors?.['required'] && submitted">Content is a required field.</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field form-single-field">
+            <mat-form-field appearance="outline">
+              <mat-label>Image URL</mat-label>
+              <input formControlName="image" matInput type="text">
+              <mat-error *ngIf="f['image'].errors?.['required'] && submitted">Image is a required field.</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="form-row">
+          <button [disabled]="!form.valid" class="edit-post-button" color="primary" mat-raised-button type="submit">
+            Submit
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>

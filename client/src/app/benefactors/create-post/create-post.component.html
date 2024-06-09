@@ -1,0 +1,38 @@
+<mat-card class="create-post-card">
+    <mat-card-title class="card-title">
+      <span class="title-text">Create a Post</span>
+    </mat-card-title>
+    <mat-card-content class="mat-content">
+      <form (ngSubmit)="onSubmit()" [formGroup]="form">
+        <div class="form-row">
+          <div class="form-field form-single-field">
+            <mat-form-field appearance="outline">
+              <input formControlName="title" matInput type="text" placeholder="Title">
+              <mat-error *ngIf="f['title'].errors?.['required'] && submitted">Title is a required field.</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field form-single-field">
+            <mat-form-field appearance="outline">
+              <textarea formControlName="content" matInput placeholder="Content"></textarea>
+              <mat-error *ngIf="f['content'].errors?.['required'] && submitted">Content is a required field.</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field form-single-field">
+            <mat-form-field appearance="outline">
+              <input formControlName="image" matInput type="text" placeholder="Image URL">
+              <mat-error *ngIf="f['image'].errors?.['required'] && submitted">Image is a required field.</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="form-row">
+          <button [disabled]="!form.valid" class="create-post-button" color="primary" mat-raised-button type="submit">
+            Submit
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>

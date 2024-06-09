@@ -1,0 +1,294 @@
+<mat-card class="edit-benefactor-card">
+  <mat-card-title class="card-title">
+    <span class="title-text">Edit Benefactor</span>
+    <button mat-icon-button (click)="onDelete()" aria-label="Delete" class="delete-button">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </mat-card-title>
+  <mat-card-content>
+    <form (ngSubmit)="onSubmit()" [formGroup]="form">
+      <mat-accordion>
+        <!-- Credentials Section -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Credentials </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="form-row">
+            <div class="form-field form-single-field">
+              <mat-form-field appearance="outline">
+                <mat-label>Username</mat-label>
+                <input
+                  formControlName="username"
+                  matInput
+                  type="text"
+                  placeholder="Enter username"
+                />
+                <mat-error
+                  *ngIf="f['username'].errors?.['required'] && submitted"
+                  >Username is required</mat-error
+                >
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field form-paired-field">
+              <mat-form-field appearance="outline">
+                <mat-label>New Password</mat-label>
+                <input
+                  formControlName="newPassword"
+                  matInput
+                  type="password"
+                  placeholder="Enter new password"
+                />
+                <mat-error *ngIf="f['newPassword']?.hasError('minlength')">Password must be at least 6 characters</mat-error>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Repeat Password</mat-label>
+                <input
+                  formControlName="confirmPassword"
+                  matInput
+                  type="password"
+                  placeholder="Confirm new password"
+                />
+                <mat-error *ngIf="f['confirmPassword']?.hasError('required')">Confirm Password is required</mat-error>
+                <mat-error *ngIf="f['confirmPassword']?.hasError('minlength')">Password must be at least 6 characters</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-expansion-panel>
+        <!-- Profile Section -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Profile </mat-panel-title>
+          </mat-expansion-panel-header>
+          <!-- Name and Phone -->
+          <div class="form-row">
+            <div class="form-field form-paired-field">
+              <mat-form-field appearance="outline">
+                <mat-label>Name</mat-label>
+                <input
+                  formControlName="name"
+                  matInput
+                  type="text"
+                  placeholder="Enter your name"
+                />
+                <mat-error *ngIf="f['name'].errors?.['required'] && submitted"
+                  >Name is required</mat-error
+                >
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Phone</mat-label>
+                <input
+                  formControlName="phone"
+                  matInput
+                  type="tel"
+                  placeholder="Enter phone"
+                />
+                <mat-error *ngIf="f['phone'].errors?.['required'] && submitted"
+                  >Phone is required</mat-error
+                >
+              </mat-form-field>
+            </div>
+          </div>
+          <!-- Description (full width) -->
+          <div class="form-row">
+            <div class="form-field form-single-field" style="width: 100%">
+              <mat-form-field appearance="outline">
+                <mat-label>Description</mat-label>
+                <textarea
+                  formControlName="description"
+                  matInput
+                  placeholder="Enter description"
+                ></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+          <!-- Banner and Logo URL -->
+          <div class="form-row">
+            <div class="form-field form-paired-field">
+              <mat-form-field appearance="outline">
+                <mat-label>Banner URL</mat-label>
+                <input
+                  formControlName="banner"
+                  matInput
+                  type="text"
+                  placeholder="Enter banner URL"
+                />
+                <mat-error *ngIf="f['banner'].errors?.['required'] && submitted"
+                  >Banner URL is required</mat-error
+                >
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Logo URL</mat-label>
+                <input
+                  formControlName="logo"
+                  matInput
+                  type="text"
+                  placeholder="Enter logo URL"
+                />
+                <mat-error *ngIf="f['logo'].errors?.['required'] && submitted"
+                  >Logo URL is required</mat-error
+                >
+              </mat-form-field>
+            </div>
+          </div>
+          <!-- Email URL -->
+          <div class="form-row">
+            <div class="form-field form-single-field" style="width: 100%">
+              <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input
+                  formControlName="email"
+                  matInput
+                  type="email"
+                  placeholder="Enter email"
+                />
+                <mat-error *ngIf="f['email'].errors?.['required'] && submitted"
+                  >Email is required</mat-error
+                >
+                <mat-error *ngIf="f['email'].errors?.['email'] && submitted"
+                  >Invalid email format</mat-error
+                >
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-expansion-panel>
+        <!-- Address Section -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Address </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="form-row" formGroupName="address">
+            <div class="form-field form-paired-field">
+              <mat-form-field
+                appearance="outline"
+                class="form-field"
+                style="width: 100%"
+              >
+                <mat-label>Street</mat-label>
+                <input
+                  formControlName="street"
+                  matInput
+                  type="text"
+                  placeholder="Enter street"
+                />
+                <mat-error
+                  *ngIf="addressControls['street'].errors?.['required'] && submitted"
+                >
+                  Street is required
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field
+                appearance="outline"
+                class="form-field"
+                style="width: 100%"
+              >
+                <mat-label>City</mat-label>
+                <input
+                  formControlName="city"
+                  matInput
+                  type="text"
+                  placeholder="Enter city"
+                />
+                <mat-error
+                  *ngIf="addressControls['city'].errors?.['required'] && submitted"
+                  >City is required</mat-error
+                >
+              </mat-form-field>
+            </div>
+            <div class="form-row">
+              <div class="form-field form-paired-field">
+                <mat-form-field
+                  appearance="outline"
+                  class="form-field"
+                  style="width: 100%"
+                >
+                  <mat-label>Postal Code</mat-label>
+                  <input
+                    formControlName="postalCode"
+                    matInput
+                    type="text"
+                    placeholder="Enter postal code"
+                  />
+                  <mat-error
+                    *ngIf="addressControls['postalCode'].errors?.['required'] && submitted"
+                  >
+                    Postal Code is required
+                  </mat-error>
+                </mat-form-field>
+                <mat-form-field
+                  appearance="outline"
+                  class="form-field"
+                  style="width: 100%"
+                >
+                  <mat-label>Country</mat-label>
+                  <input
+                    formControlName="country"
+                    matInput
+                    type="text"
+                    placeholder="Enter country"
+                  />
+                  <mat-error
+                    *ngIf="addressControls['country'].errors?.['required'] && submitted"
+                  >
+                    Country is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Conversion Ratio </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="form-row" formGroupName="conversionRatio">
+            <div class="form-field form-paired-field">
+              <mat-form-field appearance="outline">
+                <mat-label>Points</mat-label>
+                <input
+                  formControlName="points"
+                  matInput
+                  type="number"
+                  placeholder="Enter points"
+                />
+                <mat-error *ngIf="conversionRatioControls['points'].errors?.['required'] && submitted"
+                  >Points are required</mat-error>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Value</mat-label>
+                <input
+                  formControlName="value"
+                  matInput
+                  type="number"
+                  placeholder="Enter value"
+                />
+                <mat-error *ngIf="conversionRatioControls['value'].errors?.['required'] && submitted"
+                  >Value is required</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-expansion-panel>
+        <div class="form-field form-paired-field">
+          banner:
+          <input type="file" (change)="onBannerSelected($event)">
+        </div>
+        <div class="form-field form-paired-field">
+          logo:
+          <input type="file" (change)="onLogoSelected($event)">
+        </div>
+      </mat-accordion>
+      <div class="form-row">
+        <button
+          [disabled]="!form.valid"
+          class="edit-offer-button"
+          color="primary"
+          mat-raised-button
+          type="submit"
+        >
+          Submit
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

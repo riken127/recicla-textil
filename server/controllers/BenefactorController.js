@@ -349,7 +349,7 @@ async function updateBenefactor(req, res, next) {
         "address",
         "phone",
         "pickpoints",
-        "convertationRatio",
+        "conversionRatio",
         "status",
     ];
 
@@ -527,10 +527,11 @@ async function deleteBenefactor(req, res, next) {
             activityType: "donation",
             "details.benefactorId": id,
         };
+
         const donations = await Donation.find(donationQuery);
 
         if (donations.length == 0) {
-            const result = await Benefactor.findByIdAndDelete(id);
+            const result = await Benefactor.findByIdAndDelete(id, {new: true});
             const {logo, banner} = result;
 
             if (logo) {
@@ -558,10 +559,10 @@ async function deleteBenefactor(req, res, next) {
                     ",\n\n" +
                     "We'd like to inform you that the account for the benefactor has been successfully deleted. Here are the details for the deleted account:\n\n" +
                     "- Username: " +
-                    result.username +
+                    req.user.username +
                     "\n" +
                     "- Email: " +
-                    result.email +
+                    req.user.email +
                     "\n\n" +
                     "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
                     "If you need any further information, we are at your disposal.\n\n" +
@@ -571,11 +572,12 @@ async function deleteBenefactor(req, res, next) {
 
             await email.send();
 
-            res.status(200).json({
+            return res.status(200).json({
                 message: "Benefactor deleted successfully",
                 type: "success",
             });
         } else {
+            console.log("idkmakdkd: "+id);
             const inactiveData = {status: "inactive"};
 
             Benefactor.findByIdAndUpdate(id, inactiveData)
@@ -596,10 +598,10 @@ async function deleteBenefactor(req, res, next) {
                             ",\n\n" +
                             "We'd like to inform you that the account for the benefactor has been successfully deleted. Here are the details for the deleted account:\n\n" +
                             "- Username: " +
-                            result.username +
+                            req.user.username +
                             "\n" +
                             "- Email: " +
-                            result.email +
+                            req.user.email +
                             "\n\n" +
                             "This is an automated email. Please do not reply to this email as responses will not be received or read.\n\n" +
                             "If you need any further information, we are at your disposal.\n\n" +
@@ -609,7 +611,7 @@ async function deleteBenefactor(req, res, next) {
 
                     await email.send();
 
-                    res.status(200).json({
+                    return res.status(200).json({
                         message: "Benefactor status updated to inactive",
                         type: "success",
                     });
@@ -628,7 +630,7 @@ async function deleteBenefactor(req, res, next) {
                             err.code +
                             "\n" +
                             "- Error Message: " +
-                            err.message +
+                            JSON.stringify(err) +
                             "\n\n" +
                             "If you need any further assistance, please don't hesitate to contact us.\n\n" +
                             "Best regards,\n\n" +
@@ -637,7 +639,7 @@ async function deleteBenefactor(req, res, next) {
 
                     await email.send();
 
-                    res.status(500).json({
+                    return res.status(500).json({
                         message: err.message,
                         type: "danger",
                     });
@@ -666,7 +668,7 @@ async function deleteBenefactor(req, res, next) {
 
         await email.send();
 
-        res.status(500).json({
+        return res.status(500).json({
             message: err.message,
             type: "danger",
         });
@@ -696,22 +698,24 @@ function uploadBanner(req, res, next) {
             "/profile/",
             originalFilename
         );
-
+        console.log(bannerUrl)
         Benefactor.findByIdAndUpdate(req.body.entityId, {
             banner: bannerUrl,
         })
             .then((updatedBenefactor) => {
-                res.json({
+                console.log("banner:" + updatedBenefactor)
+                return res.status(200).json({
                     message: "Banner uploaded successfully.",
                     type: "success",
                 });
             })
             .catch((error) => {
-                res.status(500).json({error: "Failed to upload banner."});
+                console.log(error)
+                return res.status(500).json({error: "Failed to upload banner."});
             });
     } catch (error) {
         console.error("Error uploading image", error);
-        res.status(500).json({error: "Failed to upload banner."});
+        return res.status(500).json({error: "Failed to upload banner."});
     }
 }
 
@@ -731,6 +735,7 @@ function uploadBanner(req, res, next) {
  */
 function uploadLogo(req, res, next) {
     try {
+        console.log(req)
         const originalFilename = req.file.originalname;
         const logoUrl = path.join(
             "./uploads/benefactors",
@@ -738,22 +743,24 @@ function uploadLogo(req, res, next) {
             "/profile/",
             originalFilename
         );
-
+        console.log(logoUrl)
         Benefactor.findByIdAndUpdate(req.body.entityId, {
             logo: logoUrl,
         })
             .then((updatedBenefactor) => {
-                res.json({
+                console.log("logo:" + updatedBenefactor)
+                return res.status(200).json({
                     message: "Logo uploaded successfully.",
                     type: "success",
                 });
             })
             .catch((error) => {
-                res.status(500).json({error: "Failed to upload logo."});
+                console.log(error)
+                return res.status(500).json({error: "Failed to upload logo."});
             });
     } catch (error) {
         console.error("Error uploading image", error);
-        res.status(500).json({error: "Failed to upload logo."});
+        return res.status(500).json({error: "Failed to upload logo."});
     }
 }
 

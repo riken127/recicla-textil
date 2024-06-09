@@ -92,6 +92,14 @@ export class ListComponent implements OnInit {
     }
   }
 
+  truncateDescription(benefactor: Benefactor): string {
+    const maxLength = 100;
+    if (benefactor.description.length > maxLength) {
+      return benefactor.description.substring(0, maxLength) + " ...";
+    }
+    return benefactor.description;
+  }
+
   onClick(id: string) {
     if (!id) {
       return;

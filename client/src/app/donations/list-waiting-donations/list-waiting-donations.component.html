@@ -1,169 +1,203 @@
-<div class="mat-elevation-z8">
-  <table
-    [dataSource]="dataSource"
-    class="mat-elevation-z8"
-    mat-table
-    multiTemplateDataRows
-  >
-    <ng-container matColumnDef="expand">
-      <th *matHeaderCellDef mat-header-cell>
-        <mat-slide-toggle (change)="onToggleChange($event)" [(ngModel)]="onlyWaiting" [disabled]="isDisabled">Waiting
-        </mat-slide-toggle>
-      </th>
-      <td *matCellDef="let donation" mat-cell>
-        <button
-          (click)="
-            expandedElement = expandedElement === donation ? null : donation
-          "
-          mat-icon-button
-        >
-          <mat-icon>{{
-              expandedElement === donation
-                ? "keyboard_arrow_up"
-                : "keyboard_arrow_down"
-            }}
-          </mat-icon>
-        </button>
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="username">
-      <th *matHeaderCellDef class="center-cell" mat-header-cell>Donator</th>
-      <td *matCellDef="let donation" class="center-cell" mat-cell>
-        {{ donation.username }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="pickpointAddress">
-      <th *matHeaderCellDef class="center-cell" mat-header-cell>
-        Pickpoint Address
-      </th>
-      <td *matCellDef="let donation" class="center-cell" mat-cell>
-        {{ donation.pickpointAddress }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="items">
-      <th *matHeaderCellDef class="center-cell" mat-header-cell>Items</th>
-      <td *matCellDef="let donation" class="center-cell" mat-cell>
-        {{ donation.details.items.length }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="weight">
-      <th *matHeaderCellDef class="center-cell" mat-header-cell>
-        Total Weight
-      </th>
-      <td *matCellDef="let donation" class="center-cell" mat-cell>
-        {{ donation.details.totalWeight }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="timeStamp">
-      <th *matHeaderCellDef class="center-cell" mat-header-cell>
-        Creation Date
-      </th>
-      <td *matCellDef="let donation" class="center-cell" mat-cell>
-        {{ formatTimestamp(donation.timestamp) }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="status">
-      <th *matHeaderCellDef class="center-cell" mat-header-cell>Status</th>
-      <td *matCellDef="let donation" class="center-cell" mat-cell>
-        <span
-          [attr.data-status]="donation.status.toLowerCase().replace(' ', '')"
-        >
-          {{ donation.status }}
-        </span>
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="actions">
-      <th *matHeaderCellDef class="center-cell" mat-header-cell>Actions</th>
-      <td *matCellDef="let donation" class="center-cell" mat-cell>
-        <button
-          (click)="acceptDonation(donation)"
-          [disabled]="donation.status === 'Canceled' || donation.status === 'Delivered'"
-          [ngClass]="{'icon-green': !(donation.status === 'Canceled' || donation.status === 'Delivered')}"
-          aria-label="accept"
-          mat-icon-button
-        >
-          <mat-icon *ngIf="donation.status === 'Waiting Approval'">done</mat-icon>
-          <mat-icon *ngIf="donation.status === 'On Going'">done_all</mat-icon>
-        </button>
-        <button
-          (click)="cancelDonation(donation)"
-          [disabled]="donation.status === 'Canceled' || donation.status === 'Delivered'"
-          [ngClass]="{'icon-red': !(donation.status === 'Canceled' || donation.status === 'Delivered')}"
-          aria-label="close"
-          mat-icon-button
-        >
-          <mat-icon>close</mat-icon>
-        </button>
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="expandedDetail">
-      <td
-        *matCellDef="let donation"
-        [attr.colspan]="displayedColumns.length"
-        mat-cell
+<mat-card>
+  <mat-card-content>
+    <div class="mat-elevation-z8">
+      <table
+        [dataSource]="dataSource"
+        class="mat-elevation-z8"
+        mat-table
+        multiTemplateDataRows
       >
-        <div *ngIf="expandedElement === donation" class="element-detail">
-          <h3>Items</h3>
-          <table
-            [dataSource]="donation.details.items"
-            class="inner-table"
-            mat-table
+        <ng-container matColumnDef="expand">
+          <th *matHeaderCellDef mat-header-cell>
+            <mat-slide-toggle
+              (change)="onToggleChange($event)"
+              [(ngModel)]="onlyWaiting"
+              [disabled]="isDisabled"
+              >Waiting
+            </mat-slide-toggle>
+          </th>
+          <td *matCellDef="let donation" mat-cell>
+            <button
+              (click)="
+                expandedElement = expandedElement === donation ? null : donation
+              "
+              mat-icon-button
+            >
+              <mat-icon
+                >{{
+                  expandedElement === donation
+                    ? "keyboard_arrow_up"
+                    : "keyboard_arrow_down"
+                }}
+              </mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="username">
+          <th *matHeaderCellDef class="center-cell" mat-header-cell>Donator</th>
+          <td *matCellDef="let donation" class="center-cell" mat-cell>
+            {{ donation.username }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="pickpointAddress">
+          <th *matHeaderCellDef class="center-cell" mat-header-cell>
+            Pickpoint Address
+          </th>
+          <td *matCellDef="let donation" class="center-cell" mat-cell>
+            {{ donation.pickpointAddress }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="items">
+          <th *matHeaderCellDef class="center-cell" mat-header-cell>Items</th>
+          <td *matCellDef="let donation" class="center-cell" mat-cell>
+            {{ donation.details.items.length }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="weight">
+          <th *matHeaderCellDef class="center-cell" mat-header-cell>
+            Total Weight
+          </th>
+          <td *matCellDef="let donation" class="center-cell" mat-cell>
+            {{ donation.details.totalWeight }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="timeStamp">
+          <th *matHeaderCellDef class="center-cell" mat-header-cell>
+            Creation Date
+          </th>
+          <td *matCellDef="let donation" class="center-cell" mat-cell>
+            {{ formatTimestamp(donation.timestamp) }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th *matHeaderCellDef class="center-cell" mat-header-cell>Status</th>
+          <td *matCellDef="let donation" class="center-cell" mat-cell>
+            <span
+              [attr.data-status]="
+                donation.status.toLowerCase().replace(' ', '')
+              "
+            >
+              {{ donation.status }}
+            </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th *matHeaderCellDef class="center-cell" mat-header-cell>Actions</th>
+          <td *matCellDef="let donation" class="center-cell" mat-cell>
+            <button
+              (click)="acceptDonation(donation)"
+              [disabled]="
+                donation.status === 'Canceled' ||
+                donation.status === 'Delivered'
+              "
+              [ngClass]="{
+                'icon-green': !(
+                  donation.status === 'Canceled' ||
+                  donation.status === 'Delivered'
+                )
+              }"
+              aria-label="accept"
+              mat-icon-button
+            >
+              <mat-icon *ngIf="donation.status === 'Waiting Approval'"
+                >done</mat-icon
+              >
+              <mat-icon *ngIf="donation.status === 'On Going'"
+                >done_all</mat-icon
+              >
+            </button>
+            <button
+              (click)="cancelDonation(donation)"
+              [disabled]="
+                donation.status === 'Canceled' ||
+                donation.status === 'Delivered'
+              "
+              [ngClass]="{
+                'icon-red': !(
+                  donation.status === 'Canceled' ||
+                  donation.status === 'Delivered'
+                )
+              }"
+              aria-label="close"
+              mat-icon-button
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="expandedDetail">
+          <td
+            *matCellDef="let donation"
+            [attr.colspan]="displayedColumns.length"
+            mat-cell
           >
-            <ng-container matColumnDef="brand">
-              <th *matHeaderCellDef class="center-cell" mat-header-cell>
-                Brand
-              </th>
-              <td *matCellDef="let item" class="center-cell" mat-cell>
-                {{ item.brand }}
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="weight">
-              <th *matHeaderCellDef class="center-cell" mat-header-cell>
-                Weight
-              </th>
-              <td *matCellDef="let item" class="center-cell" mat-cell>
-                {{ item.weight.value }} {{ item.weight.unit }}
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="size">
-              <th *matHeaderCellDef class="center-cell" mat-header-cell>
-                Size
-              </th>
-              <td *matCellDef="let item" class="center-cell" mat-cell>
-                {{ item.size }}
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="type">
-              <th *matHeaderCellDef class="center-cell" mat-header-cell>
-                Type
-              </th>
-              <td *matCellDef="let item" class="center-cell" mat-cell>
-                {{ item.type }}
-              </td>
-            </ng-container>
-            <tr
-              *matHeaderRowDef="['brand', 'weight', 'size', 'type']"
-              mat-header-row
-            ></tr>
-            <tr
-              *matRowDef="let row; columns: ['brand', 'weight', 'size', 'type']"
-              mat-row
-            ></tr>
-          </table>
-        </div>
-      </td>
-    </ng-container>
-    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-    <tr
-      *matRowDef="let row; columns: displayedColumns"
-      [class.expanded-row]="expandedElement === row"
-      mat-row
-    ></tr>
-    <tr
-      *matRowDef="let row; columns: ['expandedDetail']"
-      [class.detail-row]="expandedElement === row"
-      [class.hidden-row]="expandedElement !== row"
-      mat-row
-    ></tr>
-  </table>
-</div>
+            <div *ngIf="expandedElement === donation" class="element-detail">
+              <h3>Items</h3>
+              <table
+                [dataSource]="donation.details.items"
+                class="inner-table"
+                mat-table
+              >
+                <ng-container matColumnDef="brand">
+                  <th *matHeaderCellDef class="center-cell" mat-header-cell>
+                    Brand
+                  </th>
+                  <td *matCellDef="let item" class="center-cell" mat-cell>
+                    {{ item.brand }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="weight">
+                  <th *matHeaderCellDef class="center-cell" mat-header-cell>
+                    Weight
+                  </th>
+                  <td *matCellDef="let item" class="center-cell" mat-cell>
+                    {{ item.weight.value }} {{ item.weight.unit }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="size">
+                  <th *matHeaderCellDef class="center-cell" mat-header-cell>
+                    Size
+                  </th>
+                  <td *matCellDef="let item" class="center-cell" mat-cell>
+                    {{ item.size }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="type">
+                  <th *matHeaderCellDef class="center-cell" mat-header-cell>
+                    Type
+                  </th>
+                  <td *matCellDef="let item" class="center-cell" mat-cell>
+                    {{ item.type }}
+                  </td>
+                </ng-container>
+                <tr
+                  *matHeaderRowDef="['brand', 'weight', 'size', 'type']"
+                  mat-header-row
+                ></tr>
+                <tr
+                  *matRowDef="
+                    let row;
+                    columns: ['brand', 'weight', 'size', 'type']
+                  "
+                  mat-row
+                ></tr>
+              </table>
+            </div>
+          </td>
+        </ng-container>
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr
+          *matRowDef="let row; columns: displayedColumns"
+          [class.expanded-row]="expandedElement === row"
+          mat-row
+        ></tr>
+        <tr
+          *matRowDef="let row; columns: ['expandedDetail']"
+          [class.detail-row]="expandedElement === row"
+          [class.hidden-row]="expandedElement !== row"
+          mat-row
+        ></tr>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

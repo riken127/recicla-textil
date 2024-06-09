@@ -186,6 +186,7 @@ function isAuthenticated(req, res, next) {
         next();
     });
 }
+
 function checkAuth(req, res, next) {
     const encryptedToken = req.cookies.token;
 
@@ -236,6 +237,7 @@ function isNotAuthenticated(req, res, next) {
 }
 
 function hasRoles(roles) {
+
     return function (req, res, next) {
         if (!req.user || !req.user.roles) {
             res.render("error", {
