@@ -5,6 +5,7 @@ const storage = multer.diskStorage({
     // Set destination directory for uploaded files
     destination: (req, file, cb) => {
         let destinationFolder;
+
         switch (req.body.entityType) {
             case 'donation':
                 destinationFolder = path.join('uploads', 'donations', req.body.entityId, 'images');
@@ -13,7 +14,7 @@ const storage = multer.diskStorage({
                 if (req.body.entitySubType === 'profile') {
                     destinationFolder = path.join('uploads', 'benefactors', req.body.entityId, 'profile');
                 } else if (req.body.entitySubType === 'post') {
-                    destinationFolder = path.join('uploads', 'benefactors', req.body.entityId, 'posts', req.body.postId);
+                    destinationFolder = path.join('uploads', 'benefactors', req.body.entityId, 'posts');
                 } else if (req.body.entitySubType === 'offer') {
                     destinationFolder = path.join('uploads', 'benefactors', req.body.entityId, 'offers');
                 } else if (req.body.entitySubType === 'prize'){

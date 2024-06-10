@@ -22,12 +22,12 @@
         </ng-container>
         <ng-container matColumnDef="actions">
             <th mat-header-cell class="center-cell" *matHeaderCellDef>
-                <button mat-button (click)="addPickpoint()">
+                <button mat-raised-button color="primary" (click)="addPickpoint()">
                     <mat-icon>add</mat-icon> Pickpoint
                   </button>
             </th>
             <td mat-cell class="center-cell" class="center-cell" *matCellDef="let pickpoint">
-              <button mat-button (click)="editPickpoint(pickpoint)"><mat-icon>edit</mat-icon>Edit</button>
+              <button mat-raised-button class="edit" (click)="editPickpoint(pickpoint)"><mat-icon>edit</mat-icon>Edit</button>
             </td>
           </ng-container>
           <tr mat-header-row  *matHeaderRowDef="['street', 'city', 'country', 'postalCode', 'actions']"></tr>

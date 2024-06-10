@@ -1,9 +1,9 @@
 <div class="container">
-  <h1 mat-dialog-title>{{ post?.title }}</h1>
+  <h1 mat-dialog-title>{{ post.title }}</h1>
   <div mat-dialog-content>
-    <img alt="Error Loading Image" src="https://picsum.photos/500/500"/>
-    <p>{{ post?.content }}</p>
-    <div class="link-buttons" style="display: flex; flex-wrap: wrap;">
+    <img  [src]="getPostImageUrl(post.image)" />
+    <p>{{ post.content }}</p>
+    <div class="link-buttons" style="display: flex; flex-wrap: wrap">
       <div class="dialog-actions">
         <div *ngFor="let link of post?.links">
           <button

@@ -39,6 +39,7 @@ export class ProfileComponent implements OnInit {
   posts: Post[] = [];
   benefactorId: string | null = null;
   gridCols?: number;
+  type?: string;
 
   constructor(
     private authService: AuthenticationService,
@@ -73,12 +74,12 @@ export class ProfileComponent implements OnInit {
   }
 
   profile() {
-  const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
       this.service.getBenefactor(id)?.subscribe(benefactor => {
         this.benefactor = benefactor;
-        this.benefactor.description= this.truncateDescription(this.benefactor);
+        this.benefactor.description = this.truncateDescription(this.benefactor);
         this.getAllPosts();
       });
     }
@@ -87,6 +88,7 @@ export class ProfileComponent implements OnInit {
   getToken() {
     this.authService.getBenefactorDecodedToken(true, false).subscribe(result => {
       this.benefactorId = result.id;
+      this.type = result.type;
       this.profile();
     });
   }
@@ -112,15 +114,15 @@ export class ProfileComponent implements OnInit {
     this.dialog.open(CreatePostComponent, {
       data: { benefactor: benefactor },
     }).afterClosed().subscribe(result => {
-      location.reload();
+      this.getAllPosts();
     });
   }
 
   openEditPost(post: Post) {
     this.dialog.open(EditPostComponent, {
-      data: { post: post },
+      data: { post: post, benefactorId: this.benefactorId},
     }).afterClosed().subscribe(result => {
-      location.reload();
+      this.getAllPosts();
     });
   }
 
@@ -137,11 +139,11 @@ export class ProfileComponent implements OnInit {
     this.dialog.open(EditProfileComponent, {
       data: { benefactor: benefactor },
     }).afterClosed().subscribe(result => {
-      location.reload();
+      this.profile();
     });
   }
 
-   truncateDescription(benefactor: Benefactor): string {
+  truncateDescription(benefactor: Benefactor): string {
     const maxLength = 400;
     if (benefactor.description.length > maxLength) {
       return benefactor.description.substring(0, maxLength) + " ...";
@@ -165,6 +167,12 @@ export class ProfileComponent implements OnInit {
     return this.benefactor?.banner
       ? this.parseImageUrl(this.benefactor.banner)
       : `url(https://api.dicebear.com/8.x/shapes/svg?seed=${this.benefactor?.phone})`;
+  }
+
+  getPostImageUrl(image : string): string {
+    return image
+      ? this.parseImageUrl(image)
+      : `url(https://picsum.photos/500/500)`;
   }
 
   parseImageUrl(url: string): string {

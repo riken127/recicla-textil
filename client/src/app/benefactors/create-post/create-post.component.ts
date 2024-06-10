@@ -1,17 +1,18 @@
-import {Component, OnInit,Inject} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {MatCardModule} from '@angular/material/card';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {ActivatedRoute, Router} from '@angular/router';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {BenefactorsService} from '../../services/benefactors.service';
-import {Post} from '../../models/post';
-import {Benefactor} from '../../models/benefactor';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import { Component, OnInit, Inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { BenefactorsService } from '../../services/benefactors.service';
+import { Post } from '../../models/post';
+import { Benefactor } from '../../models/benefactor';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FileUploadService } from '../../services/file-upload.service';
 
 @Component({
   selector: 'app-create-post',
@@ -31,13 +32,16 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 export class CreatePostComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
-benefactorId: string | null = null;
+  benefactorId: string | null = null;
+  fileToUpload: File | null = null;
+
   constructor(
     private benefactorService: BenefactorsService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
+    private fileUploadService: FileUploadService,
     public dialogRef: MatDialogRef<CreatePostComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { benefactor: Benefactor }
   ) {
@@ -52,9 +56,8 @@ benefactorId: string | null = null;
     this.route.paramMap.subscribe((params) => {
       this.form = this.formBuilder.group({
         benefactorId: [this.benefactorId],
-        title: ['', Validators.required, ],
+        title: ['', Validators.required,],
         content: ['', Validators.required],
-        image: [''],
         links: this.formBuilder.array([])
       });
     });
@@ -68,21 +71,38 @@ benefactorId: string | null = null;
     }
 
     const newPost = new Post(
-      "",
+      '',
       this.f['benefactorId'].value,
       this.f['title'].value,
       this.f['content'].value,
-      this.f['image'].value,
+      this.fileToUpload ? 'y' : '',
       new Date(),
       new Date(),
       []
     );
 
     this.benefactorService.addPost(newPost)?.subscribe(
-      () => {
+      (result) => {
+        const postId = result.result
+
+        if(postId && this.fileToUpload  && this.benefactorId){
+          this.fileUploadService.uploadPostImage(this.fileToUpload, this.benefactorId, postId)?.subscribe(
+            () => {
+              this.snackBar.open('Post created successfully', 'Close', {
+                duration: 2000,
+              });
+            },
+            (error) => {
+              this.snackBar.open('Error uploading post image', 'Close', {
+                duration: 2000,
+              });
+            }
+          );
+        }else{
         this.snackBar.open('Post created successfully', 'Close', {
           duration: 2000,
         });
+      }
       },
       (error) => {
         this.snackBar.open('Error creating post', 'Close', {
@@ -96,5 +116,9 @@ benefactorId: string | null = null;
   onReset() {
     this.submitted = false;
     this.form.reset();
+  }
+
+  onFileSelected(event: any) {
+    this.fileToUpload = event.target.files[0];
   }
 }

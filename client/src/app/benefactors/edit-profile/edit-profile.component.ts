@@ -102,6 +102,7 @@ export class EditProfileComponent implements OnInit {
     }
 
     const benefactorData = this.form.value;
+    benefactorData.conversionRatio.weightMetric = 'g';
     benefactorData['_id'] = this.benefactor._id;
 
     if (this.form.value.newPassword && this.form.value.newPassword === this.form.value.confirmPassword) {

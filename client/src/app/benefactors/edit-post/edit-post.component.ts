@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Post } from '../../models/post';
 import { Benefactor } from '../../models/benefactor';
 import { BenefactorsService } from '../../services/benefactors.service';
+import { FileUploadService } from '../../services/file-upload.service';
 
 @Component({
   selector: 'app-edit-post',
@@ -32,6 +33,8 @@ export class EditPostComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
   post: Post;
+  fileToUpload: File | null = null;
+  benefactorId: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -40,9 +43,11 @@ export class EditPostComponent implements OnInit {
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<EditPostComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { post: Post }
+    public fileUploadService: FileUploadService,
+    @Inject(MAT_DIALOG_DATA) public data: { post: Post, benefactorId: string }
   ) {
     this.post = data.post;
+    this.benefactorId = data.benefactorId;
   }
 
   get f() {
@@ -53,7 +58,6 @@ export class EditPostComponent implements OnInit {
     this.form = this.formBuilder.group({
       title: ['', Validators.required],
       content: ['', Validators.required],
-      image: ['', Validators.required]
     });
 
     this.form.patchValue(this.post);
@@ -66,16 +70,40 @@ export class EditPostComponent implements OnInit {
       return;
     }
 
-    const postData = this.form.value;
-    postData['_id'] = this.post._id;
+    let postData;
 
-    this.service.updatePost(postData)?.subscribe(
+    if (this.benefactorId) {
+      postData = new Post(
+        this.post._id,
+        this.benefactorId,
+        this.f['title'].value,
+        this.f['content'].value,
+        this.fileToUpload ? 'y' : '',
+        this.post.createdAt,
+        this.post.updatedAt,
+        this.post.links
+      );
+
+    this.service.updatePost(postData)!.subscribe(
       response => {
-        this.snackBar.open('Post updated successfully', 'Close', {
-          duration: 3000
-        }).afterDismissed().subscribe(() => {
-          this.router.navigate(['/posts/' + postData['_id']]);
-        });
+        if (this.fileToUpload && this.benefactorId) {
+          this.fileUploadService.uploadPostImage(this.fileToUpload, this.benefactorId,this.post._id)?.subscribe(
+            response => {
+              this.snackBar.open('Post updated successfully', 'Close', {
+                duration: 3000
+              })
+            },
+            error => {
+              this.snackBar.open('Failed to update post image', 'Close', {
+                duration: 3000
+              });
+            }
+          );
+        } else {
+          this.snackBar.open('Post updated successfully', 'Close', {
+            duration: 3000
+          })
+        }
       },
       error => {
         this.snackBar.open('Failed to update post', 'Close', {
@@ -85,6 +113,7 @@ export class EditPostComponent implements OnInit {
     );
     this.onReset();
     this.dialogRef.close();
+  }
   }
 
   onReset() {
@@ -108,5 +137,9 @@ export class EditPostComponent implements OnInit {
         });
       }
     );
+  }
+
+  onFileSelected(event: any) {
+    this.fileToUpload = event.target.files[0];
   }
 }

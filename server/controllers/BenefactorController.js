@@ -753,7 +753,7 @@ function uploadBanner(req, res, next) {
             "/profile/",
             originalFilename
         );
-        console.log(bannerUrl);
+
         Benefactor.findByIdAndUpdate(req.body.entityId, {
             banner: bannerUrl,
         })
@@ -765,7 +765,7 @@ function uploadBanner(req, res, next) {
                 });
             })
             .catch((error) => {
-                console.log(error);
+
                 return res
                     .status(500)
                     .json({ error: "Failed to upload banner." });

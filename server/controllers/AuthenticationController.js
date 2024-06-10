@@ -288,6 +288,7 @@ function getDecodedToken(req, res) {
         const result = {};
 
         if (decodedToken.user !== undefined) {
+            result.type = "user";
             if (id !== undefined) {
                 result.id = decodedToken.user._id;
             }
@@ -302,6 +303,7 @@ function getDecodedToken(req, res) {
         }
 
         if (decodedToken.benefactor !== undefined) {
+            result.type = "benefactor";
             if (id !== undefined) {
                 result.id = decodedToken.benefactor._id;
             }
@@ -315,7 +317,8 @@ function getDecodedToken(req, res) {
             result.id === undefined &&
             result.fName === undefined &&
             result.lName === undefined &&
-            result.name === undefined
+            result.name === undefined &&
+            result.type === undefined
         ) {
             return res.status(500).json({
                 type: "error",

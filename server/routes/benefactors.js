@@ -24,8 +24,8 @@ router.post(
 
 // Upload benefactor post image
 router.post(
-    "/upload/image",
-    upload.single("image"),
+    "/posts/image/upload/",
+    upload.single("post"),
     postController.uploadImage
 );
 

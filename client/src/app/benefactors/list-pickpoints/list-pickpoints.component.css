@@ -10,3 +10,7 @@ mat-card {
   .center-cell {
     text-align: center;
   } 
+
+  .edit{
+    background-color: #525252;
+  } 

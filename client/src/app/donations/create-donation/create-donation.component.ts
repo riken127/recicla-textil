@@ -101,7 +101,7 @@ export class CreateDonationComponent implements OnInit {
   loadPickpoints(benefactorId: string) {
     this.benefactorsService.getAllPickpoints(benefactorId)?.subscribe(
       (response: any) => {
-        this.pickpoints = response.data;
+        this.pickpoints = response;
       },
       (error) => {
         this.snackBar.open(

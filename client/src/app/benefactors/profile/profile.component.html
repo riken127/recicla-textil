@@ -1,6 +1,6 @@
+<div class="container">
 @if (benefactor != undefined) {
 
-<div class="container">
   <mat-card>
     <mat-card-header
       id="banner-header"
@@ -40,7 +40,9 @@
             <mat-icon>edit</mat-icon>
             Edit Profile
           </button>
-          }
+
+          } @if (type=='user' && benefactor.pickpoints.length > 0) {
+
           <button
             id="addDonation"
             mat-raised-button
@@ -50,6 +52,9 @@
             <mat-icon>add</mat-icon>
             Donation
           </button>
+
+          }
+          
         </div>
       </div>
       <mat-card-subtitle id="address"
@@ -77,67 +82,73 @@
       </mat-card-subtitle>
     </mat-card-content>
   </mat-card>
-</div>
-<div class="posts-container">
-  <mat-grid-list cols="{{ gridCols }}">
-    <mat-grid-tile *ngFor="let post of posts" class="post-tile">
-      <div class="square-wrapper">
-        <mat-card class="posts">
-          <mat-card-header
-            [ngStyle]="{
-              'background-image': 'url(https://picsum.photos/500/500)'
-            }"
-            class="banner-header"
-          >
-          </mat-card-header>
-          <mat-card-content id="body">
-            <div class="title-actions-container">
-              <div class="title-actions">
-                <mat-card-subtitle id="title"
-                  >{{ post.title }}
-                </mat-card-subtitle>
-                <mat-card-actions>
-                  @if (benefactorId == benefactor._id) {
 
-                  <button
-                    class="benefactor-button"
-                    mat-raised-button
-                    (click)="openEditPost(post)"
-                  >
-                    <mat-icon>edit</mat-icon>
-                    Edit
-                  </button>
+  @if (benefactor._id == benefactorId){
 
-                  }
-
-                  <button
-                    mat-raised-button
-                    color="primary"
-                    (click)="openPost(post)"
-                  >
-                    VIEW
-                  </button>
-                </mat-card-actions>
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
-    </mat-grid-tile>
-  </mat-grid-list>
-</div>
-
-@if (benefactor._id == benefactorId){
   <div class="tables-container">
     <app-list-pickpoints></app-list-pickpoints>
     <app-list-waiting-donations></app-list-waiting-donations>
   </div>
-} } @else {
 
-<div class="error-container">
-  <div class="error-message">
-    <h2>Error</h2>
-    <p>Error loading Profile</p>
+  }
+
+  <div class="posts-container">
+    <mat-grid-list cols="{{ gridCols }}">
+      <mat-grid-tile *ngFor="let post of posts" class="post-tile">
+        <div class="square-wrapper">
+          <mat-card class="posts">
+            <mat-card-header
+              [ngStyle]="{
+                'background-image': getPostImageUrl(post.image)
+              }"
+              class="banner-header"
+            >
+            </mat-card-header>
+            <mat-card-content id="body">
+              <div class="title-actions-container">
+                <div class="title-actions">
+                  <mat-card-subtitle id="title"
+                    >{{ post.title }}
+                  </mat-card-subtitle>
+                  <mat-card-actions>
+                    @if (benefactorId == benefactor._id) {
+
+                    <button
+                      class="benefactor-button"
+                      mat-raised-button
+                      (click)="openEditPost(post)"
+                    >
+                      <mat-icon>edit</mat-icon>
+                      Edit
+                    </button>
+
+                    }
+
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="openPost(post)"
+                    >
+                      VIEW
+                    </button>
+                  </mat-card-actions>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
   </div>
+
+  } @else {
+
+  <div class="error-container">
+    <div class="error-message">
+      <h2>Error</h2>
+      <p>Error loading Profile</p>
+    </div>
+  </div>
+  }
+
 </div>
-}

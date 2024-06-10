@@ -169,12 +169,12 @@ export class BenefactorsService {
       )
   }
 
-  public addPost( post: Post): Observable<boolean> | null {
+  public addPost( post: Post): Observable<any> | null {
     return this.http.post<any>(`${BenefactorsService.apiUrl}/${post.benefactorId}/posts`, post, {observe: 'response', withCredentials: true})
       .pipe(
         map((response) => {
           if (response.status === 200) {
-            return true;
+            return response.body;
           }
           return false;
         })

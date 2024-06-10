@@ -22,10 +22,9 @@
         </div>
         <div class="form-row">
           <div class="form-field form-single-field">
-            <mat-form-field appearance="outline">
-              <input formControlName="image" matInput type="text" placeholder="Image URL">
-              <mat-error *ngIf="f['image'].errors?.['required'] && submitted">Image is a required field.</mat-error>
-            </mat-form-field>
+            <div class="form-field form-single-field">
+              <input type="file" (change)="onFileSelected($event)">
+            </div>
           </div>
         </div>
         <div class="form-row">

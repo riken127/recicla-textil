@@ -39,10 +39,10 @@ function addPost(req, res) {
         .then((post) => {
             if (
                 postData.image &&
-                !fs.existsSync("./uploads/benefactor/" + benefactorId)
+                !fs.existsSync("./uploads/benefactors/" + benefactorId)
             ) {
                 fs.mkdirSync(
-                    "./uploads/benefactor/" + benefactorId + "/posts",
+                    "./uploads/benefactors/" + benefactorId + "/posts",
                     {recursive: true}
                 );
             }
@@ -87,28 +87,28 @@ function updatePost(req, res) {
         .then((post) => {
             if (
                 req.body.image &&
-                !fs.existsSync("./uploads/benefactor/" + benefactorId)
+                !fs.existsSync("./uploads/benefactors/" + benefactorId)
             ) {
                 fs.mkdirSync(
-                    "./uploads/benefactor/" + benefactorId + "/posts",
+                    "./uploads/benefactors/" + benefactorId + "/posts",
                     {recursive: true}
                 );
             }
 
             if (!post) {
-                res.json({
+             return res.status(404).json({
                     message: "Post not found",
                     type: "danger",
                 });
             }
 
-            res.json({
+            return res.status(200).json({
                 type: "success",
                 message: post.title + " was updated successfully.",
             });
         })
         .catch((error) => {
-            res.status(500).json({
+           return  res.status(500).json({
                 type: "error",
                 result: error,
             });
@@ -142,7 +142,10 @@ function deletePost(req, res) {
                 try {
                     fs.unlinkSync("./uploads/" + post.image);
                 } catch (err) {
-                    console.log(err);
+                    return res.status(500).json({
+                        type: "error",
+                        result: err,
+                    });
                 }
             }
 
@@ -153,7 +156,7 @@ function deletePost(req, res) {
                 });
             }
 
-            res.json({
+            res.status(200).json({
                 type: "success",
                 message: post.title + " was deleted successfully.",
             });
@@ -210,34 +213,33 @@ function getAllPosts(req, res) {
  * @example
  */
 function uploadImage(req, res) {
-    try {
+        try {
         const originalFilename = req.file.originalname;
-        const benefactorId = req.params.benefactorId;
-        const imageUrl = paht.join(
+        const imageUrl = path.join(
             "./uploads/benefactors/",
-            benefactorId,
+            req.body.entityId,
             "/posts/",
             originalFilename
         );
 
         Post.findByIdAndUpdate(
             req.body.postId,
-            {image: imageUrl},
-            {new: true}
+            {image: imageUrl}
         )
             .then((post) => {
-                res.json({
+                return res.status(200).json({
                     type: "success",
                     message: "Image uploaded successfully.",
                 });
             })
             .catch((error) => {
-                res.status(500).json({
+                return res.status(500).json({
                     error: "Failed to upload image.",
                 });
             });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
+
             error: "Failed to upload image.",
         });
     }
