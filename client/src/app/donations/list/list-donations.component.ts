@@ -58,7 +58,7 @@ export class ListDonationsComponent implements OnInit {
 
   ngOnInit() {
     this.authenticationService
-      .getDecodedToken(true, false, false)
+      .getDecodedToken(true, false, false,false)
       .subscribe((result) => {
         this.userId = result.id;
 

@@ -1,0 +1,15 @@
+<div class="container">
+  <div class="login">
+    <mat-button-toggle-group [(value)]="selectedValue">
+      <mat-button-toggle value="users">Users</mat-button-toggle>
+      <mat-button-toggle value="benefactors">Benefactor</mat-button-toggle>
+    </mat-button-toggle-group>
+    <div class="login-container">
+      @if(selectedValue === 'users'){
+      <app-user-login></app-user-login>
+      } @else{
+      <app-benefactor-login></app-benefactor-login>
+      }
+    </div>
+  </div>
+</div>

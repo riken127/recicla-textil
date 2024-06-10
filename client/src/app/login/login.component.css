@@ -1,0 +1,19 @@
+.container{
+    height: 100%;
+    background-color: #c3c3c3;
+}
+
+.login {
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  mat-button-toggle-group {
+    margin-top: 35%;
+  }
+
+  .login-container{
+    margin-top: 30px;
+  }
+  

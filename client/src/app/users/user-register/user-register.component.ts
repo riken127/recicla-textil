@@ -13,7 +13,7 @@ import {User} from "../../models/user";
 import {Address} from "../../models/address";
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-user-register',
   standalone: true,
   imports: [
     CommonModule,
@@ -91,5 +91,9 @@ export class UserRegisterComponent {
           }
         );
     }
+  }
+  
+  login() {
+    this.router.navigate(['/login']);
   }
 }

@@ -1,8 +1,4 @@
 import {Routes} from '@angular/router';
-import {UserLoginComponent} from './users/user-login/user-login.component';
-import {UserRegisterComponent} from "./users/user-register/user-register.component";
-import {BenefactorLoginComponent} from "./benefactors/benefactor-login/benefactor-login.component";
-import {BenefactorRegisterComponent} from "./benefactors/benefactor-register/benefactor-register.component";
 import {authGuard} from "./auth.guard";
 import {ListComponent} from './benefactors/list/list.component';
 import {ListItemsComponent} from './donations/list-items/list-items.component';
@@ -15,11 +11,10 @@ import {DisableOfferComponent} from "./benefactors/disable-offer/disable-offer.c
 import {ProfileComponent} from './benefactors/profile/profile.component';
 import {AllOffersComponent} from "./benefactors/all-offers/all-offers.component";
 import {AllPostsComponent} from "./benefactors/all-posts/all-posts.component";
-import {CreatePickpointComponent} from "./benefactors/create-pickpoint/create-pickpoint.component";
-import {EditPickpointComponent} from "./benefactors/edit-pickpoint/edit-pickpoint.component";
-import {DisablePickpointComponent} from "./benefactors/disable-pickpoint/disable-pickpoint.component";
 import {AllPrizesComponent} from "./benefactors/all-prizes/all-prizes.component";
 import {UserProfileComponent} from './users/user-profile/user-profile.component';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
 export const routes: Routes = [
   {
@@ -48,20 +43,12 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'users/login',
-    component: UserLoginComponent,
+    path: 'login',
+    component: LoginComponent,
   },
   {
-    path: 'users/register',
-    component: UserRegisterComponent,
-  },
-  {
-    path: 'benefactors/login',
-    component: BenefactorLoginComponent,
-  },
-  {
-    path: 'benefactors/register',
-    component: BenefactorRegisterComponent,
+    path: 'register',
+    component: RegisterComponent,
   },
   {
     path: ':id/list-items',

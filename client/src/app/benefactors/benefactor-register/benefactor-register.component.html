@@ -1,6 +1,6 @@
 <mat-card class="register-card">
   <mat-card-title class="card-title">
-    <span class="title-text">Register as Benefactor</span>
+    <span class="title-text">Register Benefactor</span>
   </mat-card-title>
   <mat-card-content>
     <form (ngSubmit)="onSubmit()" [formGroup]="registerForm">
@@ -92,6 +92,9 @@
       </div>
       <button [disabled]="!registerForm.valid" class="register-button" color="primary" mat-raised-button type="submit">
         Register
+      </button>
+      <button  class="login-button" r mat-button (click)="login()">
+        Login
       </button>
     </form>
   </mat-card-content>

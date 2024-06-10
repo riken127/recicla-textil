@@ -86,7 +86,7 @@ export class ProfileComponent implements OnInit {
   }
 
   getToken() {
-    this.authService.getBenefactorDecodedToken(true, false).subscribe(result => {
+    this.authService.getDecodedToken(true, false, false, false).subscribe(result => {
       this.benefactorId = result.id;
       this.type = result.type;
       this.profile();

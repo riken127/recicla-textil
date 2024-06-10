@@ -67,4 +67,8 @@ export class UserLoginComponent {
       duration: 5000,
     });
   }
+  
+  register() {
+    this.router.navigate(['/register']);
+  }
 }

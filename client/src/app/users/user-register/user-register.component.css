@@ -30,3 +30,11 @@
   font-size: 16px;
   padding: 12px 24px;
 }
+
+.login-button {
+  width: 100%;
+  font-size: 16px;
+  padding: 12px 24px;
+  background-color: rgb(91, 91, 91);
+  margin-top: 5px; 
+}

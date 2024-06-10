@@ -92,4 +92,8 @@ export class BenefactorRegisterComponent {
         );
     }
   }
+
+  login() {
+    this.router.navigate(['/login']);
+  }
 }

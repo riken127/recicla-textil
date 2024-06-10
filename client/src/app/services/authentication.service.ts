@@ -107,7 +107,8 @@ export class AuthenticationService {
   getDecodedToken(
     id: boolean,
     fName: boolean,
-    lName: boolean
+    lName: boolean,
+    name: boolean
   ): Observable<any> {
     let params = new HttpParams();
 
@@ -121,23 +122,6 @@ export class AuthenticationService {
 
     if (lName) {
       params = params.append('lName', lName);
-    }
-
-    return this.http
-      .get(`${this.apiUrl}/getToken`, { params, withCredentials: true })
-      .pipe(
-        map((response: any) => response),
-        catchError((error) => {
-          return throwError(error);
-        })
-      );
-  }
-
-  getBenefactorDecodedToken(id: boolean, name: boolean): Observable<any> {
-    let params = new HttpParams();
-
-    if (id) {
-      params = params.append('id', id);
     }
 
     if (name) {
@@ -154,7 +138,7 @@ export class AuthenticationService {
       );
   }
 
-  private extractToken(response: HttpResponse<any>): string | null {
+   private extractToken(response: HttpResponse<any>): string | null {
     const cookieHeader = response.headers.get('Cookie');
 
     if (!cookieHeader) {
