@@ -22,8 +22,25 @@
       <div class="title-button-container">
         <mat-card-title id="name">{{ benefactor.name }}</mat-card-title>
         <div>
+
           @if (benefactorId == benefactor._id) {
 
+            <button
+            class="benefactor-button"
+            mat-raised-button
+            (click)="openOffersTable()"
+          >
+            <mat-icon>list</mat-icon>
+            Offers Table
+          </button>
+          <button
+            class="benefactor-button"
+            mat-raised-button
+            (click)="openAllOffers()"
+          >
+            <mat-icon>list</mat-icon>
+            All Offers
+          </button>
           <button
             class="benefactor-button"
             mat-raised-button
@@ -54,7 +71,7 @@
           </button>
 
           }
-          
+
         </div>
       </div>
       <mat-card-subtitle id="address"
@@ -141,6 +158,12 @@
     </mat-grid-list>
   </div>
 
+  @if (benefactor._id == benefactorId){
+
+    <div class="tables-container">
+      <app-list-pickpoints></app-list-pickpoints>
+      <app-list-waiting-donations></app-list-waiting-donations>
+    </div>
   } @else {
 
   <div class="error-container">
@@ -150,5 +173,3 @@
     </div>
   </div>
   }
-
-</div>

@@ -1,18 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BenefactorsService } from '../../services/benefactors.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Offer } from '../../models/offer';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FileUploadService } from "../../services/file-upload.service";
-import {MatIconModule} from "@angular/material/icon";
+import { FileUploadService } from '../../services/file-upload.service';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { EditOfferComponent } from '../edit-offer/edit-offer.component';
 
 @Component({
   selector: 'app-create-offer',
@@ -26,16 +35,19 @@ import {MatIconModule} from "@angular/material/icon";
     ReactiveFormsModule,
     MatGridListModule,
     MatDatepickerModule,
-    MatIconModule
+    MatIconModule,
+    MatExpansionModule,
+    EditOfferComponent
   ],
   templateUrl: './create-offer.component.html',
-  styleUrls: ['./create-offer.component.css']
+  styleUrls: ['./create-offer.component.css'],
 })
-
 export class CreateOfferComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
   fileToUpload: File | null = null;
+  benefactorId: string;
+  imageUploaded = false;
 
   constructor(
     private benefactorsService: BenefactorsService,
@@ -44,7 +56,12 @@ export class CreateOfferComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private fileUploadService: FileUploadService,
-  ) { }
+    public dialog: MatDialog,
+    public dialogRef: MatDialogRef<CreateOfferComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.benefactorId = data.benefactorId;
+  }
 
   get f() {
     return this.form.controls;
@@ -74,23 +91,20 @@ export class CreateOfferComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params) => {
-      this.form = this.formBuilder.group({
-        startDate: [new Date(Date.now()), Validators.required],
-        endDate: [new Date(Date.now()), Validators.required],
-        benefactor: [params.get('id')],
+    this.form = this.formBuilder.group(
+      {
+        startDate: ['', Validators.required],
+        endDate: ['', Validators.required],
         title: ['', [Validators.required, Validators.minLength(6)]],
-        description: [''],
-        points: ['']
-      }, {
-        validators: this.MustBeGreater('endDate', 'startDate')
-      });
-    });
+        description: ['', [Validators.required]], 
+        points: ['', [Validators.required, Validators.min(1)]], 
+        benefactor: [''],
+      },
+      { validators: this.MustBeGreater('endDate', 'startDate') }
+    );
   }
 
   onSubmit() {
-    this.submitted = true;
-
     if (this.form.invalid) {
       return;
     }
@@ -107,53 +121,55 @@ export class CreateOfferComponent implements OnInit {
       true
     );
 
-    this.benefactorsService.addOffer(this.f['benefactor'].value, newOffer)
-      .subscribe(
-        result => {
-          const offerId = result.result;
+    this.benefactorsService.addOffer(this.benefactorId, newOffer).subscribe(
+      (result) => {
+        const offerId = result.result;
 
-          if (offerId && this.fileToUpload) {
-            this.fileUploadService.uploadOfferImage(this.fileToUpload, this.f['benefactor'].value, offerId)
-              .subscribe(
-                uploadResult => {
-                  this.snackBar.open('Offer and image have been created!', 'Close', {
+        if (offerId && this.fileToUpload) {
+          this.fileUploadService
+            .uploadOfferImage(this.fileToUpload, this.benefactorId, offerId)
+            .subscribe(
+              (uploadResult) => {
+                this.snackBar
+                  .open('Offer and image have been created!', 'Close', {
                     duration: 3000,
-                  }).afterDismissed().subscribe(() => {
-                    this.router.navigate(['/']);
+                  })
+                  .afterDismissed()
+                  .subscribe(() => {
+                    this.dialogRef.close();
                   });
-                },
-                uploadError => {
-                  this.snackBar.open('Offer created, but image upload failed.', 'Close', {
-                    duration: 3000
-                  });
-                }
-              );
-          } else {
-            this.snackBar.open('Offer has been created!', 'Close', {
+              },
+              (uploadError) => {
+                this.snackBar.open(
+                  'Offer created, but image upload failed.',
+                  'Close',
+                  {
+                    duration: 3000,
+                  }
+                );
+              }
+            );
+        } else {
+          this.snackBar
+            .open('Offer has been created!', 'Close', {
               duration: 3000,
-            }).afterDismissed().subscribe(() => {
-              this.router.navigate(['/']);
+            })
+            .afterDismissed()
+            .subscribe(() => {
+              this.dialogRef.close();
             });
-          }
-        },
-        error => {
-          this.snackBar.open(error.error.message, 'Close', {
-            duration: 3000
-          });
         }
-      );
-    this.onReset();
-  }
-
-  onReset() {
-    this.route.paramMap.subscribe((params) => {
-      this.submitted = false;
-      this.form.reset();
-      this.form.patchValue({ benefactor: params.get('id') });
-    });
+      },
+      (error) => {
+        this.snackBar.open(error.error.message, 'Close', {
+          duration: 3000,
+        });
+      }
+    );
   }
 
   onFileSelected(event: any) {
     this.fileToUpload = event.target.files[0];
+    this.imageUploaded = true;
   }
 }

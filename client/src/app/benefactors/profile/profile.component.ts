@@ -5,7 +5,7 @@ import { BenefactorsService } from '../../services/benefactors.service';
 import { Benefactor } from '../../models/benefactor';
 import { Post } from '../../models/post';
 import { MatCardModule } from '@angular/material/card';
-import { AuthenticationService } from "../../services/authentication.service";
+import { AuthenticationService } from '../../services/authentication.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -18,6 +18,8 @@ import { EditPostComponent } from '../edit-post/edit-post.component';
 import { ListWaitingDonationsComponent } from '../../donations/list-waiting-donations/list-waiting-donations.component';
 import { CreateDonationComponent } from '../../donations/create-donation/create-donation.component';
 import { ListPickpointsComponent } from '../list-pickpoints/list-pickpoints.component';
+import { AllOffersComponent } from '../all-offers/all-offers.component';
+import { OffersTableComponent } from '../offers-table/offers-table.component';
 
 @Component({
   selector: 'app-profile',
@@ -29,10 +31,12 @@ import { ListPickpointsComponent } from '../list-pickpoints/list-pickpoints.comp
     MatGridListModule,
     MatIconModule,
     ListWaitingDonationsComponent,
-    ListPickpointsComponent
+    ListPickpointsComponent,
+    AllOffersComponent,
+    OffersTableComponent,
   ],
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.css'],
 })
 export class ProfileComponent implements OnInit {
   benefactor?: Benefactor;
@@ -47,9 +51,8 @@ export class ProfileComponent implements OnInit {
     private service: BenefactorsService,
     private snackBar: MatSnackBar,
     public dialog: MatDialog,
-    private router: Router,
-  ) {
-  }
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.getToken();
@@ -64,10 +67,8 @@ export class ProfileComponent implements OnInit {
   adjustGridCols(width: number) {
     if (width >= 1200) {
       this.gridCols = 3;
-
     } else if (width >= 800) {
       this.gridCols = 2;
-
     } else {
       this.gridCols = 1;
     }
@@ -77,7 +78,7 @@ export class ProfileComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
-      this.service.getBenefactor(id)?.subscribe(benefactor => {
+      this.service.getBenefactor(id)?.subscribe((benefactor) => {
         this.benefactor = benefactor;
         this.benefactor.description = this.truncateDescription(this.benefactor);
         this.getAllPosts();
@@ -106,16 +107,18 @@ export class ProfileComponent implements OnInit {
       },
       width: '35vw',
     });
-    dialogRef.afterClosed().subscribe((result) => {
-    });
+    dialogRef.afterClosed().subscribe((result) => {});
   }
 
   openAddPost(benefactor: Benefactor) {
-    this.dialog.open(CreatePostComponent, {
-      data: { benefactor: benefactor },
-    }).afterClosed().subscribe(result => {
-      this.getAllPosts();
-    });
+    this.dialog
+      .open(CreatePostComponent, {
+        data: { benefactor: benefactor },
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        location.reload();
+      });
   }
 
   openEditPost(post: Post) {
@@ -126,11 +129,30 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  openAllOffers() {
+    this.dialog.open(AllOffersComponent, {
+      data: {
+        benefactorId: this.benefactor?._id,
+      },
+      width: '80vw',
+      height: '80vh'
+    });
+  }
+
+  openOffersTable() {
+    this.dialog.open(OffersTableComponent, {
+      data: {
+        benefactorId: this.benefactor?._id,
+      },
+      width: '80vw',
+    });
+  }
+
   getAllPosts() {
     if (!this.benefactor) {
       return;
     }
-    this.service.getPosts(this.benefactor._id)?.subscribe(posts => {
+    this.service.getPosts(this.benefactor._id)?.subscribe((posts) => {
       this.posts = posts;
     });
   }
@@ -146,7 +168,7 @@ export class ProfileComponent implements OnInit {
   truncateDescription(benefactor: Benefactor): string {
     const maxLength = 400;
     if (benefactor.description.length > maxLength) {
-      return benefactor.description.substring(0, maxLength) + " ...";
+      return benefactor.description.substring(0, maxLength) + ' ...';
     }
     return benefactor.description;
   }
@@ -178,5 +200,4 @@ export class ProfileComponent implements OnInit {
   parseImageUrl(url: string): string {
     return `url(http://localhost:3000/${url.replace(/\\/g, '/')})`;
   }
-
 }

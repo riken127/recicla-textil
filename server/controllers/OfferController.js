@@ -121,12 +121,14 @@ function upload(req, res, next) {
                 return res.status(500).json({
                     type: 'error',
                     message: "Failed to upload offer image.",
+                    error
                 });
             });
     } catch (error) {
         res.status(500).json({
             type: 'error',
             message: "Failed to upload offer image.",
+            error
         });
     }
 }
@@ -210,7 +212,7 @@ function editBenefactorOffer(req, res, next) {
         active: offerData.active
     };
 
-    Offer.findByIdAndUpdate(offerData._id, offer, {new: true})
+    Offer.findByIdAndUpdate(offer._id, offer, {new: true})
         .then(offer => {
             if (
                 offerData.image &&

@@ -1,0 +1,28 @@
+mat-card {
+  margin-bottom: 20px;
+  border-radius: 0%;
+  background-color: #525252;
+}
+.element-detail {
+  padding: 16px;
+}
+
+.inner-table {
+  width: 100%;
+}
+
+.hidden-row {
+  display: none;
+}
+
+.center-cell {
+  text-align: center;
+}
+
+[data-status="active"]::before {
+  content: "✅"
+}
+
+[data-status="canceled"]::before {
+  content: "❌ ";
+}

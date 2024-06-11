@@ -3,55 +3,94 @@
     <span class="title-text">Create an Offer</span>
   </mat-card-title>
   <mat-card-content>
-    <form (ngSubmit)="onSubmit()" [formGroup]="form">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-paired-field">
+        <mat-form-field appearance="outline" class="form-single-field">
+          <mat-label>Start Date</mat-label>
+          <input formControlName="startDate" matInput type="date" />
+          <mat-error
+            *ngIf="form.get('startDate')?.hasError('required') && submitted"
+            >Field is required</mat-error
+          >
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="form-single-field">
+          <mat-label>End Date</mat-label>
+          <input formControlName="endDate" matInput type="date" />
+          <mat-error
+            *ngIf="form.get('endDate')?.hasError('required') && submitted"
+            >Field is required</mat-error
+          >
+          <mat-error
+            *ngIf="form.get('endDate')?.hasError('mustBeGreater') && submitted"
+            >Field must be greater than startDate</mat-error
+          >
+        </mat-form-field>
+      </div>
       <div class="form-row">
-        <div class="form-field form-paired-field">
-          <mat-form-field appearance="outline">
-            <input formControlName="startDate" matInput type="date">
-            <mat-error *ngIf="f['startDate'].errors?.['required'] && submitted">Field is required</mat-error>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <input formControlName="endDate" matInput type="date">
-            <mat-error *ngIf="f['endDate'].errors?.['required'] && submitted">Field is required</mat-error>
-            <mat-error *ngIf="f['endDate'].errors?.['mustBeGreater'] && submitted">Field must be greater than
-              startDate
-            </mat-error>
-          </mat-form-field>
+        <mat-form-field appearance="outline" class="form-single-field">
+          <mat-label>Title</mat-label>
+          <input formControlName="title" matInput type="text" />
+          <mat-error
+            *ngIf="form.get('title')?.hasError('required') && submitted"
+            >Title is a required field.</mat-error
+          >
+          <mat-error
+            *ngIf="form.get('title')?.hasError('minlength') && submitted"
+            >Title must have a min length of 6 characters</mat-error
+          >
+        </mat-form-field>
+      </div>
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-single-field">
+          <mat-label>Description</mat-label>
+          <textarea formControlName="description" matInput></textarea>
+          <mat-error
+            *ngIf="form.get('description')?.hasError('required') && submitted"
+            >Description is a required field.</mat-error
+          >
+        </mat-form-field>
+      </div>
+      <div class="form-paired-field">
+        <mat-form-field appearance="outline" class="form-single-field">
+          <mat-label>Points</mat-label>
+          <input formControlName="points" matInput type="number" />
+          <mat-error
+            *ngIf="form.get('points')?.hasError('required') && submitted"
+            >Points is a required field.</mat-error
+          >
+          <mat-error *ngIf="form.get('points')?.hasError('min') && submitted"
+            >Points must be greater than 0</mat-error
+          >
+        </mat-form-field>
+        <div class="form-field upload-button-field">
+          <input
+            type="file"
+            hidden
+            (change)="onFileSelected($event)"
+            #fileInput
+          />
+          <button
+          type="button"
+          mat-raised-button
+          (click)="fileInput.click()"
+          [class.uploaded]="imageUploaded"
+          class="upload-button"
+        >
+          Upload Image
+        </button>
         </div>
       </div>
       <div class="form-row">
-        <div class="form-field form-single-field">
-          <mat-form-field appearance="outline">
-            <input formControlName="title" matInput type="text">
-            <mat-error *ngIf="f['title'].errors?.['required'] && submitted">Title is a required field.</mat-error>
-            <mat-error *ngIf="f['title'].errors?.['minlength'] && submitted">Title must have a min length of 6
-              characters
-            </mat-error>
-          </mat-form-field>
-        </div>
+        <button
+          [disabled]="!form.valid"
+          class="edit-item-button"
+          color="primary"
+          mat-raised-button
+          type="submit"
+        >
+          Submit
+        </button>
       </div>
-      <div class="form-row">
-        <div class="form-field form-single-field">
-          <mat-form-field appearance="outline">
-            <textarea formControlName="description" matInput></textarea>
-          </mat-form-field>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-field form-single-field">
-          <mat-form-field appearance="outline">
-            <input formControlName="points" matInput type="number">
-          </mat-form-field>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-field form-single-field">
-          <input type="file" (change)="onFileSelected($event)">
-        </div>
-      </div>
-      <button [disabled]="!form.valid" class="create-offer-button" color="primary" mat-raised-button type="submit">
-        Submit
-      </button>
     </form>
   </mat-card-content>
 </mat-card>

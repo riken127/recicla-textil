@@ -1,32 +1,63 @@
-.form-paired-field {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-column-gap: 20px;
-}
-
-.form-single-field {
-  display: grid;
-  grid-column-gap: 20px;
-}
-
-.mat-form-field {
-  width: auto;
+.create-offer-card {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
 }
 
 .card-title {
   display: flex;
-  justify-content: center;
-  padding: 15px 15px 15px 15px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
 }
 
 .title-text {
-  font-size: 30px;
-  font-weight: bold;
-  color: #ffffff;
+  margin-right: 10px;
+  color: white;
 }
 
-.create-offer-button {
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
   width: 100%;
-  font-size: 16px;
-  padding: 12px 24px;
+}
+
+.form-paired-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+}
+
+.form-single-field, .form-field {
+  flex: 1 1 50%;
+  margin: 5px 0;
+}
+
+.form-field button {
+  width: 100%;
+}
+
+.upload-button-field {
+  display: flex;
+  align-items: center;
+}
+
+.upload-button {
+  width: 100%;
+  height: calc(3.5vw + 1px); 
+  border: 2px solid rgb(134, 131, 129);
+}
+
+.edit-item-button {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.mat-form-field {
+  margin-right: 10px;
+}
+.upload-button.uploaded {
+  background-color: green;
 }
