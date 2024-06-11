@@ -1,51 +1,72 @@
-<div class="mat-elevation-z8">
-  <div class="top-section">
-    <div class="points-info">
-      <p>You will earn 5 points with the current donation.</p>
-    </div>
-    <div class="button-container">
-      <button (click)="navigateToCreateItem()" color="primary" mat-raised-button>
-        Add Item
-      </button>
-      <button (click)="finalize()" color="primary" mat-raised-button>
-        Finalize
-      </button>
-    </div>
-  </div>
-  <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table>
-    <ng-container matColumnDef="brand">
-      <th *matHeaderCellDef class="center-cell" mat-header-cell>Brand</th>
-      <td *matCellDef="let item" class="center-cell" mat-cell>
-        {{ item.brand }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="weight">
-      <th *matHeaderCellDef class="center-cell" mat-header-cell>Weight</th>
-      <td *matCellDef="let item" class="center-cell" mat-cell>
-        {{ item.weight.value }} {{ item.weight.unit }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="size">
-      <th *matHeaderCellDef class="center-cell" mat-header-cell>Size</th>
-      <td *matCellDef="let item" class="center-cell" mat-cell>
-        {{ item.size }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="type">
-      <th *matHeaderCellDef class="center-cell" mat-header-cell>Type</th>
-      <td *matCellDef="let item" class="center-cell" mat-cell>
-        {{ item.type }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="actions">
-      <th *matHeaderCellDef class="center-cell" mat-header-cell>Actions</th>
-      <td *matCellDef="let item" class="center-cell" mat-cell>
-        <button mat-icon-button color="primary" (click)="navigateToEditItem(item)">
-          <mat-icon>edit</mat-icon>
+<mat-card>
+  <div class="mat-elevation-z8">
+    <div class="top-section">
+      <div class="leafs-display">
+        <p>
+          <span class="leafs-icon"
+            ><h2>You will earn {{ points }} </h2><mat-icon>eco</mat-icon></span
+          >
+        </p>
+      </div>
+      <div class="button-container">
+        <button
+          (click)="navigateToCreateItem()"
+          color="primary"
+          mat-raised-button
+        >
+          Add Item
         </button>
-      </td>
-    </ng-container>
-    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-    <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
-  </table>
-</div>
+        <button
+          (click)="finalize()"
+          color="primary"
+          mat-raised-button
+          [disabled]="items.length === 0"
+        >
+          Finalize
+        </button>
+      </div>
+    </div>
+    <mat-card-content>
+      <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table>
+        <ng-container matColumnDef="brand">
+          <th *matHeaderCellDef class="center-cell" mat-header-cell>Brand</th>
+          <td *matCellDef="let item" class="center-cell" mat-cell>
+            {{ item.brand }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="weight">
+          <th *matHeaderCellDef class="center-cell" mat-header-cell>Weight</th>
+          <td *matCellDef="let item" class="center-cell" mat-cell>
+            {{ item.weight.value }} {{ item.weight.unit }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="size">
+          <th *matHeaderCellDef class="center-cell" mat-header-cell>Size</th>
+          <td *matCellDef="let item" class="center-cell" mat-cell>
+            {{ item.size }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+          <th *matHeaderCellDef class="center-cell" mat-header-cell>Type</th>
+          <td *matCellDef="let item" class="center-cell" mat-cell>
+            {{ item.type }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th *matHeaderCellDef class="center-cell" mat-header-cell>Actions</th>
+          <td *matCellDef="let item" class="center-cell" mat-cell>
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="navigateToEditItem(item)"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
+      </table>
+    </mat-card-content>
+  </div>
+</mat-card>

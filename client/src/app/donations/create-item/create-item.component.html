@@ -14,35 +14,74 @@
               <mat-label>Brand</mat-label>
               <input matInput formControlName="brand" />
             </mat-form-field>
-            <mat-form-field appearance="outline" class="form-single-field">
-              <mat-label>Weight Value</mat-label>
-              <input matInput type="number" formControlName="weightValue" />
-              <mat-error *ngIf="itemForm.get('weightValue')?.hasError('min')">
-                Weight value must be greater than 0
-              </mat-error>
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="form-single-field">
-              <mat-label>Weight Unit</mat-label>
-              <input matInput formControlName="weightUnit" />
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="form-single-field">
-              <mat-label>Size</mat-label>
-              <input matInput formControlName="size" />
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="form-single-field">
-              <mat-label>Type</mat-label>
-              <input matInput formControlName="type" />
-            </mat-form-field>
+            <div class="form-paired-field">
+              <mat-form-field appearance="outline" class="form-single-field">
+                <mat-label>Weight Value</mat-label>
+                <input matInput type="number" formControlName="weightValue" />
+                <mat-error *ngIf="itemForm.get('weightValue')?.hasError('min')">
+                  Weight value must be greater than 0
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="form-single-field">
+                <mat-label>Weight Unit</mat-label>
+                <input
+                  matInput
+                  formControlName="weightUnit"
+                  value="g"
+                  readonly
+                />
+              </mat-form-field>
+            </div>
+            <div class="form-paired-field">
+              <mat-form-field appearance="outline" class="form-single-field">
+                <mat-label>Size</mat-label>
+                <input matInput formControlName="size" />
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="form-single-field">
+                <mat-label>Type</mat-label>
+                <mat-select formControlName="type">
+                  <mat-option value="">Select a clothing type</mat-option>
+                  <mat-option value="shirt">Top</mat-option>
+                  <mat-option value="pants">Pants</mat-option>
+                  <mat-option value="shoes">Shoes</mat-option>
+                  <mat-option value="socks">Socks</mat-option>
+                  <mat-option value="underwear">Underwear</mat-option>
+                  <mat-option value="hat">Hat</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
           </div>
           <div class="form-row">
-            <div class="form-field form-single-field">
-              <input type="file" (change)="onFileSelected($event)">
+            <div class="form-field upload-button-field">
+              <input
+                type="file"
+                hidden
+                (change)="onFileSelected($event)"
+                #fileInput
+              />
+              <button
+                type="button"
+                mat-raised-button
+                [class.image-selected]="fileToUpload"
+                (click)="fileInput.click()"
+                class="upload-button"
+              >
+                Upload Image
+              </button>
             </div>
           </div>
         </mat-expansion-panel>
       </mat-accordion>
       <div class="form-row">
-        <button [disabled]="!itemForm.valid" class="edit-item-button" color="primary" mat-raised-button type="submit">Create Item</button>
+        <button
+          [disabled]="!itemForm.valid"
+          class="edit-item-button"
+          color="primary"
+          mat-raised-button
+          type="submit"
+        >
+          Create Item
+        </button>
       </div>
     </form>
   </mat-card-content>

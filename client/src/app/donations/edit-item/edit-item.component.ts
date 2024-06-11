@@ -15,6 +15,8 @@ import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import {FileUploadService} from "../../services/file-upload.service";
+import { MatOption } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-edit-item',
@@ -30,6 +32,8 @@ import {FileUploadService} from "../../services/file-upload.service";
     MatExpansionModule,
     MatCardModule,
     MatIcon,
+    MatOption,
+    MatSelectModule
   ],
   templateUrl: './edit-item.component.html',
   styleUrl: './edit-item.component.css',

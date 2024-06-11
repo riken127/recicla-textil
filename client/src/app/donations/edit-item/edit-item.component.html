@@ -1,49 +1,88 @@
 <mat-card class="edit-item-card">
-    <mat-card-title class="card-title">
-        <span class="title-text">Edit Item</span>
-        <button mat-icon-button (click)="onDelete()" aria-label="Delete" class="delete-button">
-            <mat-icon>delete</mat-icon>
-        </button>
-    </mat-card-title>
-    <mat-card-content>
-        <form [formGroup]="itemForm" (ngSubmit)="onSave()">
-            <mat-accordion>
-                <mat-expansion-panel>
-                    <mat-expansion-panel-header>
-                        <mat-panel-title> Item Details </mat-panel-title>
-                    </mat-expansion-panel-header>
-                    <div class="form-row">
-                        <mat-form-field appearance="outline" class="form-single-field">
-                            <mat-label>Brand</mat-label>
-                            <input matInput formControlName="brand" />
-                        </mat-form-field>
-                        <mat-form-field appearance="outline" class="form-single-field">
-                            <mat-label>Weight Value</mat-label>
-                            <input matInput formControlName="weightValue" />
-                        </mat-form-field>
-                        <mat-form-field appearance="outline" class="form-single-field">
-                            <mat-label>Weight Unit</mat-label>
-                            <input matInput formControlName="weightUnit" />
-                        </mat-form-field>
-                        <mat-form-field appearance="outline" class="form-single-field">
-                            <mat-label>Size</mat-label>
-                            <input matInput formControlName="size" />
-                        </mat-form-field>
-                        <mat-form-field appearance="outline" class="form-single-field">
-                            <mat-label>Type</mat-label>
-                            <input matInput formControlName="type" />
-                        </mat-form-field>
-                    </div>
-                  <div class="form-row">
-                    <div class="form-field form-single-field">
-                      <input type="file" (change)="onFileSelected($event)">
-                    </div>
-                  </div>
-                </mat-expansion-panel>
-            </mat-accordion>
-            <div class="form-row">
-                <button [disabled]="!itemForm.valid" class="edit-item-button" color="primary" mat-raised-button type="submit">Save</button>
+  <mat-card-title class="card-title">
+    <span class="title-text">Edit Item</span>
+    <button
+      mat-icon-button
+      (click)="onDelete()"
+      aria-label="Delete"
+      class="delete-button"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+  </mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="itemForm" (ngSubmit)="onSave()">
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Item Details </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-single-field">
+              <mat-label>Brand</mat-label>
+              <input matInput formControlName="brand" />
+            </mat-form-field>
+            <div class="form-paired-field">
+              <mat-form-field appearance="outline" class="form-single-field">
+                <mat-label>Weight Value</mat-label>
+                <input matInput formControlName="weightValue" />
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="form-single-field">
+                <mat-label>Weight Unit</mat-label>
+                <input matInput formControlName="weightUnit" />
+              </mat-form-field>
             </div>
-        </form>
-    </mat-card-content>
+            <div class="form-paired-field">
+              <mat-form-field appearance="outline" class="form-single-field">
+                <mat-label>Size</mat-label>
+                <input matInput formControlName="size" />
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="form-single-field">
+                <mat-label>Type</mat-label>
+                <mat-select formControlName="type">
+                  <mat-option value="">Select a clothing type</mat-option>
+                  <mat-option value="shirt">Top</mat-option>
+                  <mat-option value="pants">Pants</mat-option>
+                  <mat-option value="shoes">Shoes</mat-option>
+                  <mat-option value="socks">Socks</mat-option>
+                  <mat-option value="underwear">Underwear</mat-option>
+                  <mat-option value="hat">Hat</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field upload-button-field">
+              <input
+                type="file"
+                hidden
+                (change)="onFileSelected($event)"
+                #fileInput
+              />
+              <button
+                type="button"
+                mat-raised-button
+                [class.image-selected]="fileToUpload"
+                (click)="fileInput.click()"
+                class="upload-button"
+              >
+                Upload Image
+              </button>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <div class="form-row">
+        <button
+          [disabled]="!itemForm.valid"
+          class="edit-item-button"
+          color="primary"
+          mat-raised-button
+          type="submit"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
 </mat-card>

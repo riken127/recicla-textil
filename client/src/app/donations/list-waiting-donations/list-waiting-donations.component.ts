@@ -1,25 +1,24 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {MatCardModule} from '@angular/material/card';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {MatButtonModule} from '@angular/material/button';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MatIconModule} from '@angular/material/icon';
-import {MatExpansionModule} from '@angular/material/expansion';
-import {DonationsService} from '../../services/donations.service';
-import {BenefactorsService} from '../../services/benefactors.service';
-import {UsersService} from '../../services/users.service';
-import {AuthenticationService} from '../../services/authentication.service';
-import {Donation} from '../../models/donation';
-import {Benefactor} from '../../models/benefactor';
-import {User} from '../../models/user';
-import {Pickpoint} from '../../models/pickpoint';
-import {ActivatedRoute, Router} from '@angular/router';
-import {format} from 'date-fns';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import {FormsModule} from '@angular/forms';
-import { MatCard } from '@angular/material/card';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { DonationsService } from '../../services/donations.service';
+import { BenefactorsService } from '../../services/benefactors.service';
+import { UsersService } from '../../services/users.service';
+import { AuthenticationService } from '../../services/authentication.service';
+import { Donation } from '../../models/donation';
+import { Benefactor } from '../../models/benefactor';
+import { User } from '../../models/user';
+import { Pickpoint } from '../../models/pickpoint';
+import { ActivatedRoute, Router } from '@angular/router';
+import { format } from 'date-fns';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { FormsModule } from '@angular/forms';
 
 interface DecoratedDonation extends Donation {
   username: string;
@@ -72,8 +71,7 @@ export class ListWaitingDonationsComponent implements OnInit {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private changeDetector: ChangeDetectorRef
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.getDonations();
@@ -89,7 +87,10 @@ export class ListWaitingDonationsComponent implements OnInit {
           this.decoratedDonations = [];
 
           this.donations.forEach((donation) => {
-            if (!donation.details.benefactorId || !donation.details.pickpointId) {
+            if (
+              !donation.details.benefactorId ||
+              !donation.details.pickpointId
+            ) {
               this.snackBar.open(
                 'BenefactorId or PickpointId is not defined for donation',
                 'Close',
@@ -104,8 +105,9 @@ export class ListWaitingDonationsComponent implements OnInit {
               donation.details.benefactorId === benefactorId &&
               (this.onlyWaiting
                 ? donation.status === 'Waiting Approval' ||
-                donation.status === 'On Going'
-                : true)
+                  donation.status === 'On Going'
+                : donation.status === 'Delivered' ||
+                  donation.status === 'Canceled')
             ) {
               this.benefactorsService
                 .getBenefactor(donation.details.benefactorId)
@@ -126,10 +128,7 @@ export class ListWaitingDonationsComponent implements OnInit {
                                 pickpointAddress: `${pickpoint.street}, ${pickpoint.city}, ${pickpoint.country}, ${pickpoint.postalCode}`,
                               });
 
-                              this.dataSource =
-                                new MatTableDataSource<DecoratedDonation>(
-                                  this.decoratedDonations
-                                );
+                              this.updateDataSource();
                             },
                             (error) => {
                               this.snackBar.open(
@@ -165,6 +164,10 @@ export class ListWaitingDonationsComponent implements OnInit {
                 );
             }
           });
+
+          if (this.decoratedDonations.length === 0) {
+            this.updateDataSource();
+          }
         },
         (error) => {
           this.snackBar.open('Error: ' + error.message, 'Close', {
@@ -173,6 +176,12 @@ export class ListWaitingDonationsComponent implements OnInit {
         }
       );
     });
+  }
+
+  updateDataSource() {
+    this.dataSource = new MatTableDataSource<DecoratedDonation>(
+      this.decoratedDonations
+    );
   }
 
   formatTimestamp(timestamp: string): string {
@@ -222,11 +231,11 @@ export class ListWaitingDonationsComponent implements OnInit {
     };
     this.donationsService.updateDonation(updatedDonation)?.subscribe(
       (response) => {
+        this.getDonations();
         if (response) {
           this.snackBar.open('Donation status updated successfully', 'Close', {
             duration: 5000,
           });
-          this.getDonations();
         } else {
           this.snackBar.open('Error updating donation status', 'Close', {
             duration: 5000,
@@ -248,11 +257,11 @@ export class ListWaitingDonationsComponent implements OnInit {
     };
     this.donationsService.updateDonation(updatedDonation)?.subscribe(
       (response) => {
+        this.getDonations();
         if (response) {
           this.snackBar.open('Donation status updated successfully', 'Close', {
             duration: 5000,
           });
-          this.getDonations();
         } else {
           this.snackBar.open('Error updating donation status', 'Close', {
             duration: 5000,

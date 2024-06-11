@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -38,15 +38,16 @@ export class ListComponent implements OnInit {
   totalRecords: number = 0;
   recordsFiltered: number = 0;
   draw: number = 1;
-  length: number = 10; // Number of records per page
-  orderBy: string = 'asc'; // Order direction
-  columnIndex: number = 0; // Column to sort by
+  length: number = 10;
+  orderBy: string = 'asc'; 
+  columnIndex: number = 0;
 
   constructor(
     private benefactorsService: BenefactorsService,
     private router: Router,
     private snackBar: MatSnackBar,
   ) { }
+
 
   ngOnInit() {
     this.getBenefactors();

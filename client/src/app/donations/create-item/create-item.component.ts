@@ -18,6 +18,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { MatCardModule } from '@angular/material/card';
 import {FileUploadService} from "../../services/file-upload.service";
+import { MatOption } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-create-item',
@@ -32,6 +34,8 @@ import {FileUploadService} from "../../services/file-upload.service";
     MatAccordion,
     MatExpansionModule,
     MatCardModule,
+    MatOption,
+    MatSelectModule
   ],
   templateUrl: './create-item.component.html',
   styleUrl: './create-item.component.css',
@@ -40,7 +44,7 @@ export class CreateItemComponent {
   itemForm: FormGroup = this.formBuilder.group({
     brand: ['', Validators.required],
     weightValue: ['', [Validators.required, Validators.min(1)]],
-    weightUnit: ['', Validators.required],
+    weightUnit: ['g', Validators.required],
     size: ['', Validators.required],
     type: ['', Validators.required],
     photo: [''],

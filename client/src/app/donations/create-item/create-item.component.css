@@ -57,3 +57,18 @@
   .mat-form-field {
     margin-right: 10px;
   }
+
+  .upload-button-field {
+    display: flex;
+    align-items: center;
+  }
+  
+  .upload-button {
+    width: 100%;
+    height: calc(3.5vw + 1px); 
+    border: 2px solid rgb(134, 131, 129);
+  }
+  
+  .image-selected {
+    background-color: green;
+  }

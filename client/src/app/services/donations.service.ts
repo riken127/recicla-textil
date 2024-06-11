@@ -34,25 +34,25 @@ export class DonationsService {
       );
   }
 
-  public getDonation(id: string): Observable<Donation> | null {
-    return this.http
-      .get<any | Donation>(`${DonationsService.apiUrl}/${id}`, {
-        observe: 'response',
-        withCredentials: true,
+public getDonation(id: string): Observable<{data: Donation}> | null {
+  return this.http
+    .get<any>(`${DonationsService.apiUrl}/${id}`, {
+      observe: 'response',
+      withCredentials: true,
+    })
+    .pipe(
+      map((response) => {
+        if (response.status === 200 && response.body) {
+          return {data: response.body as Donation};
+        } else {
+          throw new Error('Error getting donation');
+        }
+      }),
+      catchError((error) => {
+        return throwError(error);
       })
-      .pipe(
-        map((response) => {
-          if (response instanceof Donation) {
-            return response;
-          } else {
-            throw new Error('Error getting donation');
-          }
-        }),
-        catchError((error) => {
-          return throwError(error);
-        })
-      );
-  }
+    );
+}
 
   public addDonation(donation: Donation): Observable<string> | null {
     return this.http
