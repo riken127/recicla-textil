@@ -13,6 +13,7 @@ import {Prize} from "../../models/prize";
 import {ActivatedRoute, Router} from "@angular/router";
 import {FileUploadService} from "../../services/file-upload.service";
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
+import { DialogRef } from '@angular/cdk/dialog';
 
 @Component({
   selector: 'app-create-prize',
@@ -90,8 +91,6 @@ export class CreatePrizeComponent implements OnInit {
                 uploadResult => {
                   this.snackBar.open('Prize and image have been created!', 'Close', {
                     duration: 3000,
-                  }).afterDismissed().subscribe(() => {
-                    this.router.navigate(['/']);
                   })
                 },
                 uploadError => {
@@ -103,9 +102,7 @@ export class CreatePrizeComponent implements OnInit {
           } else {
             this.snackBar.open('Prize has been created', 'Close', {
               duration: 3000,
-            }).afterDismissed().subscribe(() => {
-              this.router.navigate(['/']);
-            });
+            })
           }
         },
         error => {

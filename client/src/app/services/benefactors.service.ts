@@ -243,7 +243,7 @@ export class BenefactorsService {
       );
   }
 
-  public addPost(post: Post): Observable<boolean> | null {
+  public addPost(post: Post): Observable<any> {
     return this.http
       .post<any>(
         `${BenefactorsService.apiUrl}/${post.benefactorId}/posts`,
@@ -253,7 +253,7 @@ export class BenefactorsService {
       .pipe(
         map((response) => {
           if (response.status === 200) {
-            return true;
+            return response.body;
           }
           return false;
         })

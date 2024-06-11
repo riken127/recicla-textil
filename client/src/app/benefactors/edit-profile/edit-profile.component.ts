@@ -131,8 +131,6 @@ export class EditProfileComponent implements OnInit {
           console.log(uploadResult)
           this.snackBar.open('Benefactor logo has been updated', 'Close', {
             duration: 3000
-          }).afterDismissed().subscribe(() => {
-            this.router.navigate(['/']);
           })
         },
         uploadError => {
@@ -150,7 +148,7 @@ export class EditProfileComponent implements OnInit {
           this.snackBar.open('Benefactor banner has been updated', 'Close', {
             duration: 3000
           }).afterDismissed().subscribe(() => {
-              this.router.navigate(['/']);
+              this.dialogRef.close();
           })
         },
         uploadError => {

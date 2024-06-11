@@ -119,7 +119,7 @@ export class ProfileComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((result) => {
-        location.reload();
+        this.getAllPosts()
       });
   }
 

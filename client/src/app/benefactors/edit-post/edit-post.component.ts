@@ -78,7 +78,7 @@ export class EditPostComponent implements OnInit {
         this.benefactorId,
         this.f['title'].value,
         this.f['content'].value,
-        this.fileToUpload ? 'y' : '',
+        this.fileToUpload ? 'y' : this.post.image,
         this.post.createdAt,
         this.post.updatedAt,
         this.post.links

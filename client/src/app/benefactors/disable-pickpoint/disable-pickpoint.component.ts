@@ -4,6 +4,7 @@ import {MatCard, MatCardContent, MatCardTitle} from "@angular/material/card";
 import {BenefactorsService} from "../../services/benefactors.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ActivatedRoute, Router} from "@angular/router";
+import { DialogRef } from '@angular/cdk/dialog';
 
 @Component({
   selector: 'app-disable-pickpoint',
@@ -23,6 +24,7 @@ export class DisablePickpointComponent {
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
+    private dialog: DialogRef
   ) {
   }
 
@@ -34,9 +36,8 @@ export class DisablePickpointComponent {
             if (result === true) {
               this.snackBar.open('Pickpoint disabled successfully!', 'Close', {
                 duration: 3000,
-              }).afterDismissed().subscribe(() => {
-                this.router.navigate(['/']);
               })
+              this.dialog.close()
             } else {
               this.snackBar.open('An error has occurred while trying to disable the offer', 'Close', {
                 duration: 3000,
@@ -48,6 +49,6 @@ export class DisablePickpointComponent {
   }
 
   onCancel() {
-    this.router.navigate(['/']);
+    this.dialog.close()
   }
 }

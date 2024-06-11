@@ -37,8 +37,6 @@ export class DisablePrizeComponent {
           if (result) {
             this.snackBar.open('Prize disabled successfully', 'Close', {
               duration: 3000
-            }).afterDismissed().subscribe(() => {
-              this.router.navigate(['/']);
             })
           } else {
             this.snackBar.open('An error has occurred while trying to disable the prize', 'Close', {
