@@ -1253,6 +1253,7 @@ router.post("/posts/:postId/links", auth.isAuthenticated, linkController.addLink
  */
 router.put("/posts/:postId/links/:linkId", auth.isAuthenticated, linkController.updateLink);
 
+
 /**
  * @swagger
  * '/benefactors/posts/{postId}/links/{linkId}':
@@ -1331,18 +1332,394 @@ router.post('/prizes/image/upload', upload.single("prize"), storeController.uplo
 
 router.post('/prizes/image/upload', upload.single("prize"), storeController.upload);
 
+/**
+ * @swagger
+ * tags:
+ *   name: Prizes
+ *   description: Prizes management APIs
+ */
+/**
+ * @swagger
+ * '/benefactors/store/redeem/{prize}':
+ *   post:
+ *     tags: [Prizes]
+ *     summary: Redeem a prize
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: prize
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the prize to be redeemed
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               _id:
+ *                 type: string
+ *                 description: The ID of the user
+ *     responses:
+ *       200:
+ *         description: Prize redeemed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: RandomString1234
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: unauthorized
+ *       500:
+ *         description: Error redeeming prize
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: unsufficient amount of points to complete the chosen transaction
+ */
+
 router.post("/store/redeem/:prize", storeController.redeemPrize);
 
+/**
+ * @swagger
+ * '/benefactors/store/':
+ *   post:
+ *     tags: [Prizes]
+ *     summary: Add a new prize
+ *     security:
+ *       - JwtCookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               price:
+ *                 type: number
+ *                 description: The price of the prize
+ *               title:
+ *                 type: string
+ *                 description: The title of the prize
+ *               description:
+ *                 type: string
+ *                 description: The description of the prize
+ *               image:
+ *                 type: string
+ *                 description: The URL of the image
+ *               benefactor:
+ *                 type: string
+ *                 description: The ID of the benefactor associated with the prize
+ *     responses:
+ *       200:
+ *         description: Prize added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: success
+ *                 result:
+ *                   type: string
+ *                   example: "60d2f3f4f342f3f4d2f3f4d2"
+ *       500:
+ *         description: Error adding prize
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: "required fields were not written."
+ */
 router.post("/store/", storeController.addPrize);
 
+/**
+ * @swagger
+ * '/benefactors/store/{id}':
+ *   put:
+ *     tags: [Prizes]
+ *     summary: Edit an existing prize
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the prize to be edited
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               price:
+ *                 type: number
+ *                 description: The price of the prize
+ *               title:
+ *                 type: string
+ *                 description: The title of the prize
+ *               description:
+ *                 type: string
+ *                 description: The description of the prize
+ *               image:
+ *                 type: string
+ *                 description: The URL of the image
+ *               benefactor:
+ *                 type: string
+ *                 description: The ID of the benefactor associated with the prize
+ *     responses:
+ *       200:
+ *         description: Prize updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: "60d2f3f4f342f3f4d2f3f4d2 was updated successfully."
+ *       500:
+ *         description: Error updating prize
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: "prize not found"
+ */
 router.put("/store/:id", storeController.editPrize);
 
+/**
+ * @swagger
+ * '/benefactors/store/{id}':
+ *   delete:
+ *     tags: [Prizes]
+ *     summary: Delete a prize
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the prize to be deleted
+ *     responses:
+ *       200:
+ *         description: Prize deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: "prize was deleted successfully."
+ *       500:
+ *         description: Error deleting prize
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: "prize not found"
+ */
 router.delete("/store/:id", storeController.deletePrize);
 
+/**
+ * @swagger
+ * '/benefactors/store/{id}':
+ *   get:
+ *     tags: [Prizes]
+ *     summary: Get a prize by ID
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the prize to retrieve
+ *     responses:
+ *       200:
+ *         description: Prize retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Prize'
+ *       500:
+ *         description: Error retrieving prize
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: "prize not found"
+ */
 router.get("/store/:id", storeController.getPrize);
 
+/**
+ * @swagger
+ * '/benefactors/store/benefactor/{id}':
+ *   get:
+ *     tags: [Prizes]
+ *     summary: Get all prizes for a benefactor
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the benefactor to retrieve prizes for
+ *     responses:
+ *       200:
+ *         description: Prizes retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Prize'
+ *       500:
+ *         description: Error retrieving prizes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: "no prize found"
+ */
 router.get("/store/benefactor/:id", storeController.getBenefactorPrizes);
 
+/**
+ * @swagger
+ * '/benefactors/prizes/all':
+ *   get:
+ *     tags: [Prizes]
+ *     summary: Get all prizes
+ *     security:
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: pageSize
+ *         required: false
+ *         schema:
+ *           type: integer
+ *         description: Number of prizes to retrieve per page
+ *       - in: query
+ *         name: pageNumber
+ *         required: false
+ *         schema:
+ *           type: integer
+ *         description: Page number to retrieve
+ *       - in: query
+ *         name: search
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Search query to filter prizes
+ *     responses:
+ *       200:
+ *         description: Prizes retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Prize'
+ *       400:
+ *         description: Invalid parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid parameters"
+ *       500:
+ *         description: Error retrieving prizes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to retrieve prizes"
+ */
 router.get('/prizes/all', storeController.getAllPrizes);
 
 module.exports = router;
