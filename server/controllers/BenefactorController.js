@@ -37,9 +37,11 @@ function renderBenefactorsTable(req, res, next) {
         .limit(limit)
         .exec()
         .then((benefactors) => {
-            res.json({
-                benefactors: benefactors,
+            res.render("benefactors/table",{
+                currentRoute: "/benefactors/all",
                 currentPage: page,
+                username: req.user.username,
+                pfp: req.user.image,
             });
         })
         .catch((err) => {
@@ -240,7 +242,7 @@ async function addBenefactor(req, res, next) {
                         if (
                             (benefactorData.banner || benefactorData.logo) &&
                             !fs.existsSync(
-                                "./uploads/benefactors/" + savedBenefactor._id
+                                "./uploads/benefactors/" + savedBenefactor._id + '/profile/'
                             )
                         ) {
                             fs.mkdirSync(

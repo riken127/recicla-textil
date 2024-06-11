@@ -65,7 +65,6 @@ export class ListPrizesComponent {
       this.service.getBenefactorPrizes(this.benefactorId)
         ?.subscribe(
           (prizes: Prize[]) => {
-            console.log(prizes, this.benefactorId);
             this.prizes = prizes;
           },
           (error) => {

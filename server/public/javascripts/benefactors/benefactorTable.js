@@ -145,8 +145,8 @@ $(document).ready(function () {
         const jsonActiveData = JSON.stringify(activeData);
 
         $.ajax({
-            url: "/benefactors/update",
-            type: "POST",
+            url: "/benefactors/" + currBenefactor,
+            type: "PUT",
             data: jsonActiveData,
             contentType: "application/json",
             dataType: "json",

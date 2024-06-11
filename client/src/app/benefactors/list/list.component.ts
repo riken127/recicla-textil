@@ -130,4 +130,20 @@ export class ListComponent implements OnInit {
       duration: 5000,
     });
   }
+
+  getLogoUrl(benefactor:Benefactor): string {
+    return benefactor?.logo
+      ? this.parseImageUrl(benefactor.logo)
+      : `url(https://api.dicebear.com/8.x/shapes/svg?seed=${benefactor?._id})`;
+  }
+
+  getBannerUrl(benefactor: Benefactor): string {
+    return benefactor!.banner
+      ? this.parseImageUrl(benefactor!.banner)
+      : `url(https://api.dicebear.com/8.x/shapes/svg?seed=${benefactor?._id})`;
+  }
+
+  parseImageUrl(url: string): string {
+    return `url(http://localhost:3000/${url.replace(/\\/g, '/')})`;
+  }
 }

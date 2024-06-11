@@ -35,7 +35,7 @@ export class TopBarComponent {
         this.router.navigate(['/benefactors/profile/' + decodedToken.id]);
       }
       else if (decodedToken.type === 'user') {
-        this.router.navigate(['/']);
+        this.router.navigate(['/user-profile/']);
       }
       else {
         this.router.navigate(['/']);

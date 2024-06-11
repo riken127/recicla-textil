@@ -75,6 +75,13 @@ async function handleBenefactorLogin(res, username, password) {
     if (passwordMatch) {
         benefactor.description = '';
         benefactor.pickpoints =  [];
+
+        if (benefactor.status === 'pending') {
+            return res.status(401).json({
+                type: 'error',
+                message: 'Benefactor is pending approval.'
+            });
+        }
         const token = jwt.sign({
             benefactor
         }, secretKey, {expiresIn: '1h'});

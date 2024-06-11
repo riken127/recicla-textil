@@ -20,11 +20,7 @@
         <mat-card>
           <mat-card-header
             [ngStyle]="{
-            'background-image': benefactor.banner
-              ? 'url(' + benefactor.banner + ')'
-              : 'url(https://api.dicebear.com/8.x/shapes/svg?seed=' +
-                benefactor.phone +
-                ')'
+            'background-image': getBannerUrl(benefactor)
           }"
             class="banner-header"
           >
@@ -34,11 +30,7 @@
               aria-colindex="1"
               mat-card-avatar
               [ngStyle]="{
-              'background-image': benefactor.logo
-                ? 'url(' + benefactor.logo + ')'
-                : 'url(https://api.dicebear.com/8.x/shapes/svg?seed=' +
-                  benefactor.email +
-                  ')'
+              'background-image': getLogoUrl(benefactor)
             }"
               class="avatar"
             ></div>

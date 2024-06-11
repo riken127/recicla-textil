@@ -39,7 +39,7 @@ function addPost(req, res) {
         .then((post) => {
             if (
                 postData.image &&
-                !fs.existsSync("./uploads/benefactors/" + benefactorId)
+                !fs.existsSync("./uploads/benefactors/" + benefactorId + "/posts")
             ) {
                 fs.mkdirSync(
                     "./uploads/benefactors/" + benefactorId + "/posts",
@@ -87,7 +87,7 @@ function updatePost(req, res) {
         .then((post) => {
             if (
                 req.body.image &&
-                !fs.existsSync("./uploads/benefactors/" + benefactorId)
+                !fs.existsSync("./uploads/benefactors/" + benefactorId + "/posts")
             ) {
                 fs.mkdirSync(
                     "./uploads/benefactors/" + benefactorId + "/posts",
