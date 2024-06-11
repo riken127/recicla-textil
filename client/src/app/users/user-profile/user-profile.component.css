@@ -91,3 +91,19 @@
 .leafs-display h2 {
     margin: 0;
 }
+
+.upload-button-field {
+    display: flex;
+    align-items: center;
+  }
+  
+  .upload-button {
+    width: 100%;
+    height: calc(3.5vw + 1px); 
+    border: 2px solid rgb(134, 131, 129);
+    margin-bottom: 15px;
+  }
+  
+  .image-selected {
+    background-color: green;
+  }

@@ -7,25 +7,42 @@
       <div class="form-row">
         <div class="form-field form-single-field">
           <mat-form-field appearance="outline">
+            <mat-label>Points</mat-label>
             <input formControlName="price" matInput type="number">
             <mat-error *ngIf="f['price'].errors?.['required'] && submitted">Field is required</mat-error>
           </mat-form-field>
         </div>
         <div class="form-field form-single-field">
           <mat-form-field appearance="outline">
+            <mat-label>Title</mat-label>
             <input formControlName="title" matInput type="text">
             <mat-error *ngIf="f['title'].errors?.['required'] && submitted">Field is required</mat-error>
           </mat-form-field>
         </div>
         <div class="form-field form-single-field">
           <mat-form-field appearance="outline">
+            <mat-label>Description</mat-label>
             <textarea formControlName="description" matInput></textarea>
           </mat-form-field>
         </div>
       </div>
       <div class="form-row">
-        <div class="form-field form-single-field">
-          <input type="file" (change)="onFileSelected($event)">
+        <div class="form-field upload-button-field">
+          <input
+            type="file"
+            hidden
+            (change)="onFileSelected($event)"
+            #fileInput
+          />
+          <button
+            type="button"
+            mat-raised-button
+            [class.image-selected]="fileToUpload"
+            (click)="fileInput.click()"
+            class="upload-button"
+          >
+            Upload Image
+          </button>
         </div>
       </div>
       <button [disabled]="!form.valid" class="create-prize-button" color="primary" mat-raised-button type="submit">

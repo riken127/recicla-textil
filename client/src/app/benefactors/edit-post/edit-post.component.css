@@ -1,21 +1,48 @@
 .edit-post-card {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-  }
-  .card-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 15px 15px 15px;
-  }
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+}
 
-  .title-text {
-    margin-right: 10px;
-    color: white;
-  }
+.card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 15px 15px 15px;
+}
 
-  .delete-button {
-    margin-left: 10px;
-    color: rgb(174, 58, 58);
-  }
+.title-text {
+  margin-right: 10px;
+  color: white;
+}
+
+.delete-button {
+  margin-left: 10px;
+  color: rgb(174, 58, 58);
+}
+
+.upload-button-field {
+  display: flex;
+  align-items: center;
+}
+
+.upload-button {
+  width: 100%;
+  height: calc(3.5vw + 1px);
+  border: 2px solid rgb(134, 131, 129);
+  margin-bottom: 15px;
+}
+
+.image-selected {
+  background-color: green;
+}
+
+.form-field {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.edit-post-button {
+  width: 100%;
+}

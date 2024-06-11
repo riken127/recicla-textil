@@ -1,52 +1,73 @@
 .edit-benefactor-card {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-  }
-  
-  .card-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 15px 15px 15px;
-  }
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+}
 
-  .title-text {
-    margin-right: 10px;
-    color: white;
-  }
+.card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 15px 15px 15px;
+}
 
-  .delete-button {
-    margin-left: 10px;
-    color: rgb(174, 58, 58);
-  }
+.title-text {
+  margin-right: 10px;
+  color: white;
+}
 
-  .mat-expansion-panel {
-    margin-bottom: 10px;
-    box-shadow: inset;
-  }
+.delete-button {
+  margin-left: 10px;
+  color: rgb(174, 58, 58);
+}
 
-  .form-row {
-    display: flex;
-    flex-wrap: wrap;
-  }
+.mat-expansion-panel {
+  margin-bottom: 10px;
+  box-shadow: inset;
+}
 
-  .form-single-field {
-    flex: 1 1 100%;
-    margin: 5px 0;
-  }
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+}
 
-  .edit-offer-button {
-    width: 100%;
-    margin-top: 20px;
-  }
+.form-single-field {
+  flex: 1 1 100%;
+  margin: 5px 0;
+}
 
-  .form-paired-field {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-  }
+.edit-offer-button {
+  width: 100%;
+  margin-top: 20px;
+}
 
-  .mat-form-field {
-    margin-right: 10px;
-  }
+.form-paired-field {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mat-form-field {
+  margin-right: 10px;
+}
+
+.upload-button-field {
+  display: flex;
+  align-items: center;
+}
+
+.upload-button {
+  width: 100%;
+  height: calc(3.5vw + 1px);
+  border: 2px solid rgb(134, 131, 129);
+  margin-bottom: 15px;
+}
+
+.image-selected {
+  background-color: green;
+}
+
+.upload-button-row {
+  display: flex;
+  gap: 10px;
+}

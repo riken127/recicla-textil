@@ -4,10 +4,14 @@
   grid-column-gap: 20px;
 }
 
+.register-card{
+  background-color: #3e3e3e;
+}
+
 .form-single-field {
   display: grid;
   grid-column-gap: 20px;
-}
+} 
 
 .mat-form-field {
   width: auto;
@@ -29,6 +33,7 @@
   width: 100%;
   font-size: 16px;
   padding: 12px 24px;
+  margin-top: 20px;
 }
 
 .login-button {
@@ -37,4 +42,20 @@
   padding: 12px 24px;
   background-color: rgb(91, 91, 91);
   margin-top: 5px; 
+}
+
+.upload-button-field {
+  display: flex;
+  align-items: center;
+}
+
+.upload-button {
+  width: 100%;
+  height: calc(3.5vw + 1px);
+  border: 2px solid rgb(134, 131, 129);
+  margin-bottom: 15px;
+}
+
+.image-selected {
+  background-color: green;
 }

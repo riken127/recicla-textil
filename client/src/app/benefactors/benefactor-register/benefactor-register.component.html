@@ -4,8 +4,6 @@
   </mat-card-title>
   <mat-card-content>
     <form (ngSubmit)="onSubmit()" [formGroup]="registerForm">
-
-      <!-- Credentials Section -->
       <mat-accordion>
         <mat-expansion-panel>
           <mat-expansion-panel-header>
@@ -13,7 +11,6 @@
               Credentials
             </mat-panel-title>
           </mat-expansion-panel-header>
-
           <div class="form-row">
             <div class="form-field form-single-field">
               <mat-form-field appearance="outline">
@@ -40,15 +37,12 @@
             </div>
           </div>
         </mat-expansion-panel>
-
-        <!-- Profile Section -->
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>
               Profile
             </mat-panel-title>
           </mat-expansion-panel-header>
-
           <div class="form-row">
             <div class="form-field form-single-field">
               <mat-form-field appearance="outline">
@@ -76,14 +70,40 @@
               </mat-form-field>
             </div>
           </div>
-          <div class="form-row">
-            <div class="form-field form-paired-field">
-              banner:
-              <input type="file" (change)="onBannerSelected($event)">
+          <div class="form-row upload-button-row">
+            <div class="form-field upload-button-field">
+              <input
+                type="file"
+                hidden
+                (change)="onBannerSelected($event)"
+                #bannerFileInput
+              />
+              <button
+                type="button"
+                mat-raised-button
+                [class.image-selected]="bannerToUpload"
+                (click)="bannerFileInput.click()"
+                class="upload-button"
+              >
+                Upload Banner
+              </button>
             </div>
-            <div class="form-field form-paired-field">
-              logo:
-              <input type="file" (change)="onLogoSelected($event)">
+            <div class="form-field upload-button-field">
+              <input
+                type="file"
+                hidden
+                (change)="onLogoSelected($event)"
+                #logoFileInput
+              />
+              <button
+                type="button"
+                mat-raised-button
+                [class.image-selected]="logoToUpload"
+                (click)="logoFileInput.click()"
+                class="upload-button"
+              >
+                Upload Logo
+              </button>
             </div>
           </div>
           <div class="form-row">
@@ -95,15 +115,12 @@
             </div>
           </div>
         </mat-expansion-panel>
-
-        <!-- Address Section -->
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>
               Address
             </mat-panel-title>
           </mat-expansion-panel-header>
-
           <div class="form-row">
             <div class="form-field form-paired-field">
               <mat-form-field appearance="outline">
@@ -128,7 +145,6 @@
           </div>
         </mat-expansion-panel>
       </mat-accordion>
-
       <button [disabled]="!registerForm.valid" class="register-button" color="primary" mat-raised-button type="submit">
         Register
       </button>

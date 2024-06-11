@@ -12,6 +12,7 @@ import { UsersService } from "../../services/users.service";
 import { User } from "../../models/user";
 import { Address } from "../../models/address";
 import { FileUploadService } from '../../services/file-upload.service';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-user-register',
@@ -24,6 +25,7 @@ import { FileUploadService } from '../../services/file-upload.service';
     MatFormFieldModule,
     ReactiveFormsModule,
     MatGridListModule,
+    MatExpansionModule
   ],
   templateUrl: './user-register.component.html',
   styleUrls: ['./user-register.component.css']

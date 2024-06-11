@@ -26,10 +26,22 @@
           </div>
         </div>
         <div class="form-row">
-          <div class="form-field form-single-field">
-            <div class="form-field form-single-field">
-              <input type="file" (change)="onFileSelected($event)">
-            </div>
+          <div class="form-field upload-button-field">
+            <input
+              type="file"
+              hidden
+              (change)="onFileSelected($event)"
+              #fileInput
+            />
+            <button
+              type="button"
+              mat-raised-button
+              [class.image-selected]="fileToUpload"
+              (click)="fileInput.click()"
+              class="upload-button"
+            >
+              Upload Image
+            </button>
           </div>
         </div>
         <div class="form-row">

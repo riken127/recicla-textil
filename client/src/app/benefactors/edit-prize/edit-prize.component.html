@@ -1,34 +1,51 @@
 <mat-card class="edit-prize-card">
   <mat-card-title class="card-title">
     <span class="title-text">Edit a Prize</span>
+    <button mat-icon-button (click)="onDelete()" aria-label="Delete" class="delete-button">
+      <mat-icon>delete</mat-icon>
+    </button>
   </mat-card-title>
-  <button mat-icon-button (click)="onDelete()" aria-label="Delete" class="delete-button">
-    <mat-icon>delete</mat-icon>
-  </button>
   <mat-card-content>
     <form (ngSubmit)="onSubmit()" [formGroup]="form">
       <div class="form-row">
         <div class="form-field form-single-field">
           <mat-form-field appearance="outline">
+            <mat-label>Points</mat-label>
             <input formControlName="price" matInput type="number">
             <mat-error *ngIf="f['price'].errors?.['required'] && submitted">Field is required</mat-error>
           </mat-form-field>
         </div>
         <div class="form-field form-single-field">
           <mat-form-field appearance="outline">
+            <mat-label>Title</mat-label>
             <input formControlName="title" matInput type="text">
             <mat-error *ngIf="f['title'].errors?.['required'] && submitted">Field is required</mat-error>
           </mat-form-field>
         </div>
         <div class="form-field form-single-field">
           <mat-form-field appearance="outline">
+            <mat-label>Description</mat-label>
             <textarea formControlName="description" matInput></textarea>
           </mat-form-field>
         </div>
       </div>
       <div class="form-row">
-        <div class="form-field form-single-field">
-          <input type="file" (change)="onFileSelected($event)">
+        <div class="form-field upload-button-field">
+          <input
+            type="file"
+            hidden
+            (change)="onFileSelected($event)"
+            #fileInput
+          />
+          <button
+            type="button"
+            mat-raised-button
+            [class.image-selected]="fileToUpload"
+            (click)="fileInput.click()"
+            class="upload-button"
+          >
+            Upload Image
+          </button>
         </div>
       </div>
       <button [disabled]="!form.valid" class="edit-prize-button" color="primary" mat-raised-button type="submit">
