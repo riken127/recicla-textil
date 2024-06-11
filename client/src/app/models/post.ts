@@ -1,5 +1,3 @@
-import {Link} from './link'
-
 export class Post {
   constructor(
     public _id: string,
@@ -9,7 +7,6 @@ export class Post {
     public image: string,
     public createdAt: Date,
     public updatedAt: Date,
-    public links: Link[]
   ) {
   }
 }

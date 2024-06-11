@@ -5,7 +5,6 @@ import { Benefactor } from '../models/benefactor';
 import { map } from 'rxjs/operators';
 import { Pickpoint } from '../models/pickpoint';
 import { Post } from '../models/post';
-import { Link } from '../models/link';
 import { Prize } from '../models/prize';
 import { Offer } from '../models/offer';
 
@@ -336,62 +335,6 @@ export class BenefactorsService {
       );
   }
 
-  public addLink(postId: string, link: Link): Observable<boolean> | null {
-    return this.http
-      .post<any>(`${BenefactorsService.apiUrl}/posts/${postId}/links`, link, {
-        observe: 'response',
-        withCredentials: true,
-      })
-      .pipe(
-        map((response) => {
-          if (response.status === 200) {
-            return true;
-          }
-          return false;
-        })
-      );
-  }
-
-  public updateLink(
-    postId: string,
-    linkId: string,
-    link: Link
-  ): Observable<boolean> | null {
-    return this.http
-      .put<any>(
-        `${BenefactorsService.apiUrl}/posts/${postId}/links/${linkId}`,
-        link,
-        { observe: 'response', withCredentials: true }
-      )
-      .pipe(
-        map((response) => {
-          if (response.status === 200) {
-            return true;
-          }
-          return false;
-        })
-      );
-  }
-
-  public deleteLink(
-    postId: string,
-    linkId: string
-  ): Observable<boolean> | null {
-    return this.http
-      .delete<any>(
-        `${BenefactorsService.apiUrl}/posts/${postId}/links/${linkId}`,
-        { observe: 'response', withCredentials: true }
-      )
-      .pipe(
-        map((response) => {
-          if (response.status === 200) {
-            return true;
-          }
-          return false;
-        })
-      );
-  }
-
   public getLastOffers(
     pageNumber: number,
     pageSize: number,
@@ -550,7 +493,7 @@ export class BenefactorsService {
           return throwError(error);
         })
       );
-  }
+ }
 
   public getAllPrizes(
     pageNumber: number,

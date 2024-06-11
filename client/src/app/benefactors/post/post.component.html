@@ -4,18 +4,6 @@
     <img  [src]="getPostImageUrl(post.image)" />
     <p>{{ post.content }}</p>
     <div class="link-buttons" style="display: flex; flex-wrap: wrap">
-      <div class="dialog-actions">
-        <div *ngFor="let link of post?.links">
-          <button
-            (click)="onLinkClick(link.link)"
-            color="primary"
-            mat-raised-button
-            title="{{ link.onHover }}"
-          >
-            {{ link.title }}
-          </button>
-        </div>
-      </div>
       <button (click)="onClose()" mat-raised-button>Close</button>
     </div>
   </div>

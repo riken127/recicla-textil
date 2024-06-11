@@ -81,7 +81,6 @@ export class EditPostComponent implements OnInit {
         this.fileToUpload ? 'y' : this.post.image,
         this.post.createdAt,
         this.post.updatedAt,
-        this.post.links
       );
 
     this.service.updatePost(postData)!.subscribe(

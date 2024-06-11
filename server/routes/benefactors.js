@@ -3,7 +3,6 @@ const router = express.Router();
 const benefactorController = require("../controllers/BenefactorController");
 const pickpointController = require("../controllers/PickpointController");
 const postController = require("../controllers/PostsController");
-const linkController = require("../controllers/LinkController");
 const offerController = require("../controllers/OfferController");
 const storeController = require("../controllers/StoreController");
 const upload = require("../middleware/multerMiddleware");
@@ -1126,209 +1125,7 @@ router.get(
  */
 router.get("/posts/all/:n/:p", auth.isAuthenticated, postController.getLastPosts);
 
-/**
- * @swagger
- * tags:
- *   name: Links
- *   description: Links management APIs
- */
-
-/**
- * @swagger
- * '/benefactors/posts/{postId}/links':
- *   post:
- *     tags: [Links]
- *     summary: Add a new link to a post
- *     security:
- *       - JwtCookieAuth: []
- *     parameters:
- *       - in: path
- *         name: postId
- *         required: true
- *         schema:
- *           type: string
- *         description: The ID of the post
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Link'
- *     responses:
- *       200:
- *         description: New link added successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Link added successfully
- *                 post:
- *                   $ref: '#/components/schemas/Post'
- *       400:
- *         description: Invalid input
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Invalid input
- *       500:
- *         description: Error adding link
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Error adding link
- */
-router.post("/posts/:postId/links", auth.isAuthenticated, linkController.addLink);
-
-/**
- * @swagger
- * '/benefactors/posts/{postId}/links/{linkId}':
- *   put:
- *     tags: [Links]
- *     summary: Update a link in a post
- *     security:
- *       - JwtCookieAuth: []
- *     parameters:
- *       - in: path
- *         name: postId
- *         required: true
- *         schema:
- *           type: string
- *         description: The ID of the post
- *       - in: path
- *         name: linkId
- *         required: true
- *         schema:
- *           type: string
- *         description: The ID of the link
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Link'
- *     responses:
- *       200:
- *         description: Link updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Link updated successfully
- *                 post:
- *                   $ref: '#/components/schemas/Post'
- *       404:
- *         description: Post or link not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Post not found or Link not found
- *       500:
- *         description: Error updating link
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Error updating link
- */
-router.put("/posts/:postId/links/:linkId", auth.isAuthenticated, linkController.updateLink);
-
-
-/**
- * @swagger
- * '/benefactors/posts/{postId}/links/{linkId}':
- *   delete:
- *     tags: [Links]
- *     summary: Delete a link from a post
- *     security:
- *       - JwtCookieAuth: []
- *     parameters:
- *       - in: path
- *         name: postId
- *         required: true
- *         schema:
- *           type: string
- *         description: The ID of the post
- *       - in: path
- *         name: linkId
- *         required: true
- *         schema:
- *           type: string
- *         description: The ID of the link
- *     responses:
- *       200:
- *         description: Link deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Link deleted successfully
- *                 post:
- *                   $ref: '#/components/schemas/Post'
- *       404:
- *         description: Post or link not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Post not found or Link not found
- *       500:
- *         description: Error deleting link
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Error deleting link
- */
-router.delete("/posts/:postId/links/:linkId", auth.isAuthenticated, linkController.deleteLink);
-
-// Returns the latest offers.
-router.get('/offers/all', offerController.allOffers);
-
-// Returns all offers of the specified benefactor.
-router.get('/offers/:id', offerController.getBenefactorOffers);
-
-// Adds a new offer to the specified benefactor id.
-router.post('/offers/:id', offerController.addBenefactorOffer);
-
-// Update an offer of a specified benefactor.
-router.put('/offers/:id', offerController.editBenefactorOffer);
-
-// Disables an offer of a specified benefactor.
-router.delete('/offers/:id', offerController.disableBenefactorOffer);
-
 router.post('/offers/image/upload', upload.single("offer"), offerController.upload);
-
-router.post('/prizes/image/upload', upload.single("prize"), storeController.upload);
 
 router.post('/prizes/image/upload', upload.single("prize"), storeController.upload);
 
@@ -1656,7 +1453,6 @@ router.get("/store/:id", storeController.getPrize);
  *                   example: "no prize found"
  */
 router.get("/store/benefactor/:id", storeController.getBenefactorPrizes);
-
 /**
  * @swagger
  * '/benefactors/prizes/all':
@@ -1721,5 +1517,226 @@ router.get("/store/benefactor/:id", storeController.getBenefactorPrizes);
  *                   example: "Failed to retrieve prizes"
  */
 router.get('/prizes/all', storeController.getAllPrizes);
+
+/**
+ * @swagger
+ * tags:
+ *   name: Offers
+ *   description: Offers management APIs
+ */
+
+/**
+ * @swagger
+ * /benefactors/offers/all:
+ *   get:
+ *     tags: [Offers]
+ *     summary: Retrieve all offers
+ *     description: Retrieves the last n offers based on the specified page number and page size.
+ *     parameters:
+ *       - name: pageSize
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *         description: The number of offers to retrieve per page.
+ *       - name: pageNumber
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 0
+ *         description: The page number to retrieve offers from.
+ *       - name: search
+ *         in: query
+ *         schema:
+ *           type: string
+ *           example: "Nice"
+ *         description: A search query to filter offers by title or description.
+ *     responses:
+ *       200:
+ *         description: A list of offers
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Offer'
+ *       400:
+ *         description: Invalid parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/offers/all', offerController.allOffers);
+
+/**
+ * @swagger
+ * /benefactors/offers/{id}:
+ *   get:
+ *     tags: [Offers]
+ *     summary: Retrieve offers by benefactor
+ *     description: Retrieves all offers for the specified benefactor ID.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "66341183612bf8d5aff074f0"
+ *         description: The ID of the benefactor.
+ *     responses:
+ *       200:
+ *         description: A list of offers
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Offer'
+ *       400:
+ *         description: Could not find any posts related to the specified ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+
+router.get('/offers/:id', offerController.getBenefactorOffers);
+
+/**
+ * @swagger
+ * /benefactors/offers/{id}:
+ *   post:
+ *     tags: [Offers]
+ *     summary: Add a new offer
+ *     description: Adds a new offer to the specified benefactor ID.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "66341183612bf8d5aff074f0"
+ *         description: The ID of the benefactor.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Offer'
+ *     responses:
+ *       200:
+ *         description: Offer created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: success
+ *                 result:
+ *                   type: string
+ *                   example: "665db5223dcb0ae0df44cc7f"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.post('/offers/:id', offerController.addBenefactorOffer);
+
+/**
+ * @swagger
+ * /benefactors/offers/{id}:
+ *   put:
+ *     tags: [Offers]
+ *     summary: Update an offer
+ *     description: Updates an existing offer for the specified benefactor ID.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "66341183612bf8d5aff074f0"
+ *         description: The ID of the benefactor.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Offer'
+ *     responses:
+ *       200:
+ *         description: Offer updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: "Very Nice Offer was successfully updated"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.put('/offers/:id', offerController.editBenefactorOffer);
+
+/**
+ * @swagger
+ * /benefactors/offers/{id}:
+ *   delete:
+ *     tags: [Offers]
+ *     summary: Disable an offer
+ *     description: Disables an offer for the specified benefactor ID.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "665db5223dcb0ae0df44cc7f"
+ *         description: The ID of the offer.
+ *     responses:
+ *       200:
+ *         description: Offer disabled successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 offer:
+ *                   $ref: '#/components/schemas/Offer'
+ *       404:
+ *         description: Offer not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: An error occurred while disabling the offer
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.delete('/offers/:id', offerController.disableBenefactorOffer);
 
 module.exports = router;

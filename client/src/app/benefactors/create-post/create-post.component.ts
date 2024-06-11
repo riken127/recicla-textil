@@ -78,7 +78,6 @@ export class CreatePostComponent implements OnInit {
       this.fileToUpload ? 'y' : '',
       new Date(),
       new Date(),
-      []
     );
 
     this.benefactorService.addPost(newPost)?.subscribe(

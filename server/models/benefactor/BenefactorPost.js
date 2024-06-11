@@ -9,37 +9,6 @@ const mongoose = require('mongoose');
  * @swagger
  * components:
  *   schemas:
- *     Link:
- *       type: object
- *       required:
- *         - link
- *         - title
- *         - onHover
- *       properties:
- *         link:
- *           type: string
- *           description: The URL of the link
- *         title:
- *           type: string
- *           description: The title of the link
- *         onHover:
- *           type: string
- *           description: The text to display on hover
- *       example:
- *         link: "http://example.com"
- *         title: "Example"
- *         onHover: "Go to example.com"
- */
-const LinkSchema = new mongoose.Schema({
-    link: {type: String, required: true},
-    title: {type: String, required: true},
-    onHover: {type: String, required: true}
-});
-
-/**
- * @swagger
- * components:
- *   schemas:
  *     BenefactorPost:
  *       type: object
  *       required:
@@ -85,7 +54,6 @@ const BenefactorPostSchema = new mongoose.Schema({
     image: {type: String, required: true},
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date, default: Date.now},
-    links: [LinkSchema]
 });
 
 module.exports = mongoose.model('BenefactorPost', BenefactorPostSchema);
