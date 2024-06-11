@@ -427,7 +427,7 @@ async function updateDonation(req, res, next) {
     const offers = [];
     let totalAdditionalPoints = 0;
     const benefactorOffers = await Offer.find({
-      benefactor: req.params.id,
+      benefactor: req.body.details.benefactorId,
       active: true,
       startDate: { $lte: new Date() },
       endDate: { $gte: new Date() },
@@ -440,8 +440,12 @@ async function updateDonation(req, res, next) {
       });
     }
 
-    updateData.offers = offers;
-    updateData.totalAdditionalPoints = totalAdditionalPoints;
+    const user = await User.findById(req.body.userId);
+    const benefactor = await Benefactor.findById(req.body.details.benefactorId)
+
+    updateData.details.offers = offers;
+    updateData.details.totalAdditionalPoints = totalAdditionalPoints;
+    updateData.details.points = Math.floor((req.body.details.totalWeight / benefactor.conversionRatio.value) * benefactor.conversionRatio.points);
 
     const updatedDonation = await Donation.findByIdAndUpdate(
       req.params.id,
@@ -457,19 +461,14 @@ async function updateDonation(req, res, next) {
     }
 
     if (updatedDonation.status === "Delivered") {
-      const user = await User.findById(updatedDonation.userId);
 
       if (user) {
-        user.totalPoints += updatedDonation.totalPoints;
-        user.bonusPoints += updatedDonation.bonusPoints;
+        user.leafs += updatedDonation.details.totalAdditionalPoints;
+        user.leafs += updatedDonation.details.points;
         await user.save();
       }
     }
 
-    const benefactor = await Benefactor.findById(
-      updatedDonation.details.benefactorId
-    );
-    const user = await User.findById(updatedDonation.userId);
     const userName = user ? `${user.firstName} ${user.lastName}` : "Unknown";
 
     const benefactorName = benefactor ? benefactor.name : "Unknown";

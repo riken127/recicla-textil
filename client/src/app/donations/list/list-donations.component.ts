@@ -41,6 +41,7 @@ export class ListDonationsComponent implements OnInit {
     'pickpointAddress',
     'items',
     'weight',
+    'points',
     'timeStamp',
     'status',
   ];

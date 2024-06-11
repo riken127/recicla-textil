@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {CommonModule} from "@angular/common";
 import {BenefactorsService} from "../../services/benefactors.service";
 import {MatCardModule} from "@angular/material/card";
@@ -12,6 +12,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {Prize} from "../../models/prize";
 import {ActivatedRoute, Router} from "@angular/router";
 import {FileUploadService} from "../../services/file-upload.service";
+import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-create-prize',
@@ -33,15 +34,17 @@ export class CreatePrizeComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
   fileToUpload: File | null = null;
-
+  benefactorId: string;
   constructor(
     private benefactorsService: BenefactorsService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
-    private fileUploadService: FileUploadService
+    private fileUploadService: FileUploadService,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
+    this.benefactorId = data.benefactorId;
   }
 
   get f() {
@@ -51,11 +54,10 @@ export class CreatePrizeComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
       this.form = this.formBuilder.group({
-        price: [new FormControl("", Validators.required)],
-        title: [new FormControl("", Validators.required)],
-        description: [new FormControl("")],
-        image: [new FormControl("")],
-        benefactor: [params.get('id')],
+        price: ["", Validators.required],
+        title: ["", Validators.required],
+        description: [""],
+        image: [""],
       });
     });
   }
@@ -73,12 +75,12 @@ export class CreatePrizeComponent implements OnInit {
       this.f['title'].value,
       this.f['description'].value,
       this.fileToUpload ? 'y' : '',
-      this.fileToUpload ? 'y' : '',
-    ))
+      this.benefactorId
+      ))
       .subscribe(
         result => {
           const prizeId: string = result.result;
-          
+
           if (prizeId && this.fileToUpload) {
             this.fileUploadService.uploadPrizeImage(
               this.fileToUpload,
@@ -118,9 +120,6 @@ export class CreatePrizeComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       this.submitted = false;
       this.form.reset();
-      this.form.patchValue({
-        benefactor: params.get('id'),
-      })
     });
   }
 

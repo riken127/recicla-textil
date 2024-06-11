@@ -34,6 +34,11 @@
                             <input matInput formControlName="type" />
                         </mat-form-field>
                     </div>
+                  <div class="form-row">
+                    <div class="form-field form-single-field">
+                      <input type="file" (change)="onFileSelected($event)">
+                    </div>
+                  </div>
                 </mat-expansion-panel>
             </mat-accordion>
             <div class="form-row">

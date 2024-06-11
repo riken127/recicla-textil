@@ -20,6 +20,7 @@ import { CreateDonationComponent } from '../../donations/create-donation/create-
 import { ListPickpointsComponent } from '../list-pickpoints/list-pickpoints.component';
 import { AllOffersComponent } from '../all-offers/all-offers.component';
 import { OffersTableComponent } from '../offers-table/offers-table.component';
+import {ListPrizesComponent} from "../list-prizes/list-prizes.component";
 
 @Component({
   selector: 'app-profile',
@@ -34,6 +35,7 @@ import { OffersTableComponent } from '../offers-table/offers-table.component';
     ListPickpointsComponent,
     AllOffersComponent,
     OffersTableComponent,
+    ListPrizesComponent
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],

@@ -144,7 +144,7 @@ export class DonationsService {
       );
   }
 
-  public addItem(donationId: string, item: Item): Observable<boolean> | null {
+  public addItem(donationId: string, item: Item): Observable<any> | null {
     return this.http
       .post<any>(`${DonationsService.apiUrl}/${donationId}/items/`, item, {
         observe: 'response',
@@ -152,9 +152,9 @@ export class DonationsService {
       .pipe(
         map((response) => {
           if (response.status === 200 || response.status === 201) {
-            return true;
+            return response.body;
           }
-          return false;
+          return response.body;
         })
       );
   }

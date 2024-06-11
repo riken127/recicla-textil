@@ -1,5 +1,5 @@
 <mat-card>
-  <mat-card-content>  
+  <mat-card-content>
   <div class="mat-elevation-z8">
     <table
       [dataSource]="dataSource"
@@ -53,6 +53,14 @@
         </th>
         <td *matCellDef="let donation" class="center-cell" mat-cell>
           {{ donation.details.totalWeight }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="points">
+        <th *matHeaderCellDef class="center-cell" mat-header-cell>
+          Points
+        </th>
+        <td *matCellDef="let donation" class="center-cell" mat-cell>
+          {{ donation.details.points ?  donation.details.points : 'N/A' }}
         </td>
       </ng-container>
       <ng-container matColumnDef="timeStamp">

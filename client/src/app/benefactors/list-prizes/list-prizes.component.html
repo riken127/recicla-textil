@@ -1,0 +1,32 @@
+<mat-card>
+  <mat-card-content>
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="prizes" class="mat-elevation-z8">
+        <ng-container matColumnDef="title">
+          <th mat-header-cell class="center-cell" *matHeaderCellDef>Title</th>
+          <td mat-cell class="center-cell" *matCellDef="let prize"> {{ prize.title }}</td>
+        </ng-container>
+        <ng-container matColumnDef="description">
+          <th mat-header-cell class="center-cell" *matHeaderCellDef>Description</th>
+          <td mat-cell class="center-cell" *matCellDef="let prize"> {{ prize.description }}</td>
+        </ng-container>
+        <ng-container matColumnDef="points">
+          <th mat-header-cell class="center-cell" *matHeaderCellDef>Points</th>
+          <td mat-cell class="center-cell" *matCellDef="let prize"> {{ prize.price }}</td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell class="center-cell" *matHeaderCellDef>
+              <button mat-raised-button color="primary" (click)="addPrize()">
+                <mat-icon>add</mat-icon> Prize
+              </button>
+            </th>
+            <td mat-cell class="center-cell" *matCellDef="let prize">
+              <button mat-raised-button class="edit" (click)="editPrize(prize)"><mat-icon>edit</mat-icon>Edit</button>
+            </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['title', 'description', 'points', 'actions']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['title', 'description', 'points', 'actions']"></tr>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

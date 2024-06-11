@@ -2,15 +2,12 @@
   <mat-card-title class="card-title">
     <span class="title-text">Edit a Prize</span>
   </mat-card-title>
+  <button mat-icon-button (click)="onDelete()" aria-label="Delete" class="delete-button">
+    <mat-icon>delete</mat-icon>
+  </button>
   <mat-card-content>
     <form (ngSubmit)="onSubmit()" [formGroup]="form">
       <div class="form-row">
-        <div class="form-field form-single-field">
-          <mat-form-field appearance="outline">
-            <input formControlName="price" matInput type="number">
-            <mat-error *ngIf="f['price'].errors?.['required'] && submitted">Field is required</mat-error>
-          </mat-form-field>
-        </div>
         <div class="form-field form-single-field">
           <mat-form-field appearance="outline">
             <input formControlName="price" matInput type="number">

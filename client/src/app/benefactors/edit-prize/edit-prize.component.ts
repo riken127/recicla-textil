@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {CommonModule} from "@angular/common";
 import {BenefactorsService} from "../../services/benefactors.service";
 import {MatCardModule} from "@angular/material/card";
@@ -12,6 +12,8 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {Prize} from "../../models/prize";
 import {ActivatedRoute, Router} from "@angular/router";
 import {FileUploadService} from "../../services/file-upload.service";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
   selector: 'app-edit-prize',
@@ -24,7 +26,8 @@ import {FileUploadService} from "../../services/file-upload.service";
     MatFormFieldModule,
     ReactiveFormsModule,
     MatGridListModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatIcon
   ],
   templateUrl: './edit-prize.component.html',
   styleUrl: './edit-prize.component.css'
@@ -33,6 +36,8 @@ export class EditPrizeComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
   fileToUpload: File | null = null;
+  benefactorId: string;
+  prize: Prize;
 
   constructor(
     private benefactorsService: BenefactorsService,
@@ -40,9 +45,12 @@ export class EditPrizeComponent implements OnInit {
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
-    private fileUploadService: FileUploadService
+    private fileUploadService: FileUploadService,
+    public dialogRef: MatDialogRef<EditPrizeComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-
+    this.benefactorId = data.benefactorId;
+    this.prize = data.prize
   }
 
   get f() {
@@ -52,28 +60,11 @@ export class EditPrizeComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
       this.form = this.formBuilder.group({
-        price: [new FormControl("", Validators.required)],
-        title: [new FormControl("", Validators.required)],
-        description: [new FormControl("", Validators.required)],
-        benefactor: [new FormControl(params.get('benefactor')), Validators.required],
+        price: [this.prize.price, Validators.required],
+        title: [this.prize.title, Validators.required],
+        description: [this.prize.description, Validators.required],
+        benefactor: [this.benefactorId, Validators.required],
       });
-      this.benefactorsService.getPrize(params.get('prize') || ' ')
-        ?.subscribe(result => {
-          console.log(result)
-            if (result) {
-              this.form.setValue({
-                price: result.price,
-                title: result.title,
-                benefactor: result.benefactor,
-                description: result.description
-              });
-            }
-          },
-          error => {
-            this.snackBar.open(error?.message || 'An error occurred', 'Close', {
-              duration: 3000
-            });
-          });
     });
   }
 
@@ -84,15 +75,14 @@ export class EditPrizeComponent implements OnInit {
       return;
     }
 
-    this.route.paramMap.subscribe((params) => {
       const updatedPrize = new Prize(
-        params.get('prize') || '',
+        this.prize._id,
         this.f['price'].value,
         this.f['title'].value,
         this.f['description'].value,
         '',
-        params.get('benefactor') || ''
-      );
+        this.benefactorId
+        );
 
     if (!updatedPrize)
       return;
@@ -105,15 +95,13 @@ export class EditPrizeComponent implements OnInit {
           if (this.fileToUpload) {
             this.fileUploadService.uploadPrizeImage(
               this.fileToUpload,
-              params.get('benefactor') || '',
+              this.benefactorId,
               updatedPrize._id
             )
               .subscribe(
                 uploadResult => {
                   this.snackBar.open('Prize and image have been updated', 'Close', {
                     duration: 3000
-                  }).afterDismissed().subscribe(() => {
-                    this.router.navigate(['/']);
                   })
                 },
                 uploadError => {
@@ -125,9 +113,7 @@ export class EditPrizeComponent implements OnInit {
           } else {
             this.snackBar.open('Prize has been updated', 'Close', {
               duration: 3000,
-            }).afterDismissed().subscribe(() => {
-              this.router.navigate(['/']);
-            });
+            })
           }
         },
         error => {
@@ -136,21 +122,29 @@ export class EditPrizeComponent implements OnInit {
           });
         }
       );
-    });
     this.onReset();
   }
 
   onReset() {
-    this.route.paramMap.subscribe(params => {
       this.submitted = false;
       this.form.reset();
-      this.form.patchValue({
-        benefactor: params.get('id'),
-      })
-    })
   }
 
   onFileSelected(event: any) {
     this.fileToUpload = event.target.files[0];
+  }
+
+  onDelete() {
+    this.benefactorsService.deletePrize(this.prize._id)
+      ?.subscribe(
+        result => {
+          this.dialogRef.close();
+        },
+        error => {
+          this.snackBar.open(error?.error?.message || 'An error has occurred', 'Close', {
+            duration: 3000
+          })
+        }
+      )
   }
 }

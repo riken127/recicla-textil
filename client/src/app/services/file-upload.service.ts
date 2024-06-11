@@ -108,6 +108,32 @@ export class FileUploadService {
       )
   }
 
+  uploadItemImage(file: File, donationId: string | null, itemId: string): Observable<any> {
+    let formData = new FormData();
+    formData.append("entityType", "donation");
+    formData.append("entityId", donationId ? donationId : '');
+    formData.append("subEntityId", itemId);
+    formData.append("item", file, `${itemId}-item.jpg`);
+
+    return this.http.post<any>(this.baseUrl + `/donations/${donationId}/upload`, formData, {
+      observe: 'response',
+      withCredentials: true
+    })
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body;
+          } else {
+            throw new Error(response.body!.message)
+          }
+        }),
+        catchError(error => {
+          return throwError(error)
+        })
+      )
+  }
+
+
   uploadPostImage(file: File, benefactorId: string, postId: string): Observable<any> {
     let formData = new FormData();
     formData.append("entityType", "benefactor");
