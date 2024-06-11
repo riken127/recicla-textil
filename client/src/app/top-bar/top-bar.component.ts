@@ -55,4 +55,8 @@ export class TopBarComponent {
   home() {
     this.router.navigate(['/']);
   }
+
+  store() {
+    this.router.navigate(['/prizes']);
+  }
 }

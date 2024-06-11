@@ -39,6 +39,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 export class UserProfileComponent implements OnInit {
   user?: User;
   userId: string | null = null;
+  image: string = '';
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -46,7 +47,7 @@ export class UserProfileComponent implements OnInit {
     private service: UsersService,
     private snackBar: MatSnackBar,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -63,6 +64,7 @@ export class UserProfileComponent implements OnInit {
   getUser(userId: string) {
     this.service.getUser(userId)?.subscribe((user: User) => {
       this.user = user;
+      this.getImage(user.image);
     });
   }
 
@@ -74,7 +76,7 @@ export class UserProfileComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: string) => {
       if (this.userId) {
         if (result === 'deleted') {
-          this.router.navigate(['/users/login']);
+          this.router.navigate(['/login']);
         } else if (result === 'updated') {
           this.getUser(this.userId);
         }
@@ -87,6 +89,16 @@ export class UserProfileComponent implements OnInit {
   }
 
   spendLeafs() {
-    this.snackBar.open('Spend leafs', 'Close', {});
+    this.router.navigate(['/prizes']);
+  }
+
+  getImage(image : string) {
+    this.image= image
+      ? this.parseImageUrl(image)
+      : `url(https://picsum.photos/500/500)`;
+  }
+
+  parseImageUrl(url: string): string {
+    return `url(http://localhost:3000/${url.replace(/\\/g, '/')})`;
   }
 }

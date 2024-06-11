@@ -1,13 +1,13 @@
-import {Component, HostListener, OnInit} from '@angular/core';
-import {Prize} from "../../models/prize";
-import {BenefactorsService} from "../../services/benefactors.service";
-import {Router} from "@angular/router";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {MatFormField} from "@angular/material/form-field";
-import {MatInput} from "@angular/material/input";
-import {FormsModule} from "@angular/forms";
-import {MatIcon} from "@angular/material/icon";
-import {MatGridList, MatGridTile} from "@angular/material/grid-list";
+import { Component, HostListener, OnInit } from '@angular/core';
+import { Prize } from "../../models/prize";
+import { BenefactorsService } from "../../services/benefactors.service";
+import { Router } from "@angular/router";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatFormField } from "@angular/material/form-field";
+import { MatInput } from "@angular/material/input";
+import { FormsModule } from "@angular/forms";
+import { MatIcon } from "@angular/material/icon";
+import { MatGridList, MatGridTile } from "@angular/material/grid-list";
 import {
   MatCard,
   MatCardActions,
@@ -16,9 +16,14 @@ import {
   MatCardSubtitle,
   MatCardTitle
 } from "@angular/material/card";
-import {NgForOf, NgIf, NgStyle} from "@angular/common";
-import {MatButton} from "@angular/material/button";
-import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import { NgForOf, NgIf, NgStyle } from "@angular/common";
+import { MatButton } from "@angular/material/button";
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
+import { AuthenticationService } from '../../services/authentication.service';
+import { UsersService } from '../../services/users.service';
+import { MatDialog } from '@angular/material/dialog';
+import { CodeComponent } from '../code/code.component';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-all-prizes',
@@ -52,16 +57,23 @@ export class AllPrizesComponent implements OnInit {
   loading = false;
   allLoaded = false;
   searchQuery = '';
+  authenticated: any;
 
   constructor(
     private benefactorsService: BenefactorsService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private authService: AuthenticationService,
+    private usersService: UsersService,
+    public dialog: MatDialog,
   ) {
   }
 
   ngOnInit() {
     this.getPrizes();
+    this.authService.getDecodedToken(true, false, false, false).subscribe((decodedToken: any) => {
+      this.authenticated = decodedToken;
+    });
   }
 
   getPrizes() {
@@ -93,11 +105,23 @@ export class AllPrizesComponent implements OnInit {
     }
   }
 
-  onClick(id: string) {
-    if (!id) {
-      return;
-    }
-    this.router.navigate(['/']);
+  redeemPrize(prize: Prize) {
+    this.usersService.getUser(this.authenticated.id).subscribe((user: User) => {
+      if (user.leafs >= prize.price) {
+        this.usersService.redeemPrize(prize._id, user).subscribe((result) => {
+          this.dialog.open(CodeComponent, {
+            data: {
+              code: result.body.message
+            }
+          })
+        }, error => {
+          this.showErrorMessage('An error occurred: ' + error.message);
+        });
+      } else {
+        this.showErrorMessage('You do not have enough points to redeem this prize!');
+      }
+    });
+
   }
 
   onSearch() {

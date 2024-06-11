@@ -15,6 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
+import { FileUploadService } from '../../services/file-upload.service';
 
 @Component({
   selector: 'app-user-edit',
@@ -36,6 +37,7 @@ import { MatIcon } from '@angular/material/icon';
 })
 export class UserEditComponent implements OnInit {
   userForm: FormGroup;
+  fileToUpload: File | undefined;
 
   constructor(
     public dialogRef: MatDialogRef<UserEditComponent>,
@@ -44,7 +46,8 @@ export class UserEditComponent implements OnInit {
     private usersService: UsersService,
     private snackBar: MatSnackBar,
     private router: Router,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private fileUploadService: FileUploadService
   ) {
     this.userForm = this.formBuilder.group(
       {
@@ -80,16 +83,32 @@ export class UserEditComponent implements OnInit {
         phone: this.userForm.value.phone,
         password: this.userForm.value.password || undefined,
         leafs: 0,
+        image: this.fileToUpload ? 'y' : '',
       };
 
       this.usersService
         .updateUser(updatedUser)
         ?.subscribe((success: boolean) => {
           if (success) {
+            if (this.fileToUpload) {
+              this.fileUploadService
+                .uploadUserImage(this.fileToUpload, this.data._id)
+                ?.subscribe((imageSuccess) => {
+                  if (imageSuccess.type === 'success') {
+                    this.snackBar.open('Image uploaded successfully', 'Close', {
+                      duration: 3000,
+                    });
+                  } else {
+                    this.snackBar.open('Failed to upload image', 'Close', {
+                      duration: 3000,
+                    });
+                  }
+                });
+            }
+            this.dialogRef.close('updated');
             this.snackBar.open('User updated successfully', 'Close', {
               duration: 3000,
             });
-            this.dialogRef.close('updated');
           } else {
             this.snackBar.open('Failed to update user', 'Close', {
               duration: 3000,
@@ -139,5 +158,9 @@ export class UserEditComponent implements OnInit {
           });
         }
       });
+  }
+
+  onFileSelected(event: any) {
+    this.fileToUpload = event.target.files[0];
   }
 }

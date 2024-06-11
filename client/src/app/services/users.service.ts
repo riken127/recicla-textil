@@ -53,11 +53,11 @@ export class UsersService {
       );
   }
 
-  public addUser(user: User): Observable<boolean> | null {
+  public addUser(user: User): Observable<any> {
     return this.http.post<any>(`${UsersService.apiUrl}/`, user, {}).pipe(
       map((response) => {
-        if (response.statusCode === 200) {
-          return true;
+        if (response.type === 'success' ) {
+          return response.result;
         }
         return false;
       })
@@ -96,11 +96,15 @@ export class UsersService {
       );
   }
 
-  public redeemPrize(prizeId: string): Observable<any> {
+  public redeemPrize(prizeId: string, user: User): Observable<any> {
     return this.http
       .post<any>(
         'http://localhost:3000/benefactors/store/redeem/' + prizeId,
-        {}
+        user,
+        {
+          observe: 'response',
+          withCredentials: true,
+        }
       )
       .pipe(
         map((response: HttpResponse<any>) => {

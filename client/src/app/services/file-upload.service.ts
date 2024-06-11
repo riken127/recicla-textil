@@ -133,4 +133,28 @@ export class FileUploadService {
         })
       )
   }
+
+  uploadUserImage(file: File, userId: string): Observable<any> {
+    let formData = new FormData();
+    formData.append("entityType", "user");
+    formData.append("entityId", userId);
+    formData.append("image", file, `${userId}-user.jpg`);
+
+    return this.http.post<any>(this.baseUrl + '/users/upload/', formData, {
+      observe: 'response',
+      withCredentials: true
+    })
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body;
+          } else {
+            throw new Error(response.body!.message);
+          }
+        }),
+        catchError(error => {
+          return throwError(error);
+        })
+      )
+  }
 }

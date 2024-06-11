@@ -20,6 +20,12 @@
       </div>
       <div class="form-row">
         <div class="form-field form-single-field">
+          <mat-label>Image</mat-label>
+          <input type="file" (change)="onFileSelected($event)">
+        </div>
+    </div>
+      <div class="form-row">
+        <div class="form-field form-single-field">
           <mat-form-field appearance="outline">
             <mat-label>Username</mat-label>
             <input formControlName="username" matInput>

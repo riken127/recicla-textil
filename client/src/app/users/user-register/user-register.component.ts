@@ -1,16 +1,17 @@
-import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {MatButtonModule} from '@angular/material/button';
-import {MatCardModule} from '@angular/material/card';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {MatGridListModule} from "@angular/material/grid-list";
-import {Router} from "@angular/router";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {UsersService} from "../../services/users.service";
-import {User} from "../../models/user";
-import {Address} from "../../models/address";
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatGridListModule } from "@angular/material/grid-list";
+import { Router } from "@angular/router";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { UsersService } from "../../services/users.service";
+import { User } from "../../models/user";
+import { Address } from "../../models/address";
+import { FileUploadService } from '../../services/file-upload.service';
 
 @Component({
   selector: 'app-user-register',
@@ -28,6 +29,7 @@ import {Address} from "../../models/address";
   styleUrls: ['./user-register.component.css']
 })
 export class UserRegisterComponent {
+  fileToUpload: File | undefined;
   registerForm = new FormGroup({
     firstName: new FormControl('', [Validators.required]),
     lastName: new FormControl('', [Validators.required]),
@@ -45,7 +47,8 @@ export class UserRegisterComponent {
   constructor(
     protected userService: UsersService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private fileUploadService: FileUploadService
   ) {
   }
 
@@ -58,7 +61,7 @@ export class UserRegisterComponent {
         this.registerForm.controls['username'].value || '',
         this.registerForm.controls['email'].value || '',
         this.registerForm.controls['password'].value || '',
-        '',
+        this.fileToUpload ? 'y' : '',
         new Date(),
         new Date(),
         [],
@@ -75,14 +78,33 @@ export class UserRegisterComponent {
         true,
         true,
       );
+
       this.userService.addUser(newUser)
         ?.subscribe(
           response => {
-            this.snackBar.open('User Registered Successfully', 'Close', {
-              duration: 3000,
-            }).afterDismissed().subscribe(() => {
-              this.router.navigate(['users/login']);
-            });
+            if (this.fileToUpload) {
+              this.fileUploadService.uploadUserImage(this.fileToUpload!, response).subscribe(
+                () => {
+                  this.snackBar.open('User Registered Successfully', 'Close', {
+                    duration: 3000,
+                  }).afterDismissed().subscribe(() => {
+                    this.router.navigate(['/login']);
+                  });
+                },
+                error => {
+                  this.snackBar.open(error.message, 'Close', {
+                    duration: 3000,
+                  });
+                }
+              );
+            } else {
+              this.snackBar.open('User Registered Successfully', 'Close', {
+                duration: 3000,
+              }).afterDismissed().subscribe(() => {
+                this.router.navigate(['/login']);
+              });
+            }
+
           },
           error => {
             this.snackBar.open(error.error.message, 'Close', {
@@ -92,8 +114,12 @@ export class UserRegisterComponent {
         );
     }
   }
-  
+
   login() {
     this.router.navigate(['/login']);
+  }
+
+  onFileSelected(event: any) {
+    this.fileToUpload = event.target.files[0];
   }
 }

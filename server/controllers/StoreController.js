@@ -1,8 +1,8 @@
-const Prize = require('../models/benefactor/Prize');
-const User = require('../models/user/User');
-const fs = require('fs');
-const path = require('path');
-const {Type} = require("mongoose");
+const Prize = require("../models/benefactor/Prize");
+const User = require("../models/user/User");
+const fs = require("fs");
+const path = require("path");
+const { Type } = require("mongoose");
 
 /**
  * Removes points from a user, and updates the points (if enough).
@@ -17,67 +17,88 @@ const {Type} = require("mongoose");
  * router.post('redeem/:prize', storeController.redeemPrize);
  */
 function redeemPrize(req, res, next) {
-    let user = req.body.user;
+    let user = req.body;
     let prize;
 
     if (!req.params.prize) {
         return res.status(500).json({
-            type: 'error',
-            message: 'prize is undefined.'
-        })
+            type: "error",
+            message: "prize is undefined.",
+        });
     }
 
     if (!user) {
         return res.status(401).json({
-            type: 'error',
-            message: 'unauthorized'
+            type: "error",
+            message: "unauthorized",
         });
     }
 
     User.findById(user._id)
-        .then(curr => {
-            user = user;
+        .then((currentUser) => {
+            user = currentUser;
+
+            Prize.findById(req.params.prize)
+                .then((currentPrize) => {
+                    prize = currentPrize;
+
+                    if (user.leafs < prize.price) {
+                        return res.status(500).json({
+                            type: "error",
+                            message:
+                                "unsufficient amount of points to complete the choosen trasaction.",
+                        });
+                    }
+
+                    user.leafs -= prize.price;
+
+                    User.findByIdAndUpdate(user._id, user, { new: true })
+                        .then((user) => {
+                            return res.status(200).json({
+                                type: "success",
+                                message: generateRandomString(),
+                            });
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                            return res.status(500).json({
+                                type: "error",
+                                message: err,
+                            });
+                        });
+                })
+                .catch((err) => {
+                    return res.status(500).json({
+                        type: "error",
+                        message: err,
+                    });
+                });
         })
-        .catch(err => {
+        .catch((err) => {
             return res.status(500).json({
-                type: 'error',
-                message: err
+                type: "error",
+                message: err,
             });
         });
+}
 
-    Prize.findById(req.params.prize)
-        .then(curr => {
-            prize = curr;
-        })
-        .catch(err => {
-            return res.status(500).json({
-                type: 'error',
-                message: err
-            });
-        });
-
-    if (user.points < prize.price) {
-        return res.status(500).json({
-            type: 'error',
-            message: 'unsufficient amount of points to complete the choosen trasaction.'
-        });
-    }
-
-    user.points -= prize.price;
-
-    User.findByIdAndUpdate(user._id, user, {new: true})
-        .then(user => {
-            return res.status(200).json({
-                type: 'success',
-                message: '42X132-X12313-Z1241241-Z124141'
-            });
-        })
-        .catch(err => {
-            return res.status(500).json({
-                type: 'error',
-                message: err
-            });
-        });
+/**
+ * Generates a random string in the format "A1BC-2DEF-3GHI-4JKL".
+ * Each segment of the string is a random sequence of four alphanumeric characters (0-9, A-Z).
+ * The segments are separated by hyphens.
+ * 
+ * @returns {string} The generated random string.
+ */
+function generateRandomString() {
+    return (
+        Math.random().toString(36).substring(2, 6).toUpperCase() +
+        "-" +
+        Math.random().toString(36).substring(2, 6).toUpperCase() +
+        "-" +
+        Math.random().toString(36).substring(2, 6).toUpperCase() +
+        "-" +
+        Math.random().toString(36).substring(2, 6).toUpperCase()
+    );
 }
 
 /**
@@ -98,39 +119,42 @@ function addPrize(req, res, next) {
         title: req.body.title,
         description: req.body.description,
         image: req.body.image,
-        benefactor: req.body.benefactor
+        benefactor: req.body.benefactor,
     });
 
     if (!prize.price || !prize.title || !prize.benefactor) {
         return res.status(500).json({
-            type: 'error',
-            message: 'required fields were not written.'
+            type: "error",
+            message: "required fields were not written.",
         });
     }
 
-    prize.save()
-        .then(prize => {
+    prize
+        .save()
+        .then((prize) => {
             if (
                 prize.image &&
-                !fs.existsSync('./uploads/benefactors/' + prize.benefactor + "/prizes")
+                !fs.existsSync(
+                    "./uploads/benefactors/" + prize.benefactor + "/prizes"
+                )
             ) {
                 fs.mkdirSync(
-                    './uploads/benefactors/' + prize.benefactor + '/prizes',
-                    {recursive: true}
+                    "./uploads/benefactors/" + prize.benefactor + "/prizes",
+                    { recursive: true }
                 );
             }
 
             return res.status(200).json({
-                type: 'success',
-                result: prize._id
+                type: "success",
+                result: prize._id,
             });
         })
-        .catch(error => {
+        .catch((error) => {
             return res.status(500).json({
-                type: 'error',
-                result: error
-            })
-        })
+                type: "error",
+                result: error,
+            });
+        });
 }
 
 /**
@@ -148,40 +172,53 @@ function addPrize(req, res, next) {
 function editPrize(req, res, next) {
     let prize = req.body;
 
-    Prize.findByIdAndUpdate(req.params.id, prize, {new: true})
-        .then(prize => {
+    Prize.findByIdAndUpdate(req.params.id, prize, { new: true })
+        .then((prize) => {
             if (
                 prize.image &&
-                !fs.existsSync('./uploads/benefactors/' + prize.benefactor)
+                !fs.existsSync("./uploads/benefactors/" + prize.benefactor)
             ) {
                 fs.mkdirSync(
-                    './uploads/benefactors/' + prize.benefactor + '/prizes',
-                    {recursive: true}
-                )
-            } else if (fs.existsSync(
-                    './uploads/benefactors/' + prize.benefactor + '/prizes'
-                + prize._id + '.jpg') && req.body.image) {
-                fs.unlinkSync('./uploads/benefactors/' + prize.benefactor + '/prizes/' + offer._id + '.jpg');
+                    "./uploads/benefactors/" + prize.benefactor + "/prizes",
+                    { recursive: true }
+                );
+            } else if (
+                fs.existsSync(
+                    "./uploads/benefactors/" +
+                        prize.benefactor +
+                        "/prizes" +
+                        prize._id +
+                        ".jpg"
+                ) &&
+                req.body.image
+            ) {
+                fs.unlinkSync(
+                    "./uploads/benefactors/" +
+                        prize.benefactor +
+                        "/prizes/" +
+                        offer._id +
+                        ".jpg"
+                );
             }
 
             if (!prize) {
                 return res.status(500).json({
-                    type: 'error',
-                    message: 'prize not found'
+                    type: "error",
+                    message: "prize not found",
                 });
             }
 
             return res.status(200).json({
-                type: 'success',
-                message: prize._id + " was updated successfully."
+                type: "success",
+                message: prize._id + " was updated successfully.",
             });
         })
-        .catch(error => {
+        .catch((error) => {
             return res.status(500).json({
-                type: 'error',
-                message: error
-            })
-        })
+                type: "error",
+                message: error,
+            });
+        });
 }
 
 /**
@@ -197,36 +234,36 @@ function editPrize(req, res, next) {
  * router.delete('/:id', storeController.deletePrize);
  */
 function deletePrize(req, res, next) {
-    Prize.findByIdAndDelete(req.params.id, {new: true})
-        .then(prize => {
+    Prize.findByIdAndDelete(req.params.id, { new: true })
+        .then((prize) => {
             if (!prize) {
                 return res.status(500).json({
-                    type: 'error',
-                    message: 'prize not found'
-                })
+                    type: "error",
+                    message: "prize not found",
+                });
             }
 
             if (prize.image) {
                 try {
-                    return fs.unlinkSync('./uploads/' + prize.image);
+                    return fs.unlinkSync("./uploads/" + prize.image);
                 } catch (err) {
                     res.status(500).json({
-                        type: 'error',
-                        message: err
-                    })
+                        type: "error",
+                        message: err,
+                    });
                 }
             }
 
             return res.status(200).json({
-                type: 'success',
-                message: 'prize was deleted successfully.'
+                type: "success",
+                message: "prize was deleted successfully.",
             });
         })
-        .catch(error => {
+        .catch((error) => {
             return res.status(500).json({
-                type: 'error',
-                message: error
-            })
+                type: "error",
+                message: error,
+            });
         });
 }
 
@@ -244,20 +281,20 @@ function deletePrize(req, res, next) {
  */
 function getPrize(req, res, next) {
     Prize.findById(req.params.id)
-        .then(prize => {
+        .then((prize) => {
             if (!prize) {
                 return res.status(500).json({
-                    type: 'error',
-                    message: 'prize not found'
+                    type: "error",
+                    message: "prize not found",
                 });
             }
 
             res.status(200).json(prize);
         })
-        .catch(err => {
+        .catch((err) => {
             res.status(500).json({
-                type: 'error',
-                message: err
+                type: "error",
+                message: err,
             });
         });
 }
@@ -275,22 +312,22 @@ function getPrize(req, res, next) {
  */
 function getBenefactorPrizes(req, res, next) {
     Prize.find({
-        benefactor: req.params.id
+        benefactor: req.params.id,
     })
-        .then(users => {
+        .then((users) => {
             if (!users) {
                 return res.status(500).json({
-                    type: 'error',
-                    message: 'no prize found'
+                    type: "error",
+                    message: "no prize found",
                 });
             }
 
             res.status(200).json(users);
         })
-        .catch(error => {
+        .catch((error) => {
             res.status(500).json({
-                type: 'error',
-                message: error
+                type: "error",
+                message: error,
             });
         });
 }
@@ -307,43 +344,41 @@ function getBenefactorPrizes(req, res, next) {
  * router.get('all/', storeController.getAllPrizes);
  */
 function getAllPrizes(req, res, next) {
-        const numberOfPrizes = parseInt(req.query.pageSize, 10);
-        const pageNumber = parseInt(req.query.pageNumber, 10);
-        const searchQuery = req.query.search || '';
+    const numberOfPrizes = parseInt(req.query.pageSize, 10);
+    const pageNumber = parseInt(req.query.pageNumber, 10);
+    const searchQuery = req.query.search || "";
 
-        if (isNaN(numberOfPrizes) || isNaN(pageNumber)) {
-            return res.status(400).json({
-                type: 'error',
-                message: 'Invalid parameters'
-            }
-            );
-        }
+    if (isNaN(numberOfPrizes) || isNaN(pageNumber)) {
+        return res.status(400).json({
+            type: "error",
+            message: "Invalid parameters",
+        });
+    }
 
-        const skip = pageNumber * numberOfPrizes;
-        let searchFilter = {};
+    const skip = pageNumber * numberOfPrizes;
+    let searchFilter = {};
 
-        if (searchQuery) {
-            searchFilter = {
-                $or: [
-                    { title: {$regex: searchQuery, $options: 'i' } },
-                    { description: { $regex: searchQuery, $options: 'i' } },
-                ]
-            };
-        }
+    if (searchQuery) {
+        searchFilter = {
+            $or: [
+                { title: { $regex: searchQuery, $options: "i" } },
+                { description: { $regex: searchQuery, $options: "i" } },
+            ],
+        };
+    }
 
-        Prize.find(searchFilter)
-            .limit(numberOfPrizes)
-            .skip(skip)
-            .then(prizes => {
-                return res.status(200).json(prizes);
-            })
-            .catch(err => {
-                return res.status(500).json({
-                    type: 'error',
-                    message: err
-                })
+    Prize.find(searchFilter)
+        .limit(numberOfPrizes)
+        .skip(skip)
+        .then((prizes) => {
+            return res.status(200).json(prizes);
+        })
+        .catch((err) => {
+            return res.status(500).json({
+                type: "error",
+                message: err,
             });
-
+        });
 }
 
 function upload(req, res, next) {
@@ -357,24 +392,24 @@ function upload(req, res, next) {
         );
 
         Prize.findByIdAndUpdate(req.body.prizeId, {
-            image: imageUrl
+            image: imageUrl,
         })
-            .then(updatedPrize => {
+            .then((updatedPrize) => {
                 return res.status(200).json({
-                    message: 'Prize image uploaded sucessfully',
-                    type: 'sucess',
+                    message: "Prize image uploaded sucessfully",
+                    type: "sucess",
                 });
             })
-            .catch (error => {
+            .catch((error) => {
                 return res.status(500).json({
-                    type: 'error',
-                    message: 'Failed to upload prize image.'
-                })
+                    type: "error",
+                    message: "Failed to upload prize image.",
+                });
             });
-    } catch(error) {
+    } catch (error) {
         res.status(500).json({
-            type: 'error',
-            message: 'Failed to upload prize image.'
+            type: "error",
+            message: "Failed to upload prize image.",
         });
     }
 }
@@ -386,5 +421,5 @@ module.exports = {
     editPrize,
     deletePrize,
     redeemPrize,
-    upload
-}
+    upload,
+};
