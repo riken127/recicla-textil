@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component,HostListener, OnInit, Inject } from '@angular/core';
 import { CommonModule, NgStyle } from '@angular/common';
 import {
   MatCard,
@@ -54,6 +54,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class AllOffersComponent implements OnInit {
   offers: Offer[] = [];
   benefactorId: string;
+  gridCols?:number;
 
   constructor(
     private benefactorService: BenefactorsService,
@@ -66,6 +67,22 @@ export class AllOffersComponent implements OnInit {
 
   ngOnInit() {
     this.getOffers(this.benefactorId);
+    this.adjustGridCols(window.innerWidth);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.adjustGridCols((event.target as Window).innerWidth);
+  }
+
+  adjustGridCols(width: number) {
+    if (width >= 1200) {
+      this.gridCols = 3;
+    } else if (width >= 800) {
+      this.gridCols = 2;
+    } else {
+      this.gridCols = 1;
+    }
   }
 
   getOffers(benefactorId: string) {

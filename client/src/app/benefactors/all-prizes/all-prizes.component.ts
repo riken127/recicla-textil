@@ -58,6 +58,7 @@ export class AllPrizesComponent implements OnInit {
   allLoaded = false;
   searchQuery = '';
   authenticated: any;
+  gridCols?: number;
 
   constructor(
     private benefactorsService: BenefactorsService,
@@ -74,6 +75,22 @@ export class AllPrizesComponent implements OnInit {
     this.authService.getDecodedToken(true, false, false, false).subscribe((decodedToken: any) => {
       this.authenticated = decodedToken;
     });
+    this.adjustGridCols(window.innerWidth);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.adjustGridCols((event.target as Window).innerWidth);
+  }
+
+  adjustGridCols(width: number) {
+    if (width >= 1200) {
+      this.gridCols = 3;
+    } else if (width >= 800) {
+      this.gridCols = 2;
+    } else {
+      this.gridCols = 1;
+    }
   }
 
   getPrizes() {

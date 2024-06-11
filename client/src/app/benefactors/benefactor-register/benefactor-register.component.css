@@ -4,10 +4,14 @@
   grid-column-gap: 20px;
 }
 
+.register-card{
+  background-color: #3e3e3e;
+}
+
 .form-single-field {
   display: grid;
   grid-column-gap: 20px;
-}
+} 
 
 .mat-form-field {
   width: auto;
@@ -29,6 +33,7 @@
   width: 100%;
   font-size: 16px;
   padding: 12px 24px;
+  margin-top: 20px;
 }
 
 .login-button {

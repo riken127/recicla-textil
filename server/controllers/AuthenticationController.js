@@ -73,7 +73,11 @@ async function handleBenefactorLogin(res, username, password) {
     const passwordMatch = await bcrypt.compare(password, benefactor.password);
 
     if (passwordMatch) {
-        const token = jwt.sign({benefactor}, secretKey, {expiresIn: '1h'});
+        benefactor.description = '';
+        benefactor.pickpoints =  [];
+        const token = jwt.sign({
+            benefactor
+        }, secretKey, {expiresIn: '1h'});
 
         let encryptedToken = encrypt(token);
 

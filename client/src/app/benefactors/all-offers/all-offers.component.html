@@ -8,7 +8,7 @@
     </div>
   </div>
   <div *ngIf="offers.length > 0">
-    <mat-grid-list cols="3" rowHeight="350px">
+    <mat-grid-list cols="{{ gridCols }}" rowHeight="350px">
       <mat-grid-tile *ngFor="let offer of offers">
         <mat-card>
           <mat-card-header

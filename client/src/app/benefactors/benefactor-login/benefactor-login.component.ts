@@ -48,11 +48,16 @@ export class BenefactorLoginComponent {
       })
         .subscribe(response => {
           if (response.statusCode === 200) {
-            this.router.navigate(['/']);
+            this.authenticationService.getDecodedToken(true, false, false, false)
+              .subscribe (
+                result =>  this.router.navigate(['/benefactors/profile/' + result.id]),
+                error => this.router.navigate(['/'])
+              );
           } else {
             this.showErrorMessage("An error occurred during login.");
           }
         }, error => {
+          console.log(error)
           if (error.status === 401) {
             this.showErrorMessage("Invalid username or password.");
           } else {

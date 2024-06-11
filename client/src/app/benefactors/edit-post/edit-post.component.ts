@@ -92,6 +92,7 @@ export class EditPostComponent implements OnInit {
               this.snackBar.open('Post updated successfully', 'Close', {
                 duration: 3000
               })
+              this.dialogRef.close();
             },
             error => {
               this.snackBar.open('Failed to update post image', 'Close', {
@@ -103,6 +104,7 @@ export class EditPostComponent implements OnInit {
           this.snackBar.open('Post updated successfully', 'Close', {
             duration: 3000
           })
+          this.dialogRef.close();
         }
       },
       error => {
@@ -112,7 +114,6 @@ export class EditPostComponent implements OnInit {
       }
     );
     this.onReset();
-    this.dialogRef.close();
   }
   }
 
@@ -127,7 +128,6 @@ export class EditPostComponent implements OnInit {
         this.snackBar.open('Post deleted successfully', 'Close', {
           duration: 3000
         }).afterDismissed().subscribe(() => {
-          this.router.navigate(['/posts']);
           this.dialogRef.close();
         });
       },

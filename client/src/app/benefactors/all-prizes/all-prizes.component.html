@@ -18,7 +18,7 @@
     </div>
   </div>
   <div *ngIf="prizes.length > 0">
-    <mat-grid-list cols="3" rowHeight="350px">
+    <mat-grid-list cols="{{ gridCols }}" rowHeight="350px">
       <mat-grid-tile *ngFor="let prize of prizes">
         <mat-card>
           <mat-card-header

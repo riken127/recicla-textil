@@ -92,7 +92,7 @@ export class AuthenticationService {
         map((response: HttpResponse<any>) => {
           const token = this.extractToken(response);
           const statusCode = response.status;
-
+          
           return {
             token: token,
             statusCode: statusCode,

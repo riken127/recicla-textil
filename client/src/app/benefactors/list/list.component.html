@@ -15,7 +15,7 @@
   </div>
 
   <ng-container *ngIf="benefactors.length > 0; else noBenefactors">
-    <mat-grid-list cols="3" rowHeight="350px">
+    <mat-grid-list  cols="{{ gridCols }}" rowHeight="350px">
       <mat-grid-tile *ngFor="let benefactor of benefactors">
         <mat-card>
           <mat-card-header

@@ -38,9 +38,10 @@ export class ListComponent implements OnInit {
   totalRecords: number = 0;
   recordsFiltered: number = 0;
   draw: number = 1;
-  length: number = 10;
+  length: number = 10; 
   orderBy: string = 'asc'; 
-  columnIndex: number = 0;
+  columnIndex: number = 0; 
+  gridCols?: number;
 
   constructor(
     private benefactorsService: BenefactorsService,
@@ -51,6 +52,22 @@ export class ListComponent implements OnInit {
 
   ngOnInit() {
     this.getBenefactors();
+    this.adjustGridCols(window.innerWidth);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.adjustGridCols((event.target as Window).innerWidth);
+  }
+
+  adjustGridCols(width: number) {
+    if (width >= 1200) {
+      this.gridCols = 3;
+    } else if (width >= 800) {
+      this.gridCols = 2;
+    } else {
+      this.gridCols = 1;
+    }
   }
 
   getBenefactors() {

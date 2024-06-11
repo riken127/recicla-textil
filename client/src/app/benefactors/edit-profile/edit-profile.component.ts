@@ -77,8 +77,6 @@ export class EditProfileComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       description: [''],
       phone: ['', Validators.required],
-      logo: [''],
-      banner: [''],
       conversionRatio: this.formBuilder.group({
         points: ['', Validators.required],
         value: ['', Validators.required]
@@ -109,10 +107,44 @@ export class EditProfileComponent implements OnInit {
       benefactorData['password'] = this.form.value.newPassword;
     }
 
-    benefactorData.image = (this.logoToUpload || this.bannerToUpload) ?  'y' : '';
+benefactorData.banner = this.bannerToUpload ? 'y' : this.benefactor.banner
+benefactorData.logo = this.logoToUpload ? 'y' : this.benefactor.logo 
 
     this.service.updateBenefactor(benefactorData)?.subscribe(
       response => {
+        if (this.logoToUpload) {
+          this.fileUploadService.uploadBenefactorLogo(this.logoToUpload, this.benefactor._id)
+            ?.subscribe(
+            uploadResult => {
+              this.snackBar.open('Benefactor logo has been updated', 'Close', {
+                duration: 3000
+              })
+              this.dialogRef.close()
+            },
+            uploadError => {
+              this.snackBar.open('Failed to upload logo', 'Close', {
+                duration: 3000
+              })
+            }
+          );
+        }
+    
+        if (this.bannerToUpload) {
+          this.fileUploadService.uploadBenefactorBanner(this.bannerToUpload, this.benefactor._id).subscribe(
+            uploadResult => {
+              this.snackBar.open('Benefactor banner has been updated', 'Close', {
+                duration: 3000
+              }).afterDismissed().subscribe(() => {
+                  this.dialogRef.close();
+              })
+            },
+            uploadError => {
+              this.snackBar.open('Failed to upload banner', 'Close', {
+                duration: 3000
+              })
+            }
+          );
+        }
         this.snackBar.open('Profile updated successfully', 'Close', {
           duration: 3000
         })
@@ -123,44 +155,7 @@ export class EditProfileComponent implements OnInit {
         });
       }
     );
-
-    if (this.logoToUpload) {
-      this.fileUploadService.uploadBenefactorLogo(this.logoToUpload, this.benefactor._id)
-        ?.subscribe(
-        uploadResult => {
-          console.log(uploadResult)
-          this.snackBar.open('Benefactor logo has been updated', 'Close', {
-            duration: 3000
-          })
-        },
-        uploadError => {
-          console.log(uploadError)
-          this.snackBar.open('Failed to upload logo', 'Close', {
-            duration: 3000
-          })
-        }
-      );
-    }
-
-    if (this.bannerToUpload) {
-      this.fileUploadService.uploadBenefactorBanner(this.bannerToUpload, this.benefactor._id).subscribe(
-        uploadResult => {
-          this.snackBar.open('Benefactor banner has been updated', 'Close', {
-            duration: 3000
-          }).afterDismissed().subscribe(() => {
-              this.dialogRef.close();
-          })
-        },
-        uploadError => {
-          this.snackBar.open('Failed to upload banner', 'Close', {
-            duration: 3000
-          })
-        }
-      );
-    }
-
     this.onReset();
-    this.dialogRef.close();
   }
 
   onReset() {

@@ -48,7 +48,7 @@ export class UserLoginComponent {
       })
         .subscribe(response => {
           if (response.statusCode === 200) {
-            this.router.navigate(['/']);
+            this.router.navigate(['/user-profile']);
           } else {
             this.showErrorMessage("An error occurred during login.");
           }

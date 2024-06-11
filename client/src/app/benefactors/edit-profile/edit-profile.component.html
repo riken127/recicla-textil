@@ -106,30 +106,12 @@
           <!-- Banner and Logo URL -->
           <div class="form-row">
             <div class="form-field form-paired-field">
-              <mat-form-field appearance="outline">
-                <mat-label>Banner URL</mat-label>
-                <input
-                  formControlName="banner"
-                  matInput
-                  type="text"
-                  placeholder="Enter banner URL"
-                />
-                <mat-error *ngIf="f['banner'].errors?.['required'] && submitted"
-                  >Banner URL is required</mat-error
-                >
-              </mat-form-field>
-              <mat-form-field appearance="outline">
-                <mat-label>Logo URL</mat-label>
-                <input
-                  formControlName="logo"
-                  matInput
-                  type="text"
-                  placeholder="Enter logo URL"
-                />
-                <mat-error *ngIf="f['logo'].errors?.['required'] && submitted"
-                  >Logo URL is required</mat-error
-                >
-              </mat-form-field>
+              banner:
+              <input type="file" (change)="onBannerSelected($event)">
+            </div>
+            <div class="form-field form-paired-field">
+              logo:
+              <input type="file" (change)="onLogoSelected($event)">
             </div>
           </div>
           <!-- Email URL -->
@@ -269,14 +251,6 @@
             </div>
           </div>
         </mat-expansion-panel>
-        <div class="form-field form-paired-field">
-          banner:
-          <input type="file" (change)="onBannerSelected($event)">
-        </div>
-        <div class="form-field form-paired-field">
-          logo:
-          <input type="file" (change)="onLogoSelected($event)">
-        </div>
       </mat-accordion>
       <div class="form-row">
         <button

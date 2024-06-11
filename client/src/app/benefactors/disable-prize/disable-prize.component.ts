@@ -48,6 +48,6 @@ export class DisablePrizeComponent {
   }
 
   onCancel() {
-    this.router.navigate(['/'])
+    this.router.navigate(['/user-profile'])
   }
 }

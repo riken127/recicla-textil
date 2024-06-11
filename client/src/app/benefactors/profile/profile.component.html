@@ -22,6 +22,14 @@
       <div class="title-button-container">
         <mat-card-title id="name">{{ benefactor.name }}</mat-card-title>
         <div>
+          <button
+            class="benefactor-button"
+            mat-raised-button
+            (click)="openAllOffers()"
+          >
+            <mat-icon>list</mat-icon>
+            All Offers
+          </button>
           @if (benefactorId == benefactor._id) {
 
           <button
@@ -31,14 +39,6 @@
           >
             <mat-icon>list</mat-icon>
             Offers Table
-          </button>
-          <button
-            class="benefactor-button"
-            mat-raised-button
-            (click)="openAllOffers()"
-          >
-            <mat-icon>list</mat-icon>
-            All Offers
           </button>
           <button
             class="benefactor-button"

@@ -140,8 +140,9 @@ function deletePost(req, res) {
         .then((post) => {
             if (post.image) {
                 try {
-                    fs.unlinkSync("./uploads/" + post.image);
+                    fs.unlinkSync("./uploads/benefactors/" + post.benefactorId + "/posts/" + post._id + "-post.jpg");
                 } catch (err) {
+                    console.log(err)
                     return res.status(500).json({
                         type: "error",
                         result: err,
@@ -150,19 +151,20 @@ function deletePost(req, res) {
             }
 
             if (!post) {
-                res.json({
+              return  res.status(404).json({
                     message: "Post not found",
                     type: "danger",
                 });
             }
 
-            res.status(200).json({
+            return res.status(200).json({
                 type: "success",
                 message: post.title + " was deleted successfully.",
             });
         })
         .catch((error) => {
-            res.status(500).json({
+            console.log(error)
+            return res.status(500).json({
                 type: "error",
                 result: error,
             });

@@ -169,6 +169,7 @@ function getBenefactor(req, res, next) {
             res.json(benefactor);
         })
         .catch((err) => {
+
             console.error("Error retrieving benefactor:", err);
             res.status(500).json({ message: "Internal Server Error" });
         });
@@ -277,7 +278,7 @@ async function addBenefactor(req, res, next) {
 
                         return res.status(200).json({
                             type: "success",
-                            result: savedBenefactor._id,
+                            result: savedBenefactor,
                         });
                     })
                     .catch(async (err) => {

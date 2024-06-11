@@ -44,7 +44,7 @@ export class ProfileComponent implements OnInit {
   benefactor?: Benefactor;
   posts: Post[] = [];
   benefactorId: string | null = null;
-  gridCols?: number;
+  gridCols: number=3;
   type?: string;
 
   constructor(
@@ -127,7 +127,7 @@ export class ProfileComponent implements OnInit {
     this.dialog.open(EditPostComponent, {
       data: { post: post, benefactorId: this.benefactorId},
     }).afterClosed().subscribe(result => {
-      this.getAllPosts();
+      location.reload()
     });
   }
 
@@ -178,7 +178,7 @@ export class ProfileComponent implements OnInit {
   openPost(post: Post) {
     this.dialog.open(PostComponent, {
       data: { post: post },
-    });
+    })
   }
 
   getLogoUrl(): string {
@@ -188,8 +188,8 @@ export class ProfileComponent implements OnInit {
   }
 
   getBannerUrl(): string {
-    return this.benefactor?.banner
-      ? this.parseImageUrl(this.benefactor.banner)
+    return this.benefactor!.banner
+      ? this.parseImageUrl(this.benefactor!.banner)
       : `url(https://api.dicebear.com/8.x/shapes/svg?seed=${this.benefactor?.phone})`;
   }
 

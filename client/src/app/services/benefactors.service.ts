@@ -78,7 +78,7 @@ export class BenefactorsService {
       );
   }
 
-  public addBenefactor(benefactor: Benefactor): Observable<boolean> | null {
+  public addBenefactor(benefactor: Benefactor): Observable<any> {
     return this.http
       .post<any>(`${BenefactorsService.apiUrl}/`, benefactor, {
         observe: 'response',
@@ -87,7 +87,7 @@ export class BenefactorsService {
       .pipe(
         map((response) => {
           if (response.status === 200) {
-            return true;
+            return response.body.result;
           }
           return false;
         })
